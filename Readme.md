@@ -1,3 +1,3 @@
-Gemstone UI addon for SageTV 7
+Gemstone UI addon for SageTV 9
 
-Not updated yet for V9
+This version is under minimal development while Gemstone 2 is being worked on
