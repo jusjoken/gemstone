@@ -14,7 +14,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+
+import sagex.UIContext;
 import sagex.api.AiringAPI;
 import sagex.api.FavoriteAPI;
 import sagex.api.MediaFileAPI;
@@ -267,13 +271,13 @@ public class Source {
     
     public static Map GetAllFolderRestrictions(String ViewName) {
         String ExclusionFolders = Flow.GetOptionName(ViewName, Const.FlowPathFilters, "");
-        //LOG.debug("GetAllFolderRestrictions: = '" + ExclusionFolders + "'");
+        LOG.debug("GetAllFolderRestrictions: = '" + ExclusionFolders + "'");
         Map rest = new HashMap<String, Boolean>();
         if (!ExclusionFolders.equals("")) {
             String[] AllValues = ExclusionFolders.split(";");
             for (String curr : AllValues) {
                 String[] currv = curr.split("&&");
-                rest.put(currv[0], Boolean.parseBoolean(currv[1]));
+                rest.put(util.SeparatorsToSystem(currv[0]), Boolean.parseBoolean(currv[1]));
             }
         }
         return rest;

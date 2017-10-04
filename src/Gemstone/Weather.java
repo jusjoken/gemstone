@@ -19,6 +19,9 @@ import sagex.phoenix.weather.IForecastPeriod;
  *
  * @author jusjoken
  * public Gemstone single Weather instance to use across the app and all extenders
+ * 10/02/2017 - units and location are all also stored at server level
+ *            - changes to default 90210 as epg/zip_code is no longer used in sagetv
+ *            - fix to foce an update when the location is set
  * 3/23/2013 - weather impl now stored at Server Level
  *    Note: made this change as the impl is loaded so early in the server start that the client settings were not being loaded
  *    - units and location are stored at the client level
@@ -26,7 +29,7 @@ import sagex.phoenix.weather.IForecastPeriod;
 public class Weather {
     static private final Logger LOG = Logger.getLogger(Weather.class);
     private static String implList = util.ConvertListtoString(phoenix.weather2.GetWeatherImplKeys());
-    private static final String implDefault = "world";
+    private static final String implDefault = "wunderground";
     private static final String unitsDefault = "Standard";
     private static boolean LoaderActive = false;
     private static boolean weatherInit = false;
@@ -82,14 +85,14 @@ public class Weather {
             LOG.debug("setImpl: phoenix weather set to '" + phoenix.weather2.GetWeatherImplKey() + "'");
             //as the impl changed... set units and location if required and do an update
             setUnits();
-            SetLocation();
+            SetLocation(true);
         }
         util.SetOption(Const.WeatherProp, Const.WeatherImpl, phoenix.weather2.GetWeatherImplKey(), useServerForProps);
         return success;
     }
 
     private static void setUnits(){
-        String curUnits = util.GetOptionName(Const.WeatherProp, Const.WeatherUnits, unitsDefault);
+        String curUnits = util.GetOptionName(Const.WeatherProp, Const.WeatherUnits, unitsDefault, useServerForProps);
         if (!curUnits.toLowerCase().equals(phoenix.weather2.GetUnits().toLowerCase())){
             //units are different so we need to set them
             phoenix.weather2.SetUnits(curUnits);
@@ -102,24 +105,32 @@ public class Weather {
         }else{
             phoenix.weather2.SetUnits("metric");
         }
-        util.SetOption(Const.WeatherProp, Const.WeatherUnits, phoenix.weather2.GetUnits());
+        util.SetOption(Const.WeatherProp, Const.WeatherUnits, phoenix.weather2.GetUnits(), useServerForProps);
     }
 
     public static void SetLocation(){
-        String curLoc = util.GetOptionName(Const.WeatherProp, Const.WeatherLoc, util.OptionNotFound);
-        if (!curLoc.equals(phoenix.weather2.GetLocation())){
+    	SetLocation(false);
+    }
+    public static void SetLocation(Boolean forced){
+        String curLoc = util.GetOptionName(Const.WeatherProp, Const.WeatherLoc, util.OptionNotFound, useServerForProps);
+        if (!curLoc.equals(phoenix.weather2.GetLocation()) || forced){
             if (curLoc.equals(util.OptionNotFound)){
-                //try setting using the EPG location
-                curLoc = util.GetServerProperty("epg/zip_code", util.OptionNotFound);
-                if (curLoc.equals(util.OptionNotFound)){
-                    //we have no location so clear any existing location so the user can set it in the UI
-                    phoenix.weather2.RemoveLocation();
-                    LOG.debug("setLoc: no vaild location so clearing location. Will need to be set in the UI.");
-                }else{
-                    phoenix.weather2.SetLocation(curLoc);
-                }
+                //try setting using a default zip code
+                curLoc = "90210";
+                phoenix.weather2.SetLocation(curLoc);
+                LOG.debug("setLoc: no vaild location so setting to default 90210");
             }else{
                 phoenix.weather2.SetLocation(curLoc);
+                LOG.debug("setLoc: setting location to '" + curLoc + "'");
+            }
+            //as the location has changed then as long as we are not in the init then update needs to be run
+            if (weatherInit){
+            	//force the update by switching the units twice - it works 
+            	//:TODO - add function in phoenix weather to force an update
+            	SetUnitsNext();
+            	SetUnitsNext();
+            	//force an update
+                UpdateWeather();
             }
         }
     }

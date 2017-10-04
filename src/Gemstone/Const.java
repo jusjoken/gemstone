@@ -104,7 +104,7 @@ public class Const {
     public static final String BaseRatingsSource = "BaseRatingsSource";
     public static final String LogFileName = "gemstone.log4j.properties";
     public static final String FontPathGemstone = "STVs" + File.separator + "SageTV7" + File.separator + "Themes" + File.separator + "Gemstone" + File.separator + "Fonts";
-    public static final String FontPathSage = "Fonts";
+    public static final String FontPathSage = "fonts";
 
     
     

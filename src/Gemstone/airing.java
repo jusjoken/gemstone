@@ -1,8 +1,7 @@
 package Gemstone;
 
-import java.util.Arrays;
-import java.util.Random;
-        
+import java.util.*;
+
 import org.apache.log4j.Logger;
 import sagex.api.Database;
 import sagex.api.MediaFileAPI;
@@ -10,6 +9,10 @@ import sagex.api.AiringAPI;
 import sagex.api.ShowAPI;
 import sagex.api.PlaylistAPI;
 import sagex.api.Utility;
+import sagex.phoenix.vfs.IMediaFolder;
+import sagex.phoenix.vfs.IMediaResource;
+import sagex.phoenix.vfs.sorters.Sorter;
+import sagex.phoenix.vfs.views.ViewFolder;
 
 /**
  *
@@ -26,22 +29,22 @@ public class airing
     //If it is not a TV file it returns the "MediaTitle" from the custom metadata fields. Returns "Unknown"
     //if the title is not known.
     {
-        //String MediaTitle = new String();	
-        String MediaTitle;	
+        //String MediaTitle = new String();
+        String MediaTitle;
         if (MediaFileAPI.IsTVFile(MediaObject)) {
-            MediaTitle = AiringAPI.GetAiringTitle(MediaObject);		
+            MediaTitle = AiringAPI.GetAiringTitle(MediaObject);
         }
         else {
             MediaTitle = MetadataCalls.GetMediaTitle(MediaObject);
-        }	
+        }
         if (MediaTitle.length() == 0) {
             return "Unknown";
         }
         else {
             return MediaTitle;
         }
-    }		
-	
+    }
+
 //	public static String GetShowEpisode(Object MediaObject)
 //	{
 //		if (MediaFileAPI.IsTVFile(MediaObject)) {
@@ -64,7 +67,7 @@ public class airing
         MediaObject = phoenix.media.GetSageMediaFile(MediaObject);
         return ShowAPI.GetShowEpisode(MediaObject);
     }
-    
+
     public static String GetShowDescription(Object MediaObject){
         if (MediaObject==null){
             return "";
@@ -72,8 +75,8 @@ public class airing
         MediaObject = phoenix.media.GetSageMediaFile(MediaObject);
         return ShowAPI.GetShowDescription(MediaObject);
     }
-    
-    public static long GetOriginalAiringDate(Object MediaObject) 
+
+    public static long GetOriginalAiringDate(Object MediaObject)
     {
         if (MediaFileAPI.IsTVFile(MediaObject)){
             return ShowAPI.GetOriginalAiringDate(MediaObject);
@@ -81,7 +84,7 @@ public class airing
             return MetadataCalls.GetOriginalAirDate(MediaObject);
         }
     }
-	
+
     public static String GetAiringTitlePostpend(Object MediaObject)
     {
         String s1 = airing.GetAiringTitle(MediaObject);
@@ -101,12 +104,12 @@ public class airing
         }
         return s1;
     }
-	
+
     public static Object MakePlaylist(Object MediaObjects, String NewPlaylistName)
-    /* 
+    /*
      * returns a Sage Playlist object containing the airings in MediaObjects
      * If NewPlaylistName already exists, it will be removed without prompt and recreated.
-     * 
+     *
      * @param MediaObjects, a sage MediaFile, Airing, or Show Object in an Array, list, or vector
      * @param NewPlaylistName, string for the title of the new playlist
      */
@@ -138,11 +141,11 @@ public class airing
         LOG.debug("MakePlaylist: END");
         return NewPlaylist;
     }
-	
+
     public static boolean IsWatchedPartial(Object MediaObject)
-    /* 
+    /*
      * returns true if the MediaObjects  the IsWatched() flag is false and it has been partially watched.
-     * 
+     *
      * @param MediaObject, a sage MediaFile, Airing, or Show object
      */
     {
@@ -152,10 +155,10 @@ public class airing
             return false;
         }
     }
-	
+
     /*
      * Given an array of Airings will return the last watched (in real time) object.
-     * 
+     *
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      */
     public static Object GetLastWatched(Object MediaObjects){
@@ -163,23 +166,34 @@ public class airing
             LOG.debug("GetLastWatched: null passed in");
             return null;
         }
-        MediaObjects = Database.Sort(MediaObjects, true, "Gemstone_airing_GetRealWatchedStartTime");
-        if(phoenix.media.IsWatched(Utility.GetElement(MediaObjects, 0))){
-            return Utility.GetElement(MediaObjects, 0);
-        }else{
-            //return null if there are no watched items
-            return null;
+
+        //step forwards through the object list
+        for (int item = 0; item <= Utility.Size(MediaObjects)-1; item++  ){
+        	if(!phoenix.media.IsWatched(Utility.GetElement(MediaObjects, item))){
+        		if(item==0){
+        			//first item is not watched so return null as we will consider all items not watched
+        	        LOG.debug("GetLastWatched: First item NOT watched so LastWatched not found - returning NULL");
+        			return null;
+        		}
+        		//last watched is the previous item from the first not watched item
+    	        LOG.debug("GetLastWatched: NOT watched found. Returning previous item '" + Utility.GetElement(MediaObjects, item-1) + "'");
+        		return Utility.GetElement(MediaObjects, item-1);
+        	}
         }
+        
+        LOG.debug("GetLastWatched: All items watched so LastWatched is the last item '" + Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1) + "'");
+        //return the last item as all items are watched
+        return Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1);
     }
 
     public static Long GetRealWatchedStartTime(Object MediaObject){
-        return sagex.api.AiringAPI.GetRealWatchedStartTime(phoenix.media.GetMediaObject(MediaObject));
+    	return sagex.api.AiringAPI.GetRealWatchedStartTime(phoenix.media.GetMediaObject(MediaObject));
     }
 
     /*
      * Given an array of Airings will return the next episode to watch by AiringDate (in real time).
      * Returns Null if Airings not found after last watched. (end of series)
-     * 
+     *
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      */
     public static Object GetNextShow(Object MediaObjects){
@@ -202,7 +216,7 @@ public class airing
     /*
      * Given an array of Airings will return the Newest episode by AiringDate.
      * Returns Null if invalid or all airings are watched
-     * 
+     *
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      */
     public static Object GetNewShow(Object MediaObjects){
@@ -224,11 +238,11 @@ public class airing
             return Newest;
         }
     }
-    
+
     /*
      * Given an array of Airings will return the Next or Previous episode by AiringDate (in real time).
      * Returns Null if Airings not found after or before Current Show. (end or begin of series hit)
-     * 
+     *
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      * @param CurrentShow - sage MediaFile, Airing, or Show Object.
      * @param DirectionNext - true gets Next, false gets Previous.
@@ -247,9 +261,9 @@ public class airing
             LOG.debug("GetShowNextPrev: current show was not found so returning the first item '" + Utility.GetElement(MediaObjects, 0) + "'");
             return Utility.GetElement(MediaObjects, 0);
         }
-        
+
         if(DirectionNext){
-            if(index+1 >= Utility.Size(MediaObjects)){	
+            if(index+1 >= Utility.Size(MediaObjects)){
                 LOG.debug("GetShowNextPrev: NEXT - Current Show is the last show so returning null as there is no NEXT");
                 return null;
             }else{
@@ -257,7 +271,7 @@ public class airing
                 return Utility.GetElement(MediaObjects, index+1);
             }
         }else{
-            if(index == 0){	
+            if(index == 0){
                 LOG.debug("GetShowNextPrev: PREV - Current Show is the first show so returning null as there is no PREV");
                 return null;
             }else{
@@ -270,7 +284,7 @@ public class airing
     /*
      * Given an array of Airings will return a random selection to watch by AiringDate (in real time).
      * Returns Null if Airings not found after last watched. (end of series)
-     * 
+     *
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      */
     public static Object GetNextShowRandom(Object MediaObjects){
@@ -291,13 +305,13 @@ public class airing
         }
     }
 
-    /* 
-     * given an array of Airings will return a subarray sorted by original airing date 
-     * where the first element of the array is the last watched episode 
-     * (or the next episode if IsWatched() = true).  
+    /*
+     * given an array of Airings will return a subarray sorted by original airing date
+     * where the first element of the array is the last watched episode
+     * (or the next episode if IsWatched() = true).
      * Subsequent elements are all "later" episodes (as defined by flux_api_GetOriginalAiringDate).
      * Episodes "before" the last watched are truncated (again as defined by flux_api_GetOriginalAiringDate).
-     * 
+     *
      * @param Arr - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      * Presumably grouped into AiringTitle and/or a filtered by a specific season.
      */
@@ -325,7 +339,7 @@ public class airing
      * Given an array of Airings and a member of Airing will return the remaining shows
      * (1st element = the passed Airing)
      * with  in array after current show.
-     * 
+     *
      * Returns Null if Airings not found after current show. (end of series)
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      * @param MediaObject=sage object of current show to start from
