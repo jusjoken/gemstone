@@ -19,9 +19,12 @@ import sagex.phoenix.weather.IForecastPeriod;
  *
  * @author jusjoken
  * public Gemstone single Weather instance to use across the app and all extenders
+ * 01/18/2019 - changes to support Dark Sky
+ *            - default changed to Yahoo as it is free still
+ *            - DarkSky NEEDS the user to supply an API key
  * 10/02/2017 - units and location are all also stored at server level
  *            - changes to default 90210 as epg/zip_code is no longer used in sagetv
- *            - fix to foce an update when the location is set
+ *            - fix to force an update when the location is set
  * 3/23/2013 - weather impl now stored at Server Level
  *    Note: made this change as the impl is loaded so early in the server start that the client settings were not being loaded
  *    - units and location are stored at the client level
@@ -29,7 +32,7 @@ import sagex.phoenix.weather.IForecastPeriod;
 public class Weather {
     static private final Logger LOG = Logger.getLogger(Weather.class);
     private static String implList = util.ConvertListtoString(phoenix.weather2.GetWeatherImplKeys());
-    private static final String implDefault = "wunderground";
+    private static final String implDefault = "yahoo";
     private static final String unitsDefault = "Standard";
     private static boolean LoaderActive = false;
     private static boolean weatherInit = false;
