@@ -10,15 +10,17 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.weather.IForecastPeriod;
+import sagex.phoenix.weather.ILongRangeForecast;
 
 
 /**
  *
  * @author jusjoken
+ * 08/22/2021 Depricated and not in use as now use GoogleWeather.jar
  * public Gemstone single Weather instance to use across the app and all extenders
+ * 02/03/2019 - added functions to support moon phases
  * 01/18/2019 - changes to support Dark Sky
  *            - default changed to Yahoo as it is free still
  *            - DarkSky NEEDS the user to supply an API key
@@ -30,7 +32,6 @@ import sagex.phoenix.weather.IForecastPeriod;
  *    - units and location are stored at the client level
  */
 public class Weather {
-    static private final Logger LOG = Logger.getLogger(Weather.class);
     private static String implList = util.ConvertListtoString(phoenix.weather2.GetWeatherImplKeys());
     private static final String implDefault = "yahoo";
     private static final String unitsDefault = "Standard";
@@ -47,19 +48,19 @@ public class Weather {
     
     //always call Init first - should be called in the Gemstone Init 
     public static void Init(){
-        LOG.debug("Init: weather init started: using server settings: " + util.LogInfo());
+        Log.info("Weather","Init: ***DEPRICATED: weather init started: using server settings: " + util.LogInfo());
         //force phoenix to use the current weather implementation setting
         String curImpl = util.GetOptionName(Const.WeatherProp, Const.WeatherImpl, implDefault, useServerForProps);
         //check the current phoenix impl and only change it if it's different
         if (!curImpl.equals(phoenix.weather2.GetWeatherImplKey())){
             setImpl(curImpl);
         }else{
-            LOG.debug("Init: phoenix weather was already set to '" + phoenix.weather2.GetWeatherImplKey() + "'");
+            Log.debug("Weather","Init: phoenix weather was already set to '" + phoenix.weather2.GetWeatherImplKey() + "'");
             setUnits();
             SetLocation();
         }
         weatherInit = true;
-        LOG.debug("Init: weather init completed: " + util.LogInfo());
+        Log.debug("Weather","Init: weather init completed: " + util.LogInfo());
     }
     
     public static void SetImplNext(){
@@ -75,17 +76,17 @@ public class Weather {
             //the change failed so try changing to the next in the list
             util.SetListOptionNext(Const.WeatherProp, Const.WeatherImpl, implList, useServerForProps);
             String implNext = util.GetOptionName(Const.WeatherProp, Const.WeatherImpl, implDefault, useServerForProps);
-            LOG.error("setImpl: failed to set the phoenix weather to '" + impl + "'. Trying '" + implNext + "' instead.");
+            Log.error("Weather","setImpl: failed to set the phoenix weather to '" + impl + "'. Trying '" + implNext + "' instead.");
             phoenix.weather2.SetWeatherImpl(implNext);
             if (!implNext.equals(phoenix.weather2.GetWeatherImplKey())){
-                LOG.error("setImpl: failed to set the phoenix weather to '" + impl + "' or '" + implNext + "'. Using '" + phoenix.weather2.GetWeatherImplKey() + "' instead.");
+                Log.error("Weather","setImpl: failed to set the phoenix weather to '" + impl + "' or '" + implNext + "'. Using '" + phoenix.weather2.GetWeatherImplKey() + "' instead.");
                 success = false;
             }else{
                 success = true;
             }
         }
         if (success){
-            LOG.debug("setImpl: phoenix weather set to '" + phoenix.weather2.GetWeatherImplKey() + "'");
+            Log.debug("Weather","setImpl: phoenix weather set to '" + phoenix.weather2.GetWeatherImplKey() + "'");
             //as the impl changed... set units and location if required and do an update
             setUnits();
             SetLocation(true);
@@ -121,10 +122,10 @@ public class Weather {
                 //try setting using a default zip code
                 curLoc = "90210";
                 phoenix.weather2.SetLocation(curLoc);
-                LOG.debug("setLoc: no vaild location so setting to default 90210");
+                Log.debug("Weather","setLoc: no vaild location so setting to default 90210");
             }else{
                 phoenix.weather2.SetLocation(curLoc);
-                LOG.debug("setLoc: setting location to '" + curLoc + "'");
+                Log.debug("Weather","setLoc: setting location to '" + curLoc + "'");
             }
             //as the location has changed then as long as we are not in the init then update needs to be run
             if (weatherInit){
@@ -144,13 +145,13 @@ public class Weather {
         }
         if (phoenix.weather2.Update()){
             RefreshAllClients();
-            LOG.debug("UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " at " + phoenix.weather2.GetLocation() + " weather updated for '" + phoenix.weather2.GetLocationName() + "'(" + phoenix.weather2.GetLocation() + ") as of '" + phoenix.weather2.GetRecordedDate() + "'. Units '" + phoenix.weather2.GetUnits() + "'");
+            Log.debug("Weather","UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " at " + phoenix.weather2.GetLocation() + " weather updated for '" + phoenix.weather2.GetLocationName() + "'(" + phoenix.weather2.GetLocation() + ") as of '" + phoenix.weather2.GetRecordedDate() + "'. Units '" + phoenix.weather2.GetUnits() + "'");
         }else{
             if (phoenix.weather2.HasError()){
-                LOG.debug("UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " weather update not performed. '" + phoenix.weather2.GetError() + "'");
+                Log.debug("Weather","UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " weather update not performed. '" + phoenix.weather2.GetError() + "'");
             }else{
                 RefreshAllClients();
-                LOG.debug("UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " weather update not performed. Last updated '" + sagex.api.Utility.PrintDateFull(phoenix.weather2.GetRecordedDate().getTime()) + " " + sagex.api.Utility.PrintTimeShort(phoenix.weather2.GetRecordedDate().getTime()) + "'");
+                Log.debug("Weather","UpdateWeather: " + phoenix.weather2.GetWeatherImplKey() + " weather update not performed. Last updated '" + sagex.api.Utility.PrintDateFull(phoenix.weather2.GetRecordedDate().getTime()) + " " + sagex.api.Utility.PrintTimeShort(phoenix.weather2.GetRecordedDate().getTime()) + "'");
             }
         }
     }
@@ -170,32 +171,33 @@ public class Weather {
     
     private static void RefreshWeatherScreens(String Context){
         if (Context==null){
-            LOG.debug("RefreshWeatherScreens: called with null Context");
+            Log.debug("Weather","RefreshWeatherScreens: called with null Context");
             return;
         }
         UIContext tUI = new UIContext(Context);
         String HeaderRefreshArea = "WeatherConditionsArea";
         String thisMenu = sagex.api.WidgetAPI.GetWidgetName(sagex.api.WidgetAPI.GetCurrentMenuWidget(tUI));
         if (thisMenu==null){
-            LOG.debug("RefreshWeatherScreens: null MenuWidget found.");
+            Log.debug("Weather","RefreshWeatherScreens: null MenuWidget found.");
         }else if (thisMenu.equals("Main Menu")){
             //refresh each of the valid widget areas
             if (Widget.HasWeatherWidget()){
                 sagex.api.Global.RefreshArea(tUI,"Main Menu Widget Panel");
-                LOG.debug("RefreshWeatherScreens: refreshed weather widgets for UI '" + Context + "'");
+                Log.debug("Weather","RefreshWeatherScreens: refreshed weather widgets for UI '" + Context + "'");
             }else{
                 sagex.api.Global.RefreshArea(tUI, HeaderRefreshArea);
-                LOG.debug("RefreshWeatherScreens: refreshed main menu header for UI '" + Context + "'");
+                Log.debug("Weather","RefreshWeatherScreens: refreshed main menu header for UI '" + Context + "'");
             }
         }else if (thisMenu.equals("Gemstone Weather")){
             sagex.api.Global.Refresh(tUI);
-            LOG.debug("RefreshWeatherScreens: refreshed Gemstone Weather for UI '" + Context + "'");
+            Log.debug("Weather","RefreshWeatherScreens: refreshed Gemstone Weather for UI '" + Context + "'");
         }else{
             sagex.api.Global.RefreshArea(tUI, HeaderRefreshArea);
-            LOG.debug("RefreshWeatherScreens: refreshed header for UI '" + Context + "'");
+            Log.debug("Weather","RefreshWeatherScreens: refreshed header for UI '" + Context + "'");
         }
     }
-    
+
+    /*
     public static String GetNightShortName(IForecastPeriod forecastperiod){
         String tName = "";
         if (phoenix.weather2.IsDay(forecastperiod)){
@@ -225,7 +227,7 @@ public class Weather {
     private static boolean isValidZIP(String ZIPCode){
         //String regex = "^\\d{5}(-\\d{4})?$"; //extended zip
         String regex = "^\\d{5}";  //5 digit zip
-        //LOG.debug("isValidZIP: checking for ZIP '" + ZIPCode + "'");
+        //Log.debug("Weather","isValidZIP: checking for ZIP '" + ZIPCode + "'");
         return Pattern.matches(regex, ZIPCode);
     }
     
@@ -277,7 +279,7 @@ public class Weather {
         if (BGLoc!=null){
             File[] files = BGLoc.listFiles();
             if (files==null){
-                LOG.debug("GetBackgroundsList: for code '" + code + "' invalid backgrounds location '" + GetBackgroundsPath(code) + "'");
+                Log.debug("Weather","GetBackgroundsList: for code '" + code + "' invalid backgrounds location '" + GetBackgroundsPath(code) + "'");
                 return new ArrayList<String>();
             }else{
                 for (File file : files){
@@ -285,11 +287,11 @@ public class Weather {
                         tList.add(file.getName());
                     }
                 }
-                //LOG.debug("GetBackgroundsList: for code '" + code + "' found '" + tList + "'");
+                //Log.debug("Weather","GetBackgroundsList: for code '" + code + "' found '" + tList + "'");
                 return new ArrayList<String>(tList);
             }
         }else{
-            LOG.debug("GetBackgroundsList: for code '" + code + "' invalid backgrounds location '" + GetBackgroundsPath(code) + "'");
+            Log.debug("Weather","GetBackgroundsList: for code '" + code + "' invalid backgrounds location '" + GetBackgroundsPath(code) + "'");
             return new ArrayList<String>();
         }
     }
@@ -313,6 +315,14 @@ public class Weather {
         util.SetProperty(getBGPropLocation(code), newIndex + "");
     }
     
+    public static String GetMoonPhaseImage(ILongRangeForecast longrangeforecast){
+        return util.WeatherLocation() + File.separator + "MoonPhases" + File.separator + phoenix.weather2.GetMoonPhaseFileName(longrangeforecast,"moon_","jpg");
+    }
+
+    public static String GetMoonPhaseImage(IForecastPeriod iforecastperiod){
+        return util.WeatherLocation() + File.separator + "MoonPhases" + File.separator + phoenix.weather2.GetMoonPhaseFileName(iforecastperiod,"moon_","jpg");
+    }
+
     public static String GetIconImage(IForecastPeriod iforecastperiod){
         if (phoenix.weather2.GetCode(iforecastperiod)==-1){
             return WIcons.GetWeatherIconByNumber("na");
@@ -434,5 +444,5 @@ public class Weather {
             }
         }
     }
-    
+    */
 }

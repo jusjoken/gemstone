@@ -4,7 +4,6 @@ package Gemstone;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 
 /*
@@ -18,7 +17,6 @@ import sagex.UIContext;
  */
 public class ADMCopyMode {
 
-    static private final Logger LOG = Logger.getLogger(ADMCopyMode.class);
     public static final String SageCurrentMenuItemPropertyLocation = "ADM/currmenuitem/";
 
     //save the current Folder item details to sage properties to assist the copy function
@@ -27,7 +25,7 @@ public class ADMCopyMode {
 
         ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "CurFolderStyle", CurFolderStyle);
         ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "BrowserFileCell", BrowserFileCell);
-        LOG.debug("SaveFileFolderDetails: CurFolderStyle '" + CurFolderStyle + "' BrowserFileCell '" + BrowserFileCell + "'");
+        Log.debug("ADMCopyMode","SaveFileFolderDetails: CurFolderStyle '" + CurFolderStyle + "' BrowserFileCell '" + BrowserFileCell + "'");
     }
     
     public static String GetFileFolderDetails(){
@@ -40,10 +38,10 @@ public class ADMCopyMode {
         //determine if Combined mode is on as the path is created differently
         String CurFolderStyle = ADMutil.GetProperty(SageCurrentMenuItemPropertyLocation + "CurFolderStyle", ADMutil.OptionNotFound);
         if (ADMAction.GetFileBrowserType(CurFolderStyle).equals(ADMutil.OptionNotFound)){
-            LOG.debug("IsFileFolderStyleValid: invalid Style = '" + CurFolderStyle + "'");
+            Log.debug("ADMCopyMode","IsFileFolderStyleValid: invalid Style = '" + CurFolderStyle + "'");
             return Boolean.FALSE;
         }else{
-            LOG.debug("IsFileFolderStyleValid: valid Style = '" + CurFolderStyle + "'");
+            Log.debug("ADMCopyMode","IsFileFolderStyleValid: valid Style = '" + CurFolderStyle + "'");
             return Boolean.TRUE;
         }
     }
@@ -79,11 +77,11 @@ public class ADMCopyMode {
             ADMMenuNode.SetMenuItemSubMenu(tMenuItemName,ADMutil.ListNone);
             ADMMenuNode.SetMenuItemIsActive(tMenuItemName,ADMutil.TriState.YES);
 
-            LOG.debug("CreateMenuItemfromFileFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+            Log.debug("ADMCopyMode","CreateMenuItemfromFileFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
             return tMenuItemName;
             
         }else{
-            LOG.debug("CreateMenuItemfromFileFolderCopyDetails: invalid CurFolderStyle '" + CurFolderStyle + "'");
+            Log.debug("ADMCopyMode","CreateMenuItemfromFileFolderCopyDetails: invalid CurFolderStyle '" + CurFolderStyle + "'");
             return ADMutil.OptionNotFound;
         }
     }
@@ -99,7 +97,7 @@ public class ADMCopyMode {
             ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "CurFolder", CurFolder);
             ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "VideoItem", VideoItem);
         }
-        LOG.debug("SaveVideoFolderDetails: CurFolder '" + CurFolder + "' VideoItem '" + VideoItem + "'");
+        Log.debug("ADMCopyMode","SaveVideoFolderDetails: CurFolder '" + CurFolder + "' VideoItem '" + VideoItem + "'");
     }
     
     public static String GetVideoFolderDetails(){
@@ -151,7 +149,7 @@ public class ADMCopyMode {
         ADMMenuNode.SetMenuItemSubMenu(tMenuItemName,ADMutil.ListNone);
         ADMMenuNode.SetMenuItemIsActive(tMenuItemName,ADMutil.TriState.YES);
         
-        LOG.debug("CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        Log.debug("ADMCopyMode","CreateMenuItemfromVideoFolderCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
         
     }
@@ -173,7 +171,7 @@ public class ADMCopyMode {
         UIContext tUIContext = new UIContext(sagex.api.Global.GetUIContextName());
         Object[] Children = sagex.api.WidgetAPI.GetWidgetChildren(tUIContext, CurrentWidgetSymbol);
         for (Object Child : Children){
-            //LOG.debug("SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(tUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child) + "'");
+            //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: WidgetName = '" + sagex.api.WidgetAPI.GetWidgetName(tUIContext,Child) + "' WidgetType '" + sagex.api.WidgetAPI.GetWidgetType(tUIContext,Child) + "'");
             List<String> validActions = new LinkedList<String>();
             validActions.add("Action");
             validActions.add("Menu");
@@ -191,7 +189,7 @@ public class ADMCopyMode {
             //test for special Action Widget Symbols
             if (ActionWidget.equals(ADMAction.GetWidgetSymbol(ADMAction.TVRecordingView))){
                 //TV RecordingsView found so save the view Type
-                //LOG.debug("SaveCurrentMenuItemDetails: TVRecordingView for ActionWidget '" + ActionWidget + "'");
+                //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: TVRecordingView for ActionWidget '" + ActionWidget + "'");
                 FinalType = ADMAction.TVRecordingView;
                 String tViewFilter = ADMutil.OptionNotFound;
                 String tViewTitlePostfixText = ADMutil.OptionNotFound;
@@ -220,10 +218,10 @@ public class ADMCopyMode {
                     FinalAction = UniqueID;
                     FinalType = ADMAction.GemstoneFlow;
                 }
-                //LOG.debug("SaveCurrentMenuItemDetails: GemstoneFlow for ActionWidget '" + ActionWidget + "' FinalAction '" + FinalAction + "'");
+                //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: GemstoneFlow for ActionWidget '" + ActionWidget + "' FinalAction '" + FinalAction + "'");
             }else if (ADMAction.CustomAction.WidgetSymbols.contains(ActionWidget)){
                 //CustomAction found so determine which one 
-                //LOG.debug("SaveCurrentMenuItemDetails: CustomAction for ActionWidget '" + ActionWidget + "'");
+                //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: CustomAction for ActionWidget '" + ActionWidget + "'");
                 Boolean tFound = Boolean.FALSE;
                 for (Object Child : Children){
                     //check only Attribute Widgets
@@ -244,19 +242,19 @@ public class ADMCopyMode {
                     FinalType = ADMAction.StandardMenuAction;
                 }
             }else if (ADMAction.GetActionList(ADMAction.StandardMenuAction).contains(ActionWidget)){
-                //LOG.debug("SaveCurrentMenuItemDetails: StandardMenuAction for ActionWidget '" + ActionWidget + "'");
+                //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: StandardMenuAction for ActionWidget '" + ActionWidget + "'");
                 FinalType = ADMAction.StandardMenuAction;
             }else{
-                //LOG.debug("SaveCurrentMenuItemDetails: NOTHING for ActionWidget '" + ActionWidget + "' List = [" + ADMAction.CustomAction.WidgetSymbols + "]");
+                //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: NOTHING for ActionWidget '" + ActionWidget + "' List = [" + ADMAction.CustomAction.WidgetSymbols + "]");
             }
             ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", FinalType);
             ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "Action", FinalAction);
         }else{
             //no action found so set to DoNothing
-            //LOG.debug("SaveCurrentMenuItemDetails: NO ACTION '" + ActionWidget + "'");
+            //Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: NO ACTION '" + ActionWidget + "'");
             ADMutil.SetProperty(SageCurrentMenuItemPropertyLocation + "Type", ADMAction.ActionTypeDefault);
         }
-        LOG.debug("SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
+        Log.debug("ADMCopyMode","SaveCurrentMenuItemDetails: ButtonText '" + ButtonText + "' SubMenu '" + SubMenu + "' WidgetSymbol '" + CurrentWidgetSymbol + "' Level '" + Level + "' Type ='" + FinalType + "' Action = '" + FinalAction + "'");
     }
     
     //create a new Menu Item from the current Menu Item details
@@ -279,7 +277,7 @@ public class ADMCopyMode {
         }
         ADMMenuNode.SetMenuItemIsActive(tMenuItemName,ADMutil.TriState.YES);
 
-        LOG.debug("CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
+        Log.debug("ADMCopyMode","CreateMenuItemfromCopyDetails: created '" + tMenuItemName + "' for Parent = '" + Parent + "'");
         return tMenuItemName;
         
     }
@@ -314,10 +312,10 @@ public class ADMCopyMode {
         try {
             tLevel = Integer.valueOf(ADMutil.GetProperty(SageCurrentMenuItemPropertyLocation + "Level", "0"));
         } catch (NumberFormatException ex) {
-            LOG.debug("GetCurrentMenuItemDetailsLevel: error loading level: " + ADMutil.class.getName() + ex);
+            Log.debug("ADMCopyMode","GetCurrentMenuItemDetailsLevel: error loading level: " + ADMutil.class.getName() + ex);
             tLevel = 0;
         }
-        //LOG.debug("GetCurrentMenuItemDetailsLevel: returning level = '" + tLevel + "'");
+        //Log.debug("ADMCopyMode","GetCurrentMenuItemDetailsLevel: returning level = '" + tLevel + "'");
         return tLevel;
     }
     

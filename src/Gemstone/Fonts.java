@@ -4,21 +4,18 @@
  */
 package Gemstone;
 
-import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Collection;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 import org.apache.commons.io.FilenameUtils;
 /**
  *
  * @author jusjoken
  */
 public class Fonts {
-    static private final Logger LOG = Logger.getLogger(Fonts.class);
     private SortedMap<String,FontItem> FontMap = new TreeMap<String,FontItem>();
     private boolean IncludeSystemFonts = false;
     private boolean IncludeSageFonts = false;
@@ -71,7 +68,7 @@ public class Fonts {
     private boolean isPathMatch(String File1, String File2){
         File1 = File1.replace("/", "\\");
         File2 = File2.replace("/", "\\");
-        //LOG.debug("isPathMatch: '" + File1.toLowerCase().equals(File2.toLowerCase()) + "' for this '" + File1 + "' and current '" + File2 + "'");
+        //Log.debug("Fonts","isPathMatch: '" + File1.toLowerCase().equals(File2.toLowerCase()) + "' for this '" + File1 + "' and current '" + File2 + "'");
         return File1.toLowerCase().equals(File2.toLowerCase());
     }
 
@@ -163,7 +160,7 @@ public class Fonts {
 
     private void LoadFontsFromFolder(String FontPath, FontSource Source){
         File FontLoc = new File(FontPath);
-        LOG.debug("LoadFonts: loading fonts for '" + FontLoc + "'");
+        Log.debug("Fonts","LoadFonts: loading fonts for '" + FontLoc + "'");
         File[] files = FontLoc.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.toLowerCase().endsWith(".ttf");
@@ -182,18 +179,18 @@ public class Fonts {
         //check for the current item to force it to the top of the list with a unique key
         if (!this.Current.equals("") && isPathMatch(Path, this.Current)){
             if (FontMap.containsKey(CurrentKey)){
-                LOG.debug("AddFont: current font already exists for key '" + CurrentKey + "' [" + FontMap.get(CurrentKey) + "]");
+                Log.debug("Fonts","AddFont: current font already exists for key '" + CurrentKey + "' [" + FontMap.get(CurrentKey) + "]");
             }else{
                 FontMap.put(CurrentKey,new FontItem(Name,Path,Source));
-                LOG.debug("AddFont: added current font for Key '" + CurrentKey + "' [" + FontMap.get(CurrentKey) + "]");
+                Log.debug("Fonts","AddFont: added current font for Key '" + CurrentKey + "' [" + FontMap.get(CurrentKey) + "]");
             }
         }else{
             String tKey = GetKey(Name,Source);
             if (FontMap.containsKey(tKey)){
-                LOG.debug("AddFont: font already exists for key '" + tKey + "' [" + FontMap.get(tKey) + "]");
+                Log.debug("Fonts","AddFont: font already exists for key '" + tKey + "' [" + FontMap.get(tKey) + "]");
             }else{
                 FontMap.put(tKey,new FontItem(Name,Path,Source));
-                LOG.debug("AddFont: added font for Key '" + tKey + "' [" + FontMap.get(tKey) + "]");
+                Log.debug("Fonts","AddFont: added font for Key '" + tKey + "' [" + FontMap.get(tKey) + "]");
             }
         }
         

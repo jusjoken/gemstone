@@ -7,7 +7,6 @@ package Gemstone;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -18,7 +17,6 @@ import org.apache.log4j.Logger;
  */
 public class SortMethods {
 
-    static private final Logger LOG = Logger.getLogger(SortMethods.class);
 
     public static String Title = "Gemstone_MetadataCalls_GetSortTitle";
     public static String AiringDate="Gemstone_MetadataCalls_GetOriginalAirDate";
@@ -39,20 +37,20 @@ public class SortMethods {
     }
 
     public static String GetMainSortMethod(){
-        LOG.trace("Getting Main sort Method");
+        Log.debug("SortMethods","Getting Main sort Method");
         String CurrentMethod = sagex.api.Configuration.GetProperty(PropertyPrefix+"MainSortMethod","Title");
-        LOG.info("Main sort method property="+CurrentMethod);
+        Log.debug("SortMethods","Main sort method property="+CurrentMethod);
         String Return = ClassFromString.GetSortMethod(CurrentMethod);
-        LOG.debug("Main sort ClassFromString="+Return);
+        Log.debug("SortMethods","Main sort ClassFromString="+Return);
         return Return;
     }
 
     public static String GetEpisodeSortMethod(){
-        LOG.trace("Getting Episode sort Method");
+        Log.debug("SortMethods","Getting Episode sort Method");
         String CurrentMethod = sagex.api.Configuration.GetProperty(PropertyPrefix+"EpisodeSortMethod","EpisodeTitle");
-        LOG.info("Episode sort method property="+CurrentMethod);
+        Log.debug("SortMethods","Episode sort method property="+CurrentMethod);
         String Return = ClassFromString.GetSortMethod(CurrentMethod);
-        LOG.debug("Episode sort ClassFromString="+Return);
+        Log.debug("SortMethods","Episode sort ClassFromString="+Return);
         return Return;
     }
 

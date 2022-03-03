@@ -5,7 +5,6 @@
 package Gemstone;
 
 import java.util.List;
-import org.apache.log4j.Logger;
 import sagex.phoenix.factory.ConfigurableOption;
 
 /**
@@ -26,7 +25,6 @@ public class ConfigOption extends ConfigurableOption {
     }
 
     private String PropLocation = "";
-    static private final Logger LOG = Logger.getLogger(ConfigOption.class);
     public ConfigOption(String PropertyLocation, String name, String value) {
         super(name, value);
         PropLocation = PropertyLocation;
@@ -81,7 +79,7 @@ public class ConfigOption extends ConfigurableOption {
                 }
             }
             if (!found){
-                LOG.debug("GetValue: for '" + getName() + "' stored value '" + tReturn + "' is not a valid value. Returning NotSet. PropertyLocation '" + PropLocation + "'");
+                Log.debug("ConfigOption","GetValue: for '" + getName() + "' stored value '" + tReturn + "' is not a valid value. Returning NotSet. PropertyLocation '" + PropLocation + "'");
                 tReturn = SourceUI.OptionNotSet;
             }
         }
@@ -102,7 +100,7 @@ public class ConfigOption extends ConfigurableOption {
                 }
             }
             if (!found){
-                LOG.debug("GetValue: for '" + getName() + "' stored value '" + tReturn + "' is not a valid value. Returning NotSet. PropertyLocation '" + PropLocation + "'");
+                Log.debug("ConfigOption","GetValue: for '" + getName() + "' stored value '" + tReturn + "' is not a valid value. Returning NotSet. PropertyLocation '" + PropLocation + "'");
                 tReturn = SourceUI.OptionNotSet;
             }
         }
@@ -120,21 +118,21 @@ public class ConfigOption extends ConfigurableOption {
         if (isList()){
             //change the value to the next value in the list or NotSet if at the last entry already
             String CurrentValue = GetValue();
-            //LOG.debug("SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Values '" + getListValues() + "'");
+            //Log.debug("ConfigOption","SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Values '" + getListValues() + "'");
             if (CurrentValue.equals(SourceUI.OptionNotSet)){
                 util.SetOption(PropLocation, getName(), getListValues().get(0).getValue());  //default to the 1st item
-                //LOG.debug("SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item 0 '" + getListValues().get(0).getValue() + "'");
+                //Log.debug("ConfigOption","SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item 0 '" + getListValues().get(0).getValue() + "'");
             }else{
                 Integer pos = ListValuesIndex(CurrentValue);
                 if (pos==-1){ //not found
                     util.SetOption(PropLocation, getName(), getListValues().get(0).getValue());
-                    //LOG.debug("SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item " + pos + " = '" + getListValues().get(0).getValue() + "'");
+                    //Log.debug("ConfigOption","SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item " + pos + " = '" + getListValues().get(0).getValue() + "'");
                 }else if(pos==getListValues().size()-1){ //last item
                     util.SetOption(PropLocation, getName(), SourceUI.OptionNotSet);
-                    //LOG.debug("SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Last Item - setting to NotSet");
+                    //Log.debug("ConfigOption","SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Last Item - setting to NotSet");
                 }else{ //get next item
                     util.SetOption(PropLocation, getName(), getListValues().get(pos+1).getValue());
-                    //LOG.debug("SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item " + (pos+1) + " = '" + getListValues().get(pos+1).getValue() + "'");
+                    //Log.debug("ConfigOption","SetNext: for '" + getName() + "' CurrentValue '" + CurrentValue + "' Item " + (pos+1) + " = '" + getListValues().get(pos+1).getValue() + "'");
                 }
             }
         }

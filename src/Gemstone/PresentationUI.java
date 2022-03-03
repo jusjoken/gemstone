@@ -5,7 +5,6 @@
 package Gemstone;
 
 import Gemstone.SourceUI.OrganizerType;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -13,7 +12,6 @@ import org.apache.log4j.Logger;
  * - 04/04/2012 - updated for Gemstone
  */
 public class PresentationUI {
-    static private final Logger LOG = Logger.getLogger(PresentationUI.class);
     private PresentationOrg thisGroupBy = null;
     private PresentationOrg thisSortBy = null;
     private Integer thisLevel = 0;

@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 
 /**
@@ -17,8 +16,6 @@ import sagex.UIContext;
  */
 public class Theme {
     
-    static private final Logger LOG = Logger.getLogger(Theme.class);
-
     public static Collection<String> GetHighlightSets(){
         SortedSet<String> tList = new TreeSet<String>();
         File HLSetLoc = new File(new File(util.ThemeLocation()), "Highlights");
@@ -28,7 +25,7 @@ public class Theme {
                 tList.add(file.getName());
             }
         }
-        //LOG.debug("GetHighlightSets: found '" + tList + "'");
+        //Log.debug("Theme","GetHighlightSets: found '" + tList + "'");
         return tList;
     }
     
@@ -43,7 +40,7 @@ public class Theme {
         }
         Integer iDefault = Math.round(fDefault * 100);
         Integer value = util.GetPropertyAsInteger(tProp, iDefault);
-        LOG.debug("GetTransparencyPercent: for '" + ThemedVariable + " Prop '" + tProp + "' value = '" + value + "'");
+        Log.debug("Theme","GetTransparencyPercent: for '" + ThemedVariable + " Prop '" + tProp + "' value = '" + value + "'");
         return value;
     }
     public static Float GetTransparency(String ThemedVariable,String ThemedVariableDefault){
@@ -53,7 +50,7 @@ public class Theme {
         String tProp = Const.BaseProp + Const.PropDivider + Const.ThemeProp + Const.PropDivider + Const.ThemeTrans + Const.PropDivider + ThemedVariable;
         util.SetProperty(tProp, Value + "");
         Float fValue = (float) Value/100;
-        LOG.debug("SetTransparencyPercent: for '" + ThemedVariable + " Prop '" + tProp + "' value = '" + fValue + "'");
+        Log.debug("Theme","SetTransparencyPercent: for '" + ThemedVariable + " Prop '" + tProp + "' value = '" + fValue + "'");
         sagex.api.Global.AddGlobalContext(new UIContext(sagex.api.Global.GetUIContextName()), ThemedVariable, fValue);
     }
     public static void ResetTransparency(String ThemedVariable){

@@ -12,17 +12,15 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
 
 /**
  *
  * @author jusjoken
  * - 04/04/2012 - updated for Gemstone
  */
-public class WIcons {
+class WIcons {
 
     
-    static private final Logger LOG = Logger.getLogger(WIcons.class);
     public static final String OptionNotFound = "Option not Found";
     public static final String WIconProp = "WIcons/";
     public static Map<String,String> IconsForDaytime = new HashMap<String, String>();
@@ -123,7 +121,7 @@ public class WIcons {
             }
             
             String tCondition = GetWeatherIcon(Condition, ForceDay);
-            //LOG.debug("ConvertURLtoCondition: Condition '" + Condition + "' tCondition '" + tCondition + "' URL '" + ConditionURL + "'");
+            //Log.debug("WIcons","ConvertURLtoCondition: Condition '" + Condition + "' tCondition '" + tCondition + "' URL '" + ConditionURL + "'");
             if (tCondition.equals(Condition)){
                 return ConditionURL;
             }else{
@@ -136,33 +134,33 @@ public class WIcons {
     public static String GetWeatherIconURLDay(String ConditionURL){
         String tCondition = ConvertURLtoCondition(ConditionURL, Boolean.TRUE);
         if (tCondition.equals(ConditionURL)){
-            LOG.debug("GetWeatherIconURLDay: unhandled url - please report '" + ConditionURL + "'");
+            Log.debug("WIcons","GetWeatherIconURLDay: unhandled url - please report '" + ConditionURL + "'");
             return ConditionURL;
         }else{
             return GetWeatherPath() + tCondition + ".png";
         }
     }
     public static String GetWeatherIconURL(String ConditionURL){
-        //LOG.debug("GetWeatherIconURL: ConditionURL '" + ConditionURL + "'");
+        //Log.debug("WIcons","GetWeatherIconURL: ConditionURL '" + ConditionURL + "'");
         String tCondition = ConvertURLtoCondition(ConditionURL, Boolean.FALSE);
         if (tCondition.equals(ConditionURL)){
-            LOG.debug("GetWeatherIconURL: unhandled url - please report '" + ConditionURL + "'");
+            Log.debug("WIcons","GetWeatherIconURL: unhandled url - please report '" + ConditionURL + "'");
             return ConditionURL;
         }else{
             return GetWeatherPath() + tCondition + ".png";
         }
     }
     public static String GetWeatherIconByNumber(String ConditionNumber){
-        //LOG.debug("GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
+        //Log.debug("WIcons","GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
         return GetWeatherPath() + ConditionNumber + ".png";
     }
     public static String GetWeatherIconByNumber(int ConditionNumber){
-        //LOG.debug("GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
+        //Log.debug("WIcons","GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
         return GetWeatherPath() + ConditionNumber + ".png";
     }
     
     public static String GetWeatherIconByNumber(String ConditionNumber, String WeatherSet){
-        //LOG.debug("GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
+        //Log.debug("WIcons","GetWeatherIconByNumber: returning '" + GetWeatherPath() + ConditionNumber + ".png'");
         return GetWeatherPath(WeatherSet) + ConditionNumber + ".png";
     }
     
@@ -170,7 +168,7 @@ public class WIcons {
     public static String GetWeatherIconNoURLDay(String ConditionURL){
         String tCondition = ConvertURLtoCondition(ConditionURL, Boolean.TRUE);
         if (tCondition.equals(ConditionURL)){
-            LOG.debug("GetWeatherIconNoURLDay: unhandled url - please report '" + ConditionURL + "'");
+            Log.debug("WIcons","GetWeatherIconNoURLDay: unhandled url - please report '" + ConditionURL + "'");
             return "-1";
         }else{
             return tCondition;
@@ -179,7 +177,7 @@ public class WIcons {
     public static String GetWeatherIconNoURL(String ConditionURL){
         String tCondition = ConvertURLtoCondition(ConditionURL, Boolean.FALSE);
         if (tCondition.equals(ConditionURL)){
-            LOG.debug("GetWeatherIconNoURL: unhandled url - please report '" + ConditionURL + "'");
+            Log.debug("WIcons","GetWeatherIconNoURL: unhandled url - please report '" + ConditionURL + "'");
             return "-1";
         }else{
             return tCondition;
@@ -214,7 +212,7 @@ public class WIcons {
             }
             returnIcon = util.GetProperty(WIconProp + Condition + "/" + "NightIcon", DefaultIcon );
         }
-        //LOG.debug("GetWeatherIcon: returning '" + returnIcon + "' IsDaytime '" + IsDaytime() + "' ForceDay '" + ForceDay + "'");
+        //Log.debug("WIcons","GetWeatherIcon: returning '" + returnIcon + "' IsDaytime '" + IsDaytime() + "' ForceDay '" + ForceDay + "'");
         return returnIcon;
     }
 
@@ -254,7 +252,7 @@ public class WIcons {
                 tList.add(file.getName());
             }
         }
-        LOG.debug("GetIconSets: found '" + tList + "'");
+        Log.debug("WIcons","GetIconSets: found '" + tList + "'");
         return tList;
     }
     

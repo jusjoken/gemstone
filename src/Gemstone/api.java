@@ -4,10 +4,9 @@
  */
 package Gemstone;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
+import sagex.phoenix.Phoenix;
 
 /**
  *
@@ -17,12 +16,11 @@ import sagex.UIContext;
  * - 10/1/2011 - implemented Load and InitLogger methods
  * - 10/28/2011 - Conversion to Diamond API for 4.x
  * - 04/02/2012 - Conversion to Gemstone API for 1.x
+ * - 08/28/2021 - removed the use of Log4J - using system log directly
  */
 public class api {
 
-    public static Logger LOG=Logger.getLogger(api.class);
-
-    public static String Version = "1.0501" + "";
+    public static String Version = "1.0606" + "";
     private static boolean STVAppStarted = false;
     private static boolean LoadCompleted = false;
     
@@ -42,19 +40,34 @@ public class api {
     //load any Gemstone settings that need to load at application start
     //should be called from GemstonePlugin on the start event
     public static void Load(){
+        Log.info("api", "Loading Gemstone - IsClient:" + util.IsClient() + " IsRemote:" + util.IsRemote() + " IsClientSage:" + util.IsClientSage() + " IsClientProp:" + util.IsClientProp());
+
         if (LoadCompleted){
-            LOG.debug("Load: api load called again - already loaded: " + util.LogInfo());
+            Log.info("Load: api load called again - already loaded: " + util.LogInfo());
         }else{
+
+            //Initialize the GWeather config
+            sageweather.utils.getServerOWM();
+
+            //Initialize Phoenix services as sometimes on a PC Client they do not load fully without this
+            if(util.IsClientSage()){
+                Log.info("api", "Load - begin phoenix service");
+                Phoenix phoenixservice = sagex.phoenix.Phoenix.getInstance();
+                phoenixservice.reinit();
+                Log.info("api", "Load - phoenix service re-loaded");
+            }
+
             //get the gemstone instance which will also initiate logging
             Gemstone.getInstance();
-            LOG.debug("Load: api load started: " + util.LogInfo());
+            Log.info("Load: api load started: " + util.LogInfo());
 
             //initialize the ADM settings
             //these are now called directly by the client start
             //ADMutil.LoadADM();
 
             //Init the common Weather interface
-            Weather.Init();
+            //REMOVED 7/28/2021 as gemstone now uses GoogleWeather.jar and OWM for weather calls
+            //Weather.Init();
 
             //generate symbols to be used for new names
             util.InitNameGen();
@@ -66,7 +79,7 @@ public class api {
             ImageCache.Init();
 
             LoadCompleted = true;
-            LOG.debug("Load: api load completed: " + util.LogInfo());
+            Log.info("Load: api load completed: " + util.LogInfo());
         }
         
    }
@@ -96,14 +109,14 @@ public class api {
 
     public static void ExecuteWidgeChain(String UID) {
         String UIContext = sagex.api.Global.GetUIContextName();
-        System.out.println("Getting Ready to execute widget chain for " + UIContext);
-        System.out.println("Actual context " + sagex.api.Global.GetUIContextName());
+        Log.debug("Getting Ready to execute widget chain for " + UIContext);
+        Log.debug("Actual context " + sagex.api.Global.GetUIContextName());
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(UIContext), UID);
         try {
             sage.SageTV.apiUI(UIContext, "ExecuteWidgetChainInCurrentMenuContext", passvalue);
         } catch (InvocationTargetException ex) {
-            System.out.println("error executing widget" + api.class.getName() + ex);
+            Log.error("error executing widget" + api.class.getName() + ex);
         }
 //        sagex.api.WidgetAPI.ExecuteWidgetChain(new UIContext(UIContext),sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(UIContext),UID));
         }

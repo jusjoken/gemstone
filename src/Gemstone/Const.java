@@ -28,6 +28,7 @@ public class Const {
     public static final String InfoSettings = "InfoSettings";
     public static final String FlowInfoEpisodeSimpleList = "FlowInfoEpisodeSimpleList";
     public static final String FlowName = "FlowName";
+    public static final String FlowHiddenOnClient = "FlowHiddenOnClient";
     public static final String FlowType = "FlowType";
     public static final String FlowSource = "FlowSource";
     public static final String FlowSort = "FlowSort";
@@ -73,6 +74,7 @@ public class Const {
     public static final String BaseProp = "Gemstone";
     public static final String PropDivider = "/";
     public static final String FlowProp = "Flow";
+    public static final String LogLevel = "LogLevel";
     public static final String MainMenuProp = "MainMenu";
     public static final String ThemeProp = "Theme";
     public static final String ThemeBG = "Background";

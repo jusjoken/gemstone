@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Properties;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.image.ImageUtil;
 
@@ -28,7 +27,6 @@ import sagex.phoenix.image.ImageUtil;
 public class ADMMenuNode {
     //public static DefaultMutableTreeNode Testing;
 
-    static private final Logger LOG = Logger.getLogger(ADMMenuNode.class);
     private Boolean IsDirty = Boolean.FALSE;
     private String Parent = "";
     public String Name = "";
@@ -93,7 +91,7 @@ public class ADMMenuNode {
     }
 
     public static String GetMenuItemAction(String Name){
-        //LOG.debug("GetMenuItemAction for '" + Name + "' = '" + MenuNodeList().get(Name).ActionAttribute + "'");
+        //Log.debug("ADMMenuNode","GetMenuItemAction for '" + Name + "' = '" + MenuNodeList().get(Name).ActionAttribute + "'");
         try {
             if (MenuNodeList().get(Name).ActionType.equals(ADMAction.LaunchExternalApplication)){
                 return MenuNodeList().get(Name).ActionExternal.GetApplication();
@@ -101,7 +99,7 @@ public class ADMMenuNode {
                 return MenuNodeList().get(Name).ActionAttribute;
             }
         } catch (Exception e) {
-            LOG.debug("GetMenuItemAction ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemAction ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -111,11 +109,11 @@ public class ADMMenuNode {
     }
 
     public static Object GetMenuItemActionObject(String Name){
-        //LOG.debug("GetMenuItemActionObject for '" + Name + "' = '" + MenuNodeList().get(Name).ActionObject + "'");
+        //Log.debug("ADMMenuNode","GetMenuItemActionObject for '" + Name + "' = '" + MenuNodeList().get(Name).ActionObject + "'");
         try {
             return MenuNodeList().get(Name).ActionObject;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionObject ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionObject ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -126,11 +124,11 @@ public class ADMMenuNode {
     }
 
     public static Boolean GetMenuItemIsDirty(String Name){
-        //LOG.debug("GetMenuItemIsDirty for '" + Name + "' = '" + MenuNodeList().get(Name).IsDirty + "'");
+        //Log.debug("ADMMenuNode","GetMenuItemIsDirty for '" + Name + "' = '" + MenuNodeList().get(Name).IsDirty + "'");
         try {
             return MenuNodeList().get(Name).IsDirty;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemIsDirty ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemIsDirty ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -144,7 +142,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionType;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionType ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionType ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -157,7 +155,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternal ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternal ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -165,7 +163,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal.GetApplication();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternalApplication ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternalApplication ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -173,7 +171,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal.GetArguments();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternalArguments ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternalArguments ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -181,7 +179,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal.GetWindowType();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternalWindowType ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternalWindowType ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -189,7 +187,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal.GetWaitForExit();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternalWaitForExit ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternalWaitForExit ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -197,7 +195,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).ActionExternal.GetSageStatus();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemActionExternalSageStatus ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemActionExternalSageStatus ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -227,7 +225,7 @@ public class ADMMenuNode {
         //see if using a GlobalVariable from a Theme or a path to an image file
         BGImageFile = bBGImageFile;
         BGImageFilePath = ADMutil.GetSageBGFile(bBGImageFile);
-        //LOG.debug("SetBGImageFileandPath for '" + Name + "' BGImageFile = '" + BGImageFile + "' BGImageFilePath = '" + BGImageFilePath + "'");
+        //Log.debug("ADMMenuNode","SetBGImageFileandPath for '" + Name + "' BGImageFile = '" + BGImageFile + "' BGImageFilePath = '" + BGImageFilePath + "'");
     }
     
     public static String GetMenuItemBGImageFileButtonText(String Name){
@@ -241,7 +239,7 @@ public class ADMMenuNode {
             try {
                 return MenuNodeList().get(Name).BGImageFile;
             } catch (Exception e) {
-                LOG.debug("GetMenuItemBGImageFile ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                Log.debug("ADMMenuNode","GetMenuItemBGImageFile ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
                 return null;
             }
         }
@@ -262,38 +260,38 @@ public class ADMMenuNode {
         Integer counterNo = 0;
         for (File file : files){
             if (!file.delete()){
-                LOG.debug("ClearBGFileSystemCache: failed to delete '" + file + "'");
+                Log.debug("ADMMenuNode","ClearBGFileSystemCache: failed to delete '" + file + "'");
                 counterNo++;
             }else{
                 counterYes++;
             }
         }
-        LOG.debug("ClearBGFileSystemCache: deleted " + counterYes + " of " + files.length + " files from: '" + GemCache.getPath());
+        Log.debug("ADMMenuNode","ClearBGFileSystemCache: deleted " + counterYes + " of " + files.length + " files from: '" + GemCache.getPath());
         if (counterNo>0){
-            LOG.debug("ClearBGFileSystemCache: FAILED to delete " + counterNo + " of " + files.length + " files from: '" + GemCache.getPath());
+            Log.debug("ADMMenuNode","ClearBGFileSystemCache: FAILED to delete " + counterNo + " of " + files.length + " files from: '" + GemCache.getPath());
         }
     }
     
     public static Object GetMenuItemBGImage(String Name){
         String BGKey = GetMenuItemBGImageFilePath(Name);
-        LOG.debug("GetMenuItemBGImage: BGKey '" + BGKey + "' for '" + Name + "'");
+        Log.debug("ADMMenuNode","GetMenuItemBGImage: BGKey '" + BGKey + "' for '" + Name + "'");
         Object BGImage = null;
         if (BGKey==null){
-            LOG.debug("GetMenuItemBGImage: null Key returned from GetMenuItemBGImageFilePath for '" + Name + "'");
+            Log.debug("ADMMenuNode","GetMenuItemBGImage: null Key returned from GetMenuItemBGImageFilePath for '" + Name + "'");
             return null;
         }else{
             BGImage = BGCache.get(BGKey);
             if (BGImage!=null){
-                LOG.debug("GetMenuItemBGImage: BGImage found in Cache for Key '" + BGKey + "'");
+                Log.debug("ADMMenuNode","GetMenuItemBGImage: BGImage found in Cache for Key '" + BGKey + "'");
                 return BGImage;
             }else{
                 //add it to the Cache and then return it
                 BGImage = CreateBGImage(BGKey);
                 if (BGImage==null){
-                    LOG.debug("GetMenuItemBGImage: null image returned from CreateBGImage '" + BGKey + "'");
+                    Log.debug("ADMMenuNode","GetMenuItemBGImage: null image returned from CreateBGImage '" + BGKey + "'");
                 }else{
                     BGCache.put(BGKey, BGImage);
-                    LOG.debug("GetMenuItemBGImage: adding to BGCache '" + BGKey + "'");
+                    Log.debug("ADMMenuNode","GetMenuItemBGImage: adding to BGCache '" + BGKey + "'");
                 }
                 return BGImage;
             }
@@ -302,14 +300,14 @@ public class ADMMenuNode {
     
     public static Object CreateBGImage(String Key){
         if (Key==null){
-            LOG.debug("CreateBGImage: called with null Key");
+            Log.debug("ADMMenuNode","CreateBGImage: called with null Key");
             return null;
         }
         Object ThisImage = null;
         //See if the image is already cached in the filesystem by a previous CreateBGImage call
         ThisImage = phoenix.image.GetImage(Key, Const.CreateBGImageTag);
         if (ThisImage!=null){
-            LOG.debug("CreateBGImage: Filesystem cached item found for Tag '" + Const.CreateBGImageTag + "' ID '" + Key + "' ThisImage = '" + ThisImage + "'");
+            Log.debug("ADMMenuNode","CreateBGImage: Filesystem cached item found for Tag '" + Const.CreateBGImageTag + "' ID '" + Key + "' ThisImage = '" + ThisImage + "'");
             return ThisImage;
         }
         
@@ -321,29 +319,29 @@ public class ADMMenuNode {
         try {
             //ThisImage = phoenix.image.CreateImage(Key, CreateImageTag, Key, "{name: scale, width: " + finalscalewidth + ", height: -1}", true);
             ThisImage = phoenix.image.CreateImage(Key, Const.CreateBGImageTag, Key, "{name: dummy}", true);
-            LOG.debug("CreateBGImage: Image = '" + ThisImage + "' for Key '" + Key + "'");
+            Log.debug("ADMMenuNode","CreateBGImage: Image = '" + ThisImage + "' for Key '" + Key + "'");
         } catch (Exception e) {
-            LOG.debug("CreateBGImage: phoenix.image.CreateImage FAILED for Image = '" + Key + "' Error: '" + e + "'");
+            Log.debug("ADMMenuNode","CreateBGImage: phoenix.image.CreateImage FAILED for Image = '" + Key + "' Error: '" + e + "'");
             return null;
         }
         if (!sagex.api.Utility.IsImageLoaded(UIc, ThisImage)){
-            LOG.debug("CreateBGImage: Loaded using LoagImage(loadImage)) - for Image = '" + Key + "'");
+            Log.debug("ADMMenuNode","CreateBGImage: Loaded using LoagImage(loadImage)) - for Image = '" + Key + "'");
             sagex.api.Utility.LoadImage(UIc, sagex.api.Utility.LoadImage(UIc, ThisImage));
         }else{
             sagex.api.Utility.UnloadImage(UIc, ThisImage.toString());
             sagex.api.Utility.LoadImage(UIc, sagex.api.Utility.LoadImage(UIc, ThisImage));
-            LOG.debug("CreateBGImage: already Loaded for Image = '" + Key + "'");
+            Log.debug("ADMMenuNode","CreateBGImage: already Loaded for Image = '" + Key + "'");
         }
         return ThisImage;
     }
     
     //TODO: Create New function that uses this as a Key to lookup the background in a SoftHashMap Cache
     public static String GetMenuItemBGImageFilePath(String Name){
-        //LOG.debug("GetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList().get(Name).BGImageFilePath + "'");
+        //Log.debug("ADMMenuNode","GetMenuItemBGImageFilePath for '" + Name + "' returning '" + MenuNodeList().get(Name).BGImageFilePath + "'");
         try {
             if (MenuNodeList().get(Name).BGImageFilePath==null){
                 if (MenuNodeList().get(Name).Parent.equals(ADMutil.TopMenu)){
-                    LOG.debug("GetMenuItemBGImageFilePath for '" + Name + "' returning null for TopMenu item.");
+                    Log.debug("ADMMenuNode","GetMenuItemBGImageFilePath for '" + Name + "' returning null for TopMenu item.");
                     return null;
                 }else{
                     return GetMenuItemBGImageFilePath(MenuNodeList().get(Name).Parent);
@@ -354,7 +352,7 @@ public class ADMMenuNode {
                 //return MenuNodeList().get(Name).BGImageFilePath;
             }
         } catch (Exception e) {
-            LOG.debug("GetMenuItemBGImageFilePath ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemBGImageFilePath ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -372,14 +370,14 @@ public class ADMMenuNode {
         if (Name==null){
             return null;
         }
-        //LOG.debug("GetMenuItemButtonText: Name '" + Name + "' NodeListCount = '" + (MenuNode) UIMenuNodeList.get("SAGETV_PROCESS_LOCAL_UI").get(Name) + "' root = '" + UIroot.get("SAGETV_PROCESS_LOCAL_UI").getChildCount() + "'");
+        //Log.debug("ADMMenuNode","GetMenuItemButtonText: Name '" + Name + "' NodeListCount = '" + (MenuNode) UIMenuNodeList.get("SAGETV_PROCESS_LOCAL_UI").get(Name) + "' root = '" + UIroot.get("SAGETV_PROCESS_LOCAL_UI").getChildCount() + "'");
         if (Name.equals(ADMutil.TopMenu)){
             return "Top Level";
         }else{
             try {
                 return MenuNodeList().get(Name).ButtonText;
             } catch (Exception e) {
-                LOG.debug("GetMenuItemButtonText ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                Log.debug("ADMMenuNode","GetMenuItemButtonText ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
                 return null;
             }
         }
@@ -401,7 +399,7 @@ public class ADMMenuNode {
         try {
             return !MenuNodeList().get(Name).NodeItem.isLeaf();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemHasSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemHasSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -410,7 +408,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).IsActive;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemIsActive ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemIsActive ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -429,7 +427,7 @@ public class ADMMenuNode {
             // in this case this item is active BUT the parent is not
             return "Yes (Parent: No)";
         } catch (Exception e) {
-            LOG.debug("GetMenuItemIsActiveIncludingParentFormatted ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParentFormatted ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -445,19 +443,19 @@ public class ADMMenuNode {
             for (TreeNode pathnode : path){
                 DefaultMutableTreeNode pathnodea = (DefaultMutableTreeNode)pathnode;
                 ADMMenuNode tMenu = (ADMMenuNode)pathnodea.getUserObject();
-                //LOG.debug("GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "'");
+                //Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "'");
                 if (tMenu.IsActive.equals(ADMutil.TriState.NO)){
-                    //LOG.debug("GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = NO");
+                    //Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = NO");
                     return ADMutil.TriState.NO;
                 }else if(tMenu.IsActive.equals(ADMutil.TriState.OTHER)){
-                    //LOG.debug("GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = OTHER");
+                    //Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParent for '" + Name + "' for item = '" + tMenu.ButtonText + "' = OTHER");
                     return ADMutil.TriState.OTHER;
                 }
             }
-            //LOG.debug("GetMenuItemIsActiveIncludingParent for '" + Name + "' YES");
+            //Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParent for '" + Name + "' YES");
             return ADMutil.TriState.YES;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemIsActiveIncludingParent ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemIsActiveIncludingParent ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -503,7 +501,7 @@ public class ADMMenuNode {
             if (IconName == null){
                 IconName="";
             }
-            //LOG.debug("GetMenuItemCustomIcon - Name: "+Name+" FileName: "+IconName);
+            //Log.debug("ADMMenuNode","GetMenuItemCustomIcon - Name: "+Name+" FileName: "+IconName);
             return IconName;
         }catch (Exception e){
             return "";
@@ -513,7 +511,7 @@ public class ADMMenuNode {
     public static void SetMenuItemCustomIcon(String Name, String IconPath){
         if (Name==null){
         }else {
-            //LOG.debug("GetMenuItemCustomIcon - Name: "+Name);
+            //Log.debug("ADMMenuNode","GetMenuItemCustomIcon - Name: "+Name);
             Save(Name,"CustomIcon",IconPath);
         }
     }
@@ -528,10 +526,10 @@ public class ADMMenuNode {
             if (ActionType.equals(ADMAction.GemstoneFlow)){
                 String FlowType = Flow.GetFlowType(GetMenuItemAction(Name));
                 IconName = "Themes\\Gemstone\\Switcher\\"+FlowType+".png";
-                LOG.debug("GetMenuItemDefaultIcon - Name: "+Name+" FlowType: "+FlowType+" FileName: "+IconName);
+                Log.debug("ADMMenuNode","GetMenuItemDefaultIcon - Name: "+Name+" FlowType: "+FlowType+" FileName: "+IconName);
             }else{
                 IconName = ADMAction.GetDefaultIcon(Name);
-                LOG.debug("GetMenuItemDefaultIcon - Name: "+Name+" ActionType: "+ActionType+" FileName: "+IconName);
+                Log.debug("ADMMenuNode","GetMenuItemDefaultIcon - Name: "+Name+" ActionType: "+ActionType+" FileName: "+IconName);
             }
             if (IconName==""){
                 return ADMutil.DefaultIcon;
@@ -552,7 +550,7 @@ public class ADMMenuNode {
             if (IconFile.equals("")||IconFile==null){
                 IconFile=GetMenuItemDefaultIcon(Name);
             }
-            LOG.debug("GetMenuItemIcon - Name: "+Name+" Path:"+IconFile);
+            Log.debug("ADMMenuNode","GetMenuItemIcon - Name: "+Name+" Path:"+IconFile);
             return IconFile;
         } catch (Exception e) {
             return "";
@@ -573,7 +571,7 @@ public class ADMMenuNode {
             }
             return Boolean.TRUE;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemHasCustomIcon ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemHasCustomIcon ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -618,7 +616,7 @@ public class ADMMenuNode {
                 return !MenuNodeList().get(Name).BlockedSageUsersList.contains(SageUser);
             }
         } catch (Exception e) {
-            LOG.debug("IsSageUserAllowed ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","IsSageUserAllowed ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.TRUE;
         }
     }
@@ -634,7 +632,7 @@ public class ADMMenuNode {
                 }
                 Save(Name, "BlockedSageUsersList", ADMutil.ConvertListtoString(MenuNodeList().get(Name).BlockedSageUsersList));
             } catch (Exception e) {
-                LOG.debug("ChangeSageUserAllowed ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                Log.debug("ADMMenuNode","ChangeSageUserAllowed ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             }
         }
     }
@@ -643,7 +641,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).IsCreatedNotLoaded;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemIsCreatedNotLoaded ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemIsCreatedNotLoaded ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -656,7 +654,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).IsTemp;
         } catch (Exception e) {
-            LOG.debug("SetMenuItemIsCreatedNotLoaded ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","SetMenuItemIsCreatedNotLoaded ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -669,20 +667,20 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).IsDefault;
         } catch (Exception e) {
-            LOG.debug("SetMenuItemIsTemp ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","SetMenuItemIsTemp ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
 
     public static void SetMenuItemIsDefault(String Name, Boolean Setting){
-        //LOG.debug("SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
+        //Log.debug("ADMMenuNode","SetMenuItemIsDefault: Name '" + Name + "' Setting '" + Setting + "'");
         if (Setting){
             //first clear existing Default settings for Menu Items with the same parent 
             ClearSubMenuDefaults(MenuNodeList().get(Name).Parent);
             Save(Name, "IsDefault", Setting.toString());
-            LOG.debug("SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
+            Log.debug("ADMMenuNode","SetMenuItemIsDefault: true Name '" + Name + "' Setting '" + Setting + "'");
         }else{
-            //LOG.debug("SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
+            //Log.debug("ADMMenuNode","SetMenuItemIsDefault: false Name '" + Name + "' Setting '" + Setting + "'");
             Save(Name, "IsDefault", Setting.toString());
             //ensure at least 1 item remaining is a default
             ValidateSubMenuDefault(MenuNodeList().get(Name).Parent);
@@ -713,17 +711,17 @@ public class ADMMenuNode {
                 //no default found so set the first item as the default
                 DefaultMutableTreeNode firstChild = (DefaultMutableTreeNode)MenuNodeList().get(bParent).NodeItem.getFirstChild();
                 ADMMenuNode tMenu = (ADMMenuNode)firstChild.getUserObject();
-                LOG.debug("ValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + tMenu.Name + "'");
+                Log.debug("ADMMenuNode","ValidateSubMenuDefault for '" + bParent + "' : no Default found so setting first = '" + tMenu.Name + "'");
                 Save(tMenu.Name, "IsDefault", Boolean.TRUE.toString());
             }else {
-                LOG.debug("ValidateSubMenuDefault for '" + bParent + "' : Default already set");
+                Log.debug("ADMMenuNode","ValidateSubMenuDefault for '" + bParent + "' : Default already set");
             }
             //As there are submenu items the submenu setting should be null
             SetMenuItemSubMenu(bParent, ADMutil.ListNone);
         }else{
             //no subMenu items so make sure this parent's SubMenu settings are correct
             SetMenuItemSubMenu(bParent, ADMutil.ListNone);
-            LOG.debug("ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
+            Log.debug("ADMMenuNode","ValidateSubMenuDefault for '" + bParent + "' : no SubMenu items found");
         }
     }
         
@@ -741,7 +739,7 @@ public class ADMMenuNode {
                 }
             }         
         }
-        LOG.debug("ClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList().get(bParent).NodeItem.getChildCount() + "' cleared");
+        Log.debug("ADMMenuNode","ClearSubMenuDefaults for '" + bParent + "' '" + MenuNodeList().get(bParent).NodeItem.getChildCount() + "' cleared");
     }
     
     @SuppressWarnings("unchecked")
@@ -760,7 +758,7 @@ public class ADMMenuNode {
                     //skip
                 }else{
                     if (tMenu.IsDefault){
-                        LOG.debug("GetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
+                        Log.debug("ADMMenuNode","GetSubMenuDefault for '" + bParent + "' Default = '" + tMenu.Name + "'");
                         return tMenu.Name;
                     }
                 }
@@ -768,14 +766,14 @@ public class ADMMenuNode {
         }
         //if you get here then NOT FOUND so find the first item and return it 
         if (FirstChildName.equals(ADMutil.OptionNotFound)){
-            LOG.debug("GetSubMenuDefault for '" + bParent + "' - none found");
+            Log.debug("ADMMenuNode","GetSubMenuDefault for '" + bParent + "' - none found");
             return "";
         }else{
             if (GetMenuItemActionType(FirstChildName).equals(ADMAction.DynamicList)){
-                LOG.debug("GetSubMenuDefault for '" + bParent + "' - not found so returning Dynamic Lists FirstChild '" + FirstChildName + "'");
+                Log.debug("ADMMenuNode","GetSubMenuDefault for '" + bParent + "' - not found so returning Dynamic Lists FirstChild '" + FirstChildName + "'");
                 return GetSubMenuFirstChild(FirstChildName);
             }else{
-                LOG.debug("GetSubMenuDefault for '" + bParent + "' - not found so returning FirstChild '" + FirstChildName + "'");
+                Log.debug("ADMMenuNode","GetSubMenuDefault for '" + bParent + "' - not found so returning FirstChild '" + FirstChildName + "'");
                 return FirstChildName;
             }
         }
@@ -794,10 +792,10 @@ public class ADMMenuNode {
             }         
         }
         if (FirstChildName.equals(ADMutil.OptionNotFound)){
-            LOG.debug("GetSubMenuFirstChild for '" + bParent + "' - none found");
+            Log.debug("ADMMenuNode","GetSubMenuFirstChild for '" + bParent + "' - none found");
             return "";
         }else{
-            LOG.debug("GetSubMenuFirstChild for '" + bParent + "' - FirstChild '" + FirstChildName + "'");
+            Log.debug("ADMMenuNode","GetSubMenuFirstChild for '" + bParent + "' - FirstChild '" + FirstChildName + "'");
             return FirstChildName;
         }
     }
@@ -806,7 +804,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).NodeItem.getLevel();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemLevel ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemLevel ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -818,14 +816,14 @@ public class ADMMenuNode {
     public static String GetMenuItemParent(String Name){
         //get the parent from the Tree structure
         if (Name.equals(ADMutil.TopMenu)){
-            //LOG.debug("GetMenuItemParent for '" + Name + "' returning null");
+            //Log.debug("ADMMenuNode","GetMenuItemParent for '" + Name + "' returning null");
             return null;
         }else{
-            //LOG.debug("GetMenuItemParent for '" + Name + "' = '" + MenuNodeList().get(Name).NodeItem.getParent().toString() + "'");
+            //Log.debug("ADMMenuNode","GetMenuItemParent for '" + Name + "' = '" + MenuNodeList().get(Name).NodeItem.getParent().toString() + "'");
             try {
                 return MenuNodeList().get(Name).NodeItem.getParent().toString();
             } catch (Exception e) {
-                LOG.debug("GetMenuItemParent ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                Log.debug("ADMMenuNode","GetMenuItemParent ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
                 return null;
             }
         }
@@ -855,7 +853,7 @@ public class ADMMenuNode {
             //make sure the old and new SubMenus have a single default item
             ValidateSubMenuDefault(OldParent);
             ValidateSubMenuDefault(NewParent);
-            LOG.debug("SetMenuItemParent: Parent changed for '" + Name + "' to = '" + NewParent + "'");
+            Log.debug("ADMMenuNode","SetMenuItemParent: Parent changed for '" + Name + "' to = '" + NewParent + "'");
         }
     }
     
@@ -863,7 +861,7 @@ public class ADMMenuNode {
         if (Name==null) {
         }else{
             MenuNodeList().get(Name).UseForSwitcher = UseForSwitcher;
-            LOG.debug("SetMenuItemUseForSwitcher: Switcher Use change for: '" + Name + "' to = '" + UseForSwitcher + "'");
+            Log.debug("ADMMenuNode","SetMenuItemUseForSwitcher: Switcher Use change for: '" + Name + "' to = '" + UseForSwitcher + "'");
         }
     }
     
@@ -882,7 +880,7 @@ public class ADMMenuNode {
             try {
                 return MenuNodeList().get(Name).ShowIF;
             } catch (Exception e) {
-                LOG.debug("GetMenuItemShowIF ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+                Log.debug("ADMMenuNode","GetMenuItemShowIF ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
                 return null;
             }
         }
@@ -892,7 +890,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).SortKey;
         } catch (Exception e) {
-            LOG.debug("GetMenuItemSortKey ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemSortKey ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -902,7 +900,7 @@ public class ADMMenuNode {
         try {
             tSortKey = Integer.valueOf(SortKey);
         } catch (NumberFormatException ex) {
-            LOG.debug("setSortKey: error converting '" + SortKey + "' " + ADMutil.class.getName() + ex);
+            Log.debug("ADMMenuNode","setSortKey: error converting '" + SortKey + "' " + ADMutil.class.getName() + ex);
             tSortKey = SortKeyCounter++;
         }
         this.SortKey = tSortKey;
@@ -911,9 +909,9 @@ public class ADMMenuNode {
     public static void ChangeSortOrder(String Name, Integer aDelta){
         if (moveNode(MenuNodeList().get(Name).NodeItem, aDelta)){
             SortKeyUpdate((DefaultMutableTreeNode)MenuNodeList().get(Name).NodeItem.getParent());
-            LOG.debug("ChangeSortOrder: moving '" + Name + "' by '" + aDelta.toString() + "'");
+            Log.debug("ADMMenuNode","ChangeSortOrder: moving '" + Name + "' by '" + aDelta.toString() + "'");
         }else{
-            LOG.debug("ChangeSortOrder: NOT ABLE to move '" + Name + "' by '" + aDelta.toString() + "'");
+            Log.debug("ADMMenuNode","ChangeSortOrder: NOT ABLE to move '" + Name + "' by '" + aDelta.toString() + "'");
         }
     }
     
@@ -955,10 +953,10 @@ public class ADMMenuNode {
                 tMenu.IsDirty = Boolean.TRUE;
                 //TODO: EXTERNAL MENU - Save causes new menu items to be Dirty - find another solution
                 //Save(tMenu.Name, "SortKey", tMenu.SortKey.toString());
-                //LOG.debug("SortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
+                //Log.debug("ADMMenuNode","SortKeyUpdate: Child = '" + child + "' SortKey = '" + tMenu.SortKey + "' Parent = '" + child.getParent() + "'"  );
             }
         }         
-        LOG.debug("SortKeyUpdate: completed for Parent = '" + aParent + "'"  );
+        Log.debug("ADMMenuNode","SortKeyUpdate: completed for Parent = '" + aParent + "'"  );
     }
     
     //the SubMenu field is only filled in if using a built in Sage SubMenu
@@ -988,7 +986,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).getSubMenuExcludingSageMenus();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemSubMenuQLM ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemSubMenuQLM ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -997,7 +995,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().get(Name).getSubMenu();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
@@ -1006,13 +1004,13 @@ public class ADMMenuNode {
         try {
             return ADMutil.GetSubMenuListButtonText(MenuNodeList().get(Name).getSubMenu(), GetMenuItemLevel(Name));
         } catch (Exception e) {
-            LOG.debug("GetMenuItemSubMenuButtonText ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemSubMenuButtonText ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return null;
         }
     }
 
     public static void SetMenuItemSubMenu(String Name, String Setting){
-        //LOG.debug("SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
+        //Log.debug("ADMMenuNode","SetMenuItemSubMenu for '" + Name + "' Setting = '" + Setting + "'");
         if (Setting.equals(ADMutil.ListNone) || Setting==null){
             //set the SubMenu field
             Save(Name, "SubMenu", null);
@@ -1029,7 +1027,7 @@ public class ADMMenuNode {
     public static Boolean IsSubMenuItem(String bParent, String Item, Boolean QLMCheck){
         //check if Item is a child of bParent
         if (bParent==null || Item==null || !MenuNodeList().containsKey(Item)){
-            //LOG.debug("IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found or null");
+            //Log.debug("ADMMenuNode","IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found or null");
             return Boolean.FALSE;
         }
         try {
@@ -1045,15 +1043,15 @@ public class ADMMenuNode {
                         return Boolean.FALSE;
                     }
                 }else{
-                    //LOG.debug("IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
+                    //Log.debug("ADMMenuNode","IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' found");
                     return Boolean.TRUE;
                 }
             }else{
-                //LOG.debug("IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
+                //Log.debug("ADMMenuNode","IsSubMenuItem for Parent = '" + bParent + "' Item '" + Item + "' NOT found");
                 return Boolean.FALSE;
             }
         } catch (Exception e) {
-            LOG.debug("IsSubMenuItem ERROR: Value not available for '" + bParent + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","IsSubMenuItem ERROR: Value not available for '" + bParent + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -1063,7 +1061,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().keySet();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemNameList ERROR: Value not available. Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemNameList ERROR: Value not available. Exception = '" + e + "'");
             return null;
         }
     }
@@ -1113,7 +1111,7 @@ public class ADMMenuNode {
                 //otherwise do not add the Menu Item
             }         
         }
-        LOG.debug("GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
+        Log.debug("ADMMenuNode","GetMenuItemNameList for '" + Parent + "' : IncludeInactive = '" + IncludeInactive.toString() + "' " + bNames);
         return bNames;
     }
     
@@ -1162,7 +1160,7 @@ public class ADMMenuNode {
     }
     
     public static void MenuBeforeOpen(Integer Level, String MenuName){
-        LOG.debug("MenuBeforeOpen: Level '" + Level + "' MenuName '" + MenuName + "'");
+        Log.debug("ADMMenuNode","MenuBeforeOpen: Level '" + Level + "' MenuName '" + MenuName + "'");
         //store the Menu for this Level for later retrieval while the menu is open
         //cleanup previous Temp Menu Items if any
         //DeleteAllTempMenuItems();
@@ -1192,12 +1190,12 @@ public class ADMMenuNode {
     }
 
     public static void MenuAfterClose(Integer Level){
-        LOG.debug("MenuAfterClose: Level '" + Level + "'");
+        Log.debug("ADMMenuNode","MenuAfterClose: Level '" + Level + "'");
         //clear the Menus for this Level and delete any TEMP Menu items
         
     }
     public static void MenuBeforeOpenQLM(String MenuName){
-        LOG.debug("MenuBeforeOpenQLM: MenuName '" + MenuName + "'");
+        Log.debug("ADMMenuNode","MenuBeforeOpenQLM: MenuName '" + MenuName + "'");
         //cleanup previous Temp Menu Items if any
         DeleteAllTempMenuItems();
         String UIContext = sagex.api.Global.GetUIContextName();
@@ -1209,7 +1207,7 @@ public class ADMMenuNode {
         UIMenuListQLM.get(UIContext).addAll(GetMenuItemNameListQLM(MenuName));
     }
     public static void MenuAfterCloseQLM(){
-        LOG.debug("MenuAfterCloseQLM:");
+        Log.debug("ADMMenuNode","MenuAfterCloseQLM:");
         //clear the QLM Menu and delete any TEMP Menu items
         
     }
@@ -1221,13 +1219,13 @@ public class ADMMenuNode {
             if (tMenu.IsTemp){
                 TempItems.add(tMenu.Name);
                 tMenu.NodeItem.removeFromParent();
-                //LOG.debug("DeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
+                //Log.debug("ADMMenuNode","DeleteAllTempMenuItems for '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
             }
         }
         for (String TempItem : TempItems){
             MenuNodeList().remove(TempItem);
         }
-        LOG.debug("DeleteAllTempMenuItems : Deleted '" + TempItems.size() + "' items");
+        Log.debug("ADMMenuNode","DeleteAllTempMenuItems : Deleted '" + TempItems.size() + "' items");
     }
     private static void DeleteAllTempMenuItems(Integer Level){
         List<String> TempItems = new LinkedList<String>();
@@ -1237,16 +1235,16 @@ public class ADMMenuNode {
                 if (tMenu.NodeItem.getLevel()==Level+1){
                     TempItems.add(tMenu.Name);
                     tMenu.NodeItem.removeFromParent();
-                    //LOG.debug("DeleteAllTempMenuItems for Level '" + Level + "' '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
+                    //Log.debug("ADMMenuNode","DeleteAllTempMenuItems for Level '" + Level + "' '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "'");
                 }else{
-                    //LOG.debug("DeleteAllTempMenuItems for Level '" + Level + "' Skipping as different Level '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "' Level = '" + (GetMenuItemLevel(tMenu.Name)-1) + "'");
+                    //Log.debug("ADMMenuNode","DeleteAllTempMenuItems for Level '" + Level + "' Skipping as different Level '" + tMenu.ButtonText + "' : Name = '" + tMenu.Name + "' Level = '" + (GetMenuItemLevel(tMenu.Name)-1) + "'");
                 }
             }
         }
         for (String TempItem : TempItems){
             MenuNodeList().remove(TempItem);
         }
-        LOG.debug("DeleteAllTempMenuItems for Level " + Level + " : Deleted '" + TempItems.size() + "' items");
+        Log.debug("ADMMenuNode","DeleteAllTempMenuItems for Level " + Level + " : Deleted '" + TempItems.size() + "' items");
     }
     
     private static Boolean QLMInvalidSubmenu(ADMMenuNode tMenu){
@@ -1270,7 +1268,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().size();
         } catch (Exception e) {
-            LOG.debug("GetMenuItemCount ERROR: Value not available. Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemCount ERROR: Value not available. Exception = '" + e + "'");
             return 0;
         }
     }
@@ -1330,7 +1328,7 @@ public class ADMMenuNode {
                 }
             }
         }         
-        LOG.debug("GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
+        Log.debug("ADMMenuNode","GetMenuItemSortedList: Grouped = '" + Grouped.toString() + "' :" + FinalList);
         return FinalList;
     }
     
@@ -1357,7 +1355,7 @@ public class ADMMenuNode {
                 }
             }
         }         
-        LOG.debug("GetMenuItemParentList: '" + ValidParentList + "'");
+        Log.debug("ADMMenuNode","GetMenuItemParentList: '" + ValidParentList + "'");
         return ValidParentList;
     }
     
@@ -1376,7 +1374,7 @@ public class ADMMenuNode {
                 }
             }
         }         
-        LOG.debug("GetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
+        Log.debug("ADMMenuNode","GetMenuItemParentList: for Level = '" + SpecificLevel + "' List = '" + ValidParentList + "'");
         return ValidParentList;
     }
     
@@ -1448,12 +1446,12 @@ public class ADMMenuNode {
             return;
         }
         if (UIroot.containsKey(UIContext)){
-            LOG.debug("ClientExit: UIroot found for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","ClientExit: UIroot found for '" + UIContext + "'");
             UIroot.get(UIContext).removeAllChildren();
             UIroot.remove(UIContext);
         }
         if (UIMenuNodeList.containsKey(UIContext)){
-            LOG.debug("ClientExit: UIMenuNodeList found for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","ClientExit: UIMenuNodeList found for '" + UIContext + "'");
             UIMenuNodeList.remove(UIContext);
         }
     }
@@ -1465,14 +1463,14 @@ public class ADMMenuNode {
         //ListAllNodes(UIContext + "-before");
         //create and store the top menu node
         if (UIroot.containsKey(UIContext)){
-            LOG.debug("CleanMenuNodeListandTree: clearing root for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","CleanMenuNodeListandTree: clearing root for '" + UIContext + "'");
             UIroot.get(UIContext).removeAllChildren();
             UIroot.remove(UIContext);
         }
 
         //clear the existing MenuItems from the list
         if (UIMenuNodeList.containsKey(UIContext)){
-            LOG.debug("CleanMenuNodeListandTree: clearing MenuNodeList for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","CleanMenuNodeListandTree: clearing MenuNodeList for '" + UIContext + "'");
             UIMenuNodeList.remove(UIContext);
         }
         MenuNodeList().clear();
@@ -1496,10 +1494,10 @@ public class ADMMenuNode {
         for (String Node : MenuNodeList().keySet()){
             if (GetMenuItemUseForSwitcher(Node)){
                 MenuItemNodeList.add(MenuNodeList().get(Node).Name);
-                LOG.debug("GetMenuItemsForSwitcher - Adding: '"+Node+"'");
+                Log.debug("ADMMenuNode","GetMenuItemsForSwitcher - Adding: '"+Node+"'");
             }
         }
-        LOG.debug("GetMenuItemsForSwitcher - Added "+MenuItemNodeList.size()+" MenuItems.");
+        Log.debug("ADMMenuNode","GetMenuItemsForSwitcher - Added "+MenuItemNodeList.size()+" MenuItems.");
         return MenuItemNodeList;
     }
     
@@ -1540,12 +1538,12 @@ public class ADMMenuNode {
                             NewMenuItem.ShowIF = MenuItemProps.getProperty(PropLocation + "/ShowIF", ADMutil.OptionNotFound);
                         }
                         NewMenuItem.ActionExternal.Load(MenuItemProps);
-                        LOG.debug("PropertyLoad: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
+                        Log.debug("ADMMenuNode","PropertyLoad: loaded - '" + tMenuItemName + "' = '" + NewMenuItem.ButtonText + "'");
                     }else{
-                        LOG.debug("PropertyLoad: skipped - '" + tMenuItemName + "' due to ShowIF ");
+                        Log.debug("ADMMenuNode","PropertyLoad: skipped - '" + tMenuItemName + "' due to ShowIF ");
                     }
                 }else{
-                    LOG.debug("PropertyLoad: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
+                    Log.debug("ADMMenuNode","PropertyLoad: skipping - '" + tMenuItemName + "' - should not load a TopMenu item");
                 }
             }
             if (MenuNodeList().size()>0){
@@ -1559,12 +1557,12 @@ public class ADMMenuNode {
                 //as SortKeyUpdate will make all items Dirty we need to Clear that setting
                 ClearDirty();
                 LoadSuccess = Boolean.TRUE;
-                LOG.debug("PropertyLoad: loaded " + MenuNodeList().size() + " MenuItems = '" + MenuNodeList() + "'");
+                Log.debug("ADMMenuNode","PropertyLoad: loaded " + MenuNodeList().size() + " MenuItems = '" + MenuNodeList() + "'");
             }
             
         }else{
             LoadSuccess = Boolean.FALSE;
-            LOG.debug("PropertyLoad: no MenuItems found - loading default menu.");
+            Log.debug("ADMMenuNode","PropertyLoad: no MenuItems found - loading default menu.");
         }
         
         return LoadSuccess;
@@ -1591,7 +1589,7 @@ public class ADMMenuNode {
 //            //add the item into the MenuNodeList
 //            MenuNodeList().put(tMenu.Name, tMenu);
 //        }         
-//        LOG.debug("SaveMenuItemsToSage: saved " + MenuNodeList().size() + " MenuItems");
+//        Log.debug("ADMMenuNode","SaveMenuItemsToSage: saved " + MenuNodeList().size() + " MenuItems");
 //        
 //        return;
 //    }
@@ -1600,28 +1598,28 @@ public class ADMMenuNode {
     public static void SaveMenus(){
         Export tExport = new Export();
         tExport.SaveMenus();
-        LOG.debug("SaveMenus: save completed for current menu items");
+        Log.debug("ADMMenuNode","SaveMenus: save completed for current menu items");
         //clear the dirty flag as these menus are now saved
         ClearDirty();
     }
     public static void SaveMenusLocal(){
         Export tExport = new Export();
         tExport.SaveMenusLocal();
-        LOG.debug("SaveMenusLocal: save completed for current menu items");
+        Log.debug("ADMMenuNode","SaveMenusLocal: save completed for current menu items");
         //clear the dirty flag as these menus are now saved
         ClearDirty();
     }
     public static void SaveMenusOverride(){
         Export tExport = new Export();
         tExport.SaveMenusOverride();
-        LOG.debug("SaveMenusOverride: save completed for current menu items");
+        Log.debug("ADMMenuNode","SaveMenusOverride: save completed for current menu items");
         //clear the dirty flag as these menus are now saved
         ClearDirty();
     }
     public static void SaveMenusOverride(String OverrideFilePath){
         Export tExport = new Export();
         tExport.SaveMenusOverride(OverrideFilePath);
-        LOG.debug("SaveMenusOverride: to '" + OverrideFilePath + "' - save completed for current menu items");
+        Log.debug("ADMMenuNode","SaveMenusOverride: to '" + OverrideFilePath + "' - save completed for current menu items");
         //clear the dirty flag as these menus are now saved
         ClearDirty();
     }
@@ -1637,10 +1635,10 @@ public class ADMMenuNode {
             }
         }
         if (found){
-            LOG.debug("SaveMenusIfDirty: menus are Dirty so save called");
+            Log.debug("ADMMenuNode","SaveMenusIfDirty: menus are Dirty so save called");
             SaveMenus();
         }else{
-            LOG.debug("SaveMenusIfDirty: no Dirty Menu Items found - no Save required");
+            Log.debug("ADMMenuNode","SaveMenusIfDirty: no Dirty Menu Items found - no Save required");
         }
     }
     
@@ -1652,9 +1650,9 @@ public class ADMMenuNode {
         if (MenuNodeList().size()>0){
             Export tExport = new Export();
             tExport.BackupMenus(FileNameOverride);
-            LOG.debug("BackupMenus: backup completed for current menu items");
+            Log.debug("ADMMenuNode","BackupMenus: backup completed for current menu items");
         }else{
-            LOG.debug("BackupMenus: no backup completed as no menu items were found");
+            Log.debug("ADMMenuNode","BackupMenus: no backup completed as no menu items were found");
         }
     }
 
@@ -1670,14 +1668,14 @@ public class ADMMenuNode {
             //import the converted ADM menus
             Import cImport = new Import(ADMutil.ConvertedADMMenusFilePath, util.ExportType.MENUS);
             if (cImport.getMenusLoaded()){
-                LOG.debug("LoadMenus: ADM MenuItems converted and saved.");
+                Log.debug("ADMMenuNode","LoadMenus: ADM MenuItems converted and saved.");
             }else{
-                LOG.debug("LoadMenus: no ADM MenuItems found to convert - loading default menu.");
+                Log.debug("ADMMenuNode","LoadMenus: no ADM MenuItems found to convert - loading default menu.");
                 ADMMenuNode.LoadMenuItemDefaults();
             }
         }
 
-        LOG.debug("LoadMenus: load completed for current menu items");
+        Log.debug("ADMMenuNode","LoadMenus: load completed for current menu items");
     }
     
 //    //TODO: EXTERNAL MENU - SaveMenuItemToSage
@@ -1710,7 +1708,7 @@ public class ADMMenuNode {
 //        ValidateSubMenuDefault(OldParent);
 //        //rebuild any lists
 //        SaveMenuItemsToSage();
-//        LOG.debug("DeleteMenuItem: deleted '" + Name + "'");
+//        Log.debug("ADMMenuNode","DeleteMenuItem: deleted '" + Name + "'");
 //    }
 
     @SuppressWarnings("unchecked")
@@ -1727,7 +1725,7 @@ public class ADMMenuNode {
             //add the item into the MenuNodeList
             MenuNodeList().put(tMenu.Name, tMenu);
         }         
-        LOG.debug("RebuildMenuNodeList: added " + MenuNodeList().size() + " MenuItems");
+        Log.debug("ADMMenuNode","RebuildMenuNodeList: added " + MenuNodeList().size() + " MenuItems");
         return;
     }
     
@@ -1742,7 +1740,7 @@ public class ADMMenuNode {
         //rebuild the MenuNodeList
         RebuildMenuNodeList();
         SaveMenus();
-        LOG.debug("DeleteMenuItem: deleted '" + Name + "'");
+        Log.debug("ADMMenuNode","DeleteMenuItem: deleted '" + Name + "'");
     }
     
     public static void DeleteAllMenuItems(){
@@ -1754,7 +1752,7 @@ public class ADMMenuNode {
         //Create 1 new MenuItem at the TopMenu level
         NewMenuItem(ADMutil.TopMenu, 1) ;
         SaveMenus();
-        LOG.debug("DeleteAllMenuItems: completed");
+        Log.debug("ADMMenuNode","DeleteAllMenuItems: completed");
     }
     
     public static String NewMenuItem(String Parent, Integer SortKey){
@@ -1772,7 +1770,7 @@ public class ADMMenuNode {
         InsertNode(MenuNodeList().get(Parent).NodeItem, NewMenuItem, Boolean.TRUE);
         //ensure there is 1 default item
         ValidateSubMenuDefault(Parent);
-        LOG.debug("NewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
+        Log.debug("ADMMenuNode","NewMenuItem: Parent '" + Parent + "' Name '" + tMenuItemName + "' SortKey = '" + SortKey + "'");
         //ADMutil.ListObjectMembers(NewMenuItem);
         return tMenuItemName;
     }
@@ -1787,12 +1785,12 @@ public class ADMMenuNode {
         //do an Import for MENUS only but skip writing as we are still going to modify this and then save
         //Import tImport = new Import(DefaultsFullPath, util.ExportType.MENUS, Boolean.TRUE);
         new Import(DefaultsFullPath, util.ExportType.MENUS, Boolean.TRUE);
-        LOG.debug("LoadMenuItemDefaults: Import returned to Load Defaults");
+        Log.debug("ADMMenuNode","LoadMenuItemDefaults: Import returned to Load Defaults");
         
         ADMutil.ClearFocusStorage();
         
         //now build any dynamic submenus
-        LOG.debug("LoadMenuItemDefaults: building any dynamic submenus");
+        Log.debug("ADMMenuNode","LoadMenuItemDefaults: building any dynamic submenus");
         Integer Counter = 0;
         
         //build the TV Recordings submenu
@@ -1824,7 +1822,7 @@ public class ADMMenuNode {
         SortKeyUpdate(SageTVMenuVideos);
 
         SaveMenus();
-        LOG.debug("LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
+        Log.debug("ADMMenuNode","LoadMenuItemDefaults: loading default menu items from '" + DefaultsFullPath + "'");
     }
     
     public static String CreateDynamicMenuItem(String dKey, String dParent, String dActionType, Integer dSortKey){
@@ -1888,7 +1886,7 @@ public class ADMMenuNode {
         try {
             return MenuNodeList().containsKey(Name);
         } catch (Exception e) {
-            LOG.debug("GetMenuItemSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
+            Log.debug("ADMMenuNode","GetMenuItemSubMenu ERROR: Value not available for '" + Name + "' Exception = '" + e + "'");
             return Boolean.FALSE;
         }
     }
@@ -1930,10 +1928,10 @@ public class ADMMenuNode {
             if (!rID.equals(tID)){
                 rID = CleanPathChars(rID + File.separator + Const.MenuSharedfileName);
             }
-            //LOG.debug("GetMenuID: returning '" + rID + "'");
+            //Log.debug("ADMMenuNode","GetMenuID: returning '" + rID + "'");
             return rID;
         }else{
-            //LOG.debug("GetMenuID: returning '" + tID + "'");
+            //Log.debug("ADMMenuNode","GetMenuID: returning '" + tID + "'");
             return tID;
         }
     }
@@ -1942,43 +1940,43 @@ public class ADMMenuNode {
         Boolean Override = util.GetTrueFalseOption(Const.MenuManagerProp, "MenuLocationOverride", Boolean.FALSE);
         if (Override){
             String rLocation = util.GetOptionName(Const.MenuManagerProp, "MenuLocationFullPath", tLocation);
-            LOG.debug("GetDefaultMenuLocation: returning '" + rLocation + "'");
+            Log.debug("ADMMenuNode","GetDefaultMenuLocation: returning '" + rLocation + "'");
             return rLocation + File.separator + Const.MenuSharedfileName;
         }else{
-            LOG.debug("GetDefaultMenuLocation: returning '" + tLocation + "'");
+            Log.debug("ADMMenuNode","GetDefaultMenuLocation: returning '" + tLocation + "'");
             return tLocation;
         }
     }
     public static String GetDefaultMenuLocationLocal(){
         String tID = sagex.api.Global.GetUIContextName();
         String tLocation = util.MenusLocation() + File.separator + tID + ".properties";
-        LOG.debug("GetDefaultMenuLocationLocal: returning '" + tLocation + "'");
+        Log.debug("ADMMenuNode","GetDefaultMenuLocationLocal: returning '" + tLocation + "'");
         return tLocation;
     }
     public static String GetDefaultMenuLocationOverride(){
         String tLocation = util.MenusLocation() + File.separator + GetMenuID() + ".properties";
         String rLocation = util.GetOptionName(Const.MenuManagerProp, "MenuLocationFullPath", tLocation);
-        LOG.debug("GetDefaultMenuLocationOverride: returning '" + rLocation + "'");
+        Log.debug("ADMMenuNode","GetDefaultMenuLocationOverride: returning '" + rLocation + "'");
         return rLocation + File.separator + Const.MenuSharedfileName;
     }
     public static String GetDefaultMenuLocationPath(){
         String rLocation = util.GetOptionName(Const.MenuManagerProp, "MenuLocationFullPath", util.OptionNotFound);
         if (rLocation.equals(util.OptionNotFound)){
-            LOG.debug("GetDefaultMenuLocationPath: returning '" + util.UserDataLocation() + "'");
+            Log.debug("ADMMenuNode","GetDefaultMenuLocationPath: returning '" + util.UserDataLocation() + "'");
             return util.UserDataLocation();
         }else{
-            LOG.debug("GetDefaultMenuLocationPath: returning '" + rLocation + "'");
+            Log.debug("ADMMenuNode","GetDefaultMenuLocationPath: returning '" + rLocation + "'");
             return rLocation;
         }
     }
     //call this to change WHERE the overriden menus are stored
     public static void SetDefaultMenuLocation(String Location){
         if (Location==null || Location.isEmpty()){
-            LOG.debug("SetDefaultMenuLocation: null Location passed - no changes made to override location");
+            Log.debug("ADMMenuNode","SetDefaultMenuLocation: null Location passed - no changes made to override location");
         }else{
             String rLocation = util.GetOptionName(Const.MenuManagerProp, "MenuLocationFullPath", util.OptionNotFound);
-            LOG.debug("SetDefaultMenuLocation: old location '" + rLocation + "'");
-            LOG.debug("SetDefaultMenuLocation: new location '" + Location + "'");
+            Log.debug("ADMMenuNode","SetDefaultMenuLocation: old location '" + rLocation + "'");
+            Log.debug("ADMMenuNode","SetDefaultMenuLocation: new location '" + Location + "'");
             if (!rLocation.equals(Location)){
                 BackupMenus();
                 //save the new path setting
@@ -1988,13 +1986,13 @@ public class ADMMenuNode {
                     //as the menu file exists - load menus from this file
                     util.SetOption(Const.MenuManagerProp, "MenuLocationFullPath", Location);
                     LoadMenus();
-                    LOG.debug("SetDefaultMenuLocation: loading menus from existing override location '" + OverrideFilePath + "'");
+                    Log.debug("ADMMenuNode","SetDefaultMenuLocation: loading menus from existing override location '" + OverrideFilePath + "'");
                 }else{
                     //as the menu file does not exist - save the current menus to this file
                     SaveMenusOverride(OverrideFilePath);
                     util.SetOption(Const.MenuManagerProp, "MenuLocationFullPath", Location);
                     LoadMenus();
-                    LOG.debug("SetDefaultMenuLocation: saving current menus to override location '" + OverrideFilePath + "'");
+                    Log.debug("ADMMenuNode","SetDefaultMenuLocation: saving current menus to override location '" + OverrideFilePath + "'");
                 }
             }
         }
@@ -2015,13 +2013,13 @@ public class ADMMenuNode {
                 //as the menu file exists - load menus from this file
                 util.SetTrueFalseOption(Const.MenuManagerProp, "MenuLocationOverride", Boolean.TRUE);
                 LoadMenus();
-                LOG.debug("ChangeMenuLocationOverride: loading menus from existing override location '" + OverrideFilePath + "'");
+                Log.debug("ADMMenuNode","ChangeMenuLocationOverride: loading menus from existing override location '" + OverrideFilePath + "'");
             }else{
                 //as the menu file does not exist - save the current menus to this file
                 SaveMenusOverride();
                 util.SetTrueFalseOption(Const.MenuManagerProp, "MenuLocationOverride", Boolean.TRUE);
                 LoadMenus();
-                LOG.debug("ChangeMenuLocationOverride: saving current menus to override location '" + OverrideFilePath + "'");
+                Log.debug("ADMMenuNode","ChangeMenuLocationOverride: saving current menus to override location '" + OverrideFilePath + "'");
             }
         }else{
             //switching from Override to Client
@@ -2029,7 +2027,7 @@ public class ADMMenuNode {
             SaveMenusLocal();
             util.SetTrueFalseOption(Const.MenuManagerProp, "MenuLocationOverride", Boolean.FALSE);
             LoadMenus();
-            LOG.debug("ChangeMenuLocationOverride: saving current menus to client based location '" + GetDefaultMenuLocation() + "'");
+            Log.debug("ADMMenuNode","ChangeMenuLocationOverride: saving current menus to client based location '" + GetDefaultMenuLocation() + "'");
         }
     }
     
@@ -2043,7 +2041,7 @@ public class ADMMenuNode {
                 }
             }
         }
-        LOG.debug("ClearDirty: cleared Dirty Flag from '" + counter + "' menu items. Total Items '" + MenuNodeList().size() + "'");
+        Log.debug("ADMMenuNode","ClearDirty: cleared Dirty Flag from '" + counter + "' menu items. Total Items '" + MenuNodeList().size() + "'");
     }
 
     public static String LogDirty(){
@@ -2060,15 +2058,15 @@ public class ADMMenuNode {
         }
         ReturnString = buf.toString();
         ReturnString = "TOTALS: " + counter + "' Dirty items. Total Items '" + MenuNodeList().size() + "' \n" + ReturnString;
-        LOG.debug("LogDirty: found \n" + ReturnString);
+        Log.debug("ADMMenuNode","LogDirty: found \n" + ReturnString);
         return ReturnString;
     }
     
     public static void PropertySave(Properties MenuItemProps){
         String PropLocation = "";
-        //LOG.debug("PropertySave: starting - Menu Items '" + MenuNodeList().keySet() + "'");
+        //Log.debug("ADMMenuNode","PropertySave: starting - Menu Items '" + MenuNodeList().keySet() + "'");
         for (String tName : MenuNodeList().keySet()){
-            //LOG.debug("PropertySave: tName '" + tName + "'");
+            //Log.debug("ADMMenuNode","PropertySave: tName '" + tName + "'");
             if (!tName.equals(ADMutil.TopMenu)){
                 if (GetMenuItemIsCreatedNotLoaded(tName) && ADMutil.GetDefaultsWorkingMode()){
                     //skip exporting this item as we are in DefaultsWorkingMode and this is a Created item so it should not be exported
@@ -2103,7 +2101,7 @@ public class ADMMenuNode {
                     if (GetMenuItemActionType(tName).equals(ADMAction.LaunchExternalApplication)){
                         GetMenuItemActionExternal(tName).AddProperties(MenuItemProps);
                     }
-                    //LOG.debug("ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
+                    //Log.debug("ADMMenuNode","ExportMenuItems: exported - '" + entry.getValue().getName() + "'");
                 }
             }
         }
@@ -2122,16 +2120,16 @@ public class ADMMenuNode {
             if (aNode.Parent.equals(ADMutil.TopMenu)){
                 //root.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(root(), aNode, Boolean.FALSE);
-                //LOG.debug("AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
+                //Log.debug("ADMMenuNode","AddNode: node '" + aNode.ButtonText + "' not found so adding to ROOT");
             }else{
                 AddNode(MenuNodeList().get(aNode.Parent));
                 DefaultMutableTreeNode tParent = FindNode(root(), aNode.Parent);
                 //tParent.add(new DefaultMutableTreeNode(aNode));
                 InsertNode(tParent, aNode, Boolean.FALSE);
-                //LOG.debug("AddNode: node '" + aNode.ButtonText + "' not found so adding");
+                //Log.debug("ADMMenuNode","AddNode: node '" + aNode.ButtonText + "' not found so adding");
             }
         }else{
-            //LOG.debug("AddNode: node '" + aNode.ButtonText + "' already exists");
+            //Log.debug("ADMMenuNode","AddNode: node '" + aNode.ButtonText + "' already exists");
         }
     }
     
@@ -2196,11 +2194,11 @@ public class ADMMenuNode {
             if(child.equals(Node)) 
             { 
                 //tree node with string found 
-                //LOG.debug("FindNode: '" + Node + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //Log.debug("ADMMenuNode","FindNode: '" + Node + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return child;                          
             } 
         }         
-        //LOG.debug("FindNode: '" + Node + "' not found.");
+        //Log.debug("ADMMenuNode","FindNode: '" + Node + "' not found.");
         return null;
     }
     
@@ -2212,11 +2210,11 @@ public class ADMMenuNode {
             if(NodeKey.equals(child.getUserObject().toString())) 
             { 
                 //tree node with string found 
-                //LOG.debug("FindNode: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //Log.debug("ADMMenuNode","FindNode: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return child;                          
             } 
         }         
-        //LOG.debug("FindNode: '" + NodeKey + "' not found.");
+        //Log.debug("ADMMenuNode","FindNode: '" + NodeKey + "' not found.");
         return null;
     }
     
@@ -2230,7 +2228,7 @@ public class ADMMenuNode {
                 return tMenu.Name;
             }
         }         
-        //LOG.debug("FindNode: '" + NodeKey + "' not found.");
+        //Log.debug("ADMMenuNode","FindNode: '" + NodeKey + "' not found.");
         return ADMutil.OptionNotFound;
     }
     
@@ -2242,11 +2240,11 @@ public class ADMMenuNode {
             if(NodeKey.equals(child.getUserObject().toString())) 
             { 
                 //tree node with string found 
-                //LOG.debug("NodeExists: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+                //Log.debug("ADMMenuNode","NodeExists: '" + NodeKey + "' found = '" + child + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
                 return Boolean.TRUE;                          
             } 
         }         
-        //LOG.debug("NodeExists: '" + NodeKey + "' not found.");
+        //Log.debug("ADMMenuNode","NodeExists: '" + NodeKey + "' not found.");
         return Boolean.FALSE;
     }
     
@@ -2256,7 +2254,7 @@ public class ADMMenuNode {
         while (en.hasMoreElements())   {
             DefaultMutableTreeNode child = en.nextElement();
             ADMMenuNode tMenu = (ADMMenuNode)child.getUserObject();
-            LOG.debug("ListAllNodes(" + LogText + "}: '" + tMenu.Name + "' ButtonText = '" + tMenu.ButtonText + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
+            Log.debug("ADMMenuNode","ListAllNodes(" + LogText + "}: '" + tMenu.Name + "' ButtonText = '" + tMenu.ButtonText + "' childcount = '" + child.getChildCount() + "' Parent = '" + child.getParent() + "' Level = '" + child.getLevel() + "' Leaf = '" + child.isLeaf() + "'"  );
         }         
     }
     
@@ -2283,7 +2281,7 @@ public class ADMMenuNode {
         DefaultMutableTreeNode oldParent = (DefaultMutableTreeNode)Node.getParent();   
         oldParent.remove(Node);   
         newParent.add(Node);  
-        LOG.debug("setParent: node = '" + Node + "' oldParent = '" + oldParent +"' newParent = '" + newParent + "'");
+        Log.debug("ADMMenuNode","setParent: node = '" + Node + "' oldParent = '" + oldParent +"' newParent = '" + newParent + "'");
     }
     
     //TODO: EXTERNAL MENU - Save
@@ -2330,9 +2328,9 @@ public class ADMMenuNode {
             }else if (PropType.equals("BlockedSageUsersList")){
                 //assume that the list has already been modified by the calling routine
             }else{
-                LOG.debug("Save - invalid option passed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
+                Log.debug("ADMMenuNode","Save - invalid option passed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
             }
-            //LOG.debug("Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
+            //Log.debug("ADMMenuNode","Save completed for '" + PropType + "' '" + Name + "' = '" + Setting + "'");
         }
     }
     
@@ -2354,15 +2352,15 @@ public class ADMMenuNode {
         //String UIContext = sagex.api.Global.GetUIContextName();
         if (!UIMenuNodeList.containsKey(UIContext)){
             //create the MenuNodeList for this UIContext
-            LOG.debug("MenuNodeList: creating MenuNodeList for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","MenuNodeList: creating MenuNodeList for '" + UIContext + "'");
             UIMenuNodeList.put(UIContext, new LinkedHashMap<String,ADMMenuNode>());
         }
-        //LOG.debug("MenuNodeList: '" + UIContext + "'");
+        //Log.debug("ADMMenuNode","MenuNodeList: '" + UIContext + "'");
         Map<String,ADMMenuNode> tMenuNodeList = null;
         try {
             tMenuNodeList = UIMenuNodeList.get(UIContext);
         } catch (Exception e) {
-            //LOG.debug("MenuNodeList ERROR: '" + UIContext + "' = '" + e + "'");
+            //Log.debug("ADMMenuNode","MenuNodeList ERROR: '" + UIContext + "' = '" + e + "'");
         }
         return tMenuNodeList;
     }
@@ -2370,28 +2368,28 @@ public class ADMMenuNode {
     public static DefaultMutableTreeNode root(){
         //changed to use new "shared" ID
         String UIContext = GetMenuID();
-        //LOG.debug("root: GetMenuID '" + UIContext + "'");
+        //Log.debug("ADMMenuNode","root: GetMenuID '" + UIContext + "'");
         //String UIContext = sagex.api.Global.GetUIContextName();
         if (!UIroot.containsKey(UIContext)){
-            LOG.debug("root: creating root for '" + UIContext + "'");
+            Log.debug("ADMMenuNode","root: creating root for '" + UIContext + "'");
             ADMMenuNode rootNode = new ADMMenuNode(ADMutil.TopMenu);
             UIroot.put(UIContext,new DefaultMutableTreeNode(rootNode));
             rootNode.NodeItem = UIroot.get(UIContext);
             rootNode.ButtonText = "Top Level";
         }
-        //LOG.debug("root: '" + UIContext + "'");
+        //Log.debug("ADMMenuNode","root: '" + UIContext + "'");
         return UIroot.get(UIContext);
     }
 
 //    public static DefaultMutableTreeNode root(String UIContext){
 //        if (!UIroot.containsKey(UIContext)){
-//            LOG.debug("root: creating root for '" + UIContext + "'");
+//            Log.debug("ADMMenuNode","root: creating root for '" + UIContext + "'");
 //            ADMMenuNode rootNode = new ADMMenuNode(ADMutil.TopMenu);
 //            UIroot.put(UIContext,new DefaultMutableTreeNode(rootNode));
 //            rootNode.NodeItem = UIroot.get(UIContext);
 //            rootNode.ButtonText = "Top Level";
 //        }
-//        //LOG.debug("root: '" + UIContext + "'");
+//        //Log.debug("ADMMenuNode","root: '" + UIContext + "'");
 //        return UIroot.get(UIContext);
 //    }
     

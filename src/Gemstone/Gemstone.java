@@ -4,10 +4,6 @@
  */
 package Gemstone;
 
-import java.util.logging.Level;
-import org.apache.log4j.Logger;
-import sagex.phoenix.util.Loggers;
-import sagex.util.Log4jConfigurator;
 
 /**
  *
@@ -21,7 +17,7 @@ public class Gemstone {
             try {
                     INSTANCE.init();
             } catch (Exception e) {
-                    Loggers.LOG.error("Failed to load gemstone.", e);
+                    Log.error("Gemstone", "INSTANCE init Failed to load gemstone. " + e);
             }
     }
 
@@ -29,16 +25,9 @@ public class Gemstone {
             return INSTANCE;
     }
 
-    private Logger log = Logger.getLogger(this.getClass());
-
     protected void init() {
-        try {
-            Log4jConfigurator.configureQuietly("gemstone", this.getClass().getClassLoader());
-            log.info("Initializing Gemstone - Version: " +  api.GetVersion() + " : logging started: " + util.LogInfo());
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(Gemstone.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        Log.info("Gemstone","Initializing Gemstone - Version: " +  api.GetVersion() + " " + util.LogInfo());
+
     }
 
     protected Gemstone() {

@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.Properties;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 
 /**
@@ -24,7 +22,6 @@ import sagex.UIContext;
  * - 04/04/2012 - updated for Gemstone
  */
 public class Import {
-    static private final Logger LOG = Logger.getLogger(Import.class);
     private util.ExportType eType = util.ExportType.GENERAL;
     private String FilePath = "";
     private PropertiesExt Props = new PropertiesExt();
@@ -68,21 +65,21 @@ public class Import {
 
         Boolean KeepProcessing = Boolean.TRUE;
         if (FilePath==null){
-            LOG.debug("Import: null FilePath passed.");
+            Log.debug("Import","Import: null FilePath passed.");
             KeepProcessing = Boolean.FALSE;
             this.Description = "Import failed. FilePath was null.";
         }else{
             //read the properties from the properties file
-            LOG.debug("Import: FilePath passed '" + FilePath + "'");
+            Log.debug("Import","Import: FilePath passed '" + FilePath + "'");
             if (FromServer){
             	//fails larger than 65535 bytes will fail so need to catch the error
             	String ServerImportProps = "";
                 try {
 					ServerImportProps = sagex.api.Utility.GetFileAsString(UIContext.SAGETV_PROCESS_LOCAL_UI, new File(FilePath));
 	                Props.load(ServerImportProps);
-	                LOG.debug("Import: loaded '" + Props.size() + "' properties from the server");
+	                Log.debug("Import","Import: loaded '" + Props.size() + "' properties from the server");
 				} catch (Exception e) {
-		            LOG.debug("Import: GetFileAsString Failed - check server logs for error details.");
+		            Log.debug("Import","Import: GetFileAsString Failed - check server logs for error details.");
 		            this.Description = "";
 	                KeepProcessing = Boolean.FALSE;
 				}
@@ -95,7 +92,7 @@ public class Import {
                         in.close();
                     }
                 } catch (Exception ex) {
-                    LOG.debug("Import: file not found inporting properties " + util.class.getName() + ex);
+                    Log.debug("Import","Import: file not found inporting properties " + util.class.getName() + ex);
                     KeepProcessing = Boolean.FALSE;
 		            this.Description = "";
                 }
@@ -225,32 +222,32 @@ public class Import {
             FileInputStream in = new FileInputStream(FilePath);
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, "ISO-8859-1"));
-                LOG.debug("IsOldADMExport: BufferedReader '" + FilePath + "'");
+                Log.debug("Import","IsOldADMExport: BufferedReader '" + FilePath + "'");
                 try {
                     String Line = reader.readLine();
-                    LOG.debug("IsOldADMExport: reader readline '" + FilePath + "'");
+                    Log.debug("Import","IsOldADMExport: reader readline '" + FilePath + "'");
                     reader.close();
-                    LOG.debug("IsOldADMExport: reader close '" + FilePath + "'");
+                    Log.debug("Import","IsOldADMExport: reader close '" + FilePath + "'");
                     in.close();
-                    LOG.debug("IsOldADMExport: close in '" + FilePath + "'");
+                    Log.debug("Import","IsOldADMExport: close in '" + FilePath + "'");
                     if (Line.contains(ADMutil.ADMPropertyComment)){
                         OldADMExportFound = Boolean.TRUE;
-                        LOG.debug("IsOldADMExport: old ADM Menus Export found in '" + FilePath + "'");
+                        Log.debug("Import","IsOldADMExport: old ADM Menus Export found in '" + FilePath + "'");
                     }else{
                         OldADMExportFound = Boolean.FALSE;
-                        LOG.debug("IsOldADMExport: old ADM Menus Export NOT found in '" + FilePath + "'");
+                        Log.debug("Import","IsOldADMExport: old ADM Menus Export NOT found in '" + FilePath + "'");
                     }
                 } catch (IOException ex) {
                     OldADMExportFound = Boolean.FALSE;
-                    LOG.debug("IsOldADMExport: IOException checking old ADM import " + util.class.getName() + ex);
+                    Log.debug("Import","IsOldADMExport: IOException checking old ADM import " + util.class.getName() + ex);
                 }
             } catch (UnsupportedEncodingException ex) {
                 OldADMExportFound = Boolean.FALSE;
-                LOG.debug("IsOldADMExport: UnsupportedEncodingException checking old ADM import " + util.class.getName() + ex);
+                Log.debug("Import","IsOldADMExport: UnsupportedEncodingException checking old ADM import " + util.class.getName() + ex);
             }
 
         } catch (FileNotFoundException ex) {
-            LOG.debug("IsOldADMExport: file not found inporting properties " + util.class.getName() + ex);
+            Log.debug("Import","IsOldADMExport: file not found inporting properties " + util.class.getName() + ex);
             OldADMExportFound = Boolean.FALSE;
         }
         return OldADMExportFound;
@@ -290,36 +287,36 @@ public class Import {
 
     public void Load(){
         //load the properties to the SageTV properties file or menus file
-        //LOG.debug("Load: MENUS '" + this.MENUS + "' FLOWS '" + this.FLOWS + "' GENERAL '" + this.GENERAL + "' WIDGETS '" + this.WIDGETS + "'");
+        //Log.debug("Import","Load: MENUS '" + this.MENUS + "' FLOWS '" + this.FLOWS + "' GENERAL '" + this.GENERAL + "' WIDGETS '" + this.WIDGETS + "'");
         if (this.Props.size()>0 && this.IsValid){
             //clean up existing Properties from the SageTV properties file before writing the new ones
             String tProp = "";
             if (IsALL()){
                 tProp = Const.BaseProp;
                 util.RemovePropertyAndChildren(tProp);
-                LOG.debug("Load: removing old properties for ALL '" + tProp + "'");
+                Log.debug("Import","Load: removing old properties for ALL '" + tProp + "'");
             }else{
                 if (IsFLOW()){
                     tProp = Flow.GetFlowBaseProp(this.FLOW);
                     util.RemovePropertyAndChildren(tProp);
-                    LOG.debug("Load: removing old properties for specific Flow '" + tProp + "'");
+                    Log.debug("Import","Load: removing old properties for specific Flow '" + tProp + "'");
                 }
                 if (this.FLOWS){
                     tProp = Const.BaseProp + Const.PropDivider + Const.FlowProp;
                     util.RemovePropertyAndChildren(tProp);
-                    LOG.debug("Load: removing old properties for FLOWS type '" + tProp + "'");
+                    Log.debug("Import","Load: removing old properties for FLOWS type '" + tProp + "'");
                 }
                 if (this.WIDGETS){
                     tProp = Const.BaseProp + Const.PropDivider + Const.WidgetProp;
                     util.RemovePropertyAndChildren(tProp);
-                    LOG.debug("Load: removing old properties for WIDGET type '" + tProp + "'");
+                    Log.debug("Import","Load: removing old properties for WIDGET type '" + tProp + "'");
                 }
                 if (this.GENERAL){
                     //remove all Gemstone properties BUT NOT FLOWS or WIDGETS
                     tProp = Const.BaseProp;
                     SafeRemoveAllProperties(tProp);
                     SafeRemoveAllSubProperties(tProp);
-                    LOG.debug("Load: removing old properties for GENERAL type '" + tProp + "'");
+                    Log.debug("Import","Load: removing old properties for GENERAL type '" + tProp + "'");
                 }
                 //no need to remove properties for MENUS as they are stored in a separate file
 
@@ -330,15 +327,15 @@ public class Import {
 
             for (String tPropertyKey : this.Props.stringPropertyNames()){
                 if (tPropertyKey.equals(Const.ExportPropKey) || tPropertyKey.equals(Const.ExportTypeKey) || tPropertyKey.equals(Const.ExportPropName) || tPropertyKey.equals(Const.ExportDateTimeKey) || tPropertyKey.equals(Const.ExportFlowName)){
-                    //LOG.debug("Load: skipping '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
+                    //Log.debug("Import","Load: skipping '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
                 }else if(tPropertyKey.equals("FLOW") || tPropertyKey.equals("FLOWS") || tPropertyKey.equals("GENERAL") || tPropertyKey.equals("MENUS") || tPropertyKey.equals("WIDGETS")){
-                    //LOG.debug("Load: skipping type identifier '" + tPropertyKey + "'");
+                    //Log.debug("Import","Load: skipping type identifier '" + tPropertyKey + "'");
                 }else if(tPropertyKey.startsWith(ADMutil.SagePropertyLocation)){
                     Menus.put(tPropertyKey, this.Props.getProperty(tPropertyKey));
-                    //LOG.debug("Load: processing menuitem '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
+                    //Log.debug("Import","Load: processing menuitem '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
                 }else{
                     util.SetProperty(tPropertyKey, this.Props.getProperty(tPropertyKey));
-                    //LOG.debug("Load: loading '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
+                    //Log.debug("Import","Load: loading '" + tPropertyKey + "' = '" + this.Props.getProperty(tPropertyKey) + "'");
                 }
             }
             if (Menus.size()>0){
@@ -346,13 +343,13 @@ public class Import {
                 this.MenusLoaded = ADMMenuNode.PropertyLoad(Menus);
                 if (this.MenusLoaded){
                     if (MenusSkipWrite){
-                        LOG.debug("Load: menus imported - write skipped");
+                        Log.debug("Import","Load: menus imported - write skipped");
                     }else{
                         WriteMenuProperties(Menus);
-                        LOG.debug("Load: menus imported and written");
+                        Log.debug("Import","Load: menus imported and written");
                     }
                 }else{
-                    LOG.debug("Load: menus not imported");
+                    Log.debug("Import","Load: menus not imported");
                 }
             }
         }
@@ -372,10 +369,10 @@ public class Import {
                     out.close();
                 }
             } catch (Exception ex) {
-                LOG.debug("WriteMenuProperties: error exporting properties " + util.class.getName() + ex);
+                Log.debug("Import","WriteMenuProperties: error exporting properties " + util.class.getName() + ex);
             }
         }else{
-            LOG.debug("WriteMenuProperties: no properties to export");
+            Log.debug("Import","WriteMenuProperties: no properties to export");
         }
         
     }
@@ -387,10 +384,10 @@ public class Import {
             String tProp = PropLocation + Const.PropDivider + PropItem;
             if (tProp.startsWith(Const.BaseProp + Const.PropDivider + Const.FlowProp) || tProp.startsWith(Const.BaseProp + Const.PropDivider + Const.WidgetProp)){
                 //skip this property
-                LOG.debug("SafeRemoveAllProperties: skipping '" + tProp + "'");
+                Log.debug("Import","SafeRemoveAllProperties: skipping '" + tProp + "'");
             }else{
                 util.RemoveProperty(tProp);
-                LOG.debug("SafeRemoveAllProperties: removing '" + tProp + "'");
+                Log.debug("Import","SafeRemoveAllProperties: removing '" + tProp + "'");
             }
         }
     }

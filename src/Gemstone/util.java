@@ -26,7 +26,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.vfs.IMediaResource;
 import sagex.phoenix.vfs.views.ViewFolder;
@@ -45,7 +44,6 @@ import sagex.api.PluginAPI;
  */
 public class util {
 
-    static private final Logger LOG = Logger.getLogger(util.class);
     private static final char[] symbols = new char[36];
     private static boolean symbolsInit = false;
     private static boolean locationsInit = false;
@@ -60,7 +58,7 @@ public class util {
 
         //String test = StringNumberFormat("27.96903", 0, 2);
         //String test = StringNumberFormat("27.1", 0, 2);
-        //LOG.debug(test);
+        //Log.debug("util",test);
         //api.InitLogger();
         //test1();
         
@@ -77,45 +75,45 @@ public class util {
 //                Props.load(in);
 //                in.close();
 //            } catch (IOException ex) {
-//                LOG.debug("test1: IO exception inporting properties " + util.class.getName() + ex);
+//                Log.debug("util","test1: IO exception inporting properties " + util.class.getName() + ex);
 //                KeepProcessing = Boolean.FALSE;
 //            }
 //        } catch (FileNotFoundException ex) {
-//            LOG.debug("test1: file not found inporting properties " + util.class.getName() + ex);
+//            Log.debug("util","test1: file not found inporting properties " + util.class.getName() + ex);
 //            KeepProcessing = Boolean.FALSE;
 //        }
 //        if (KeepProcessing){
-//            LOG.debug("test1: start of BRANCHES");
+//            Log.debug("util","test1: start of BRANCHES");
 //            for (String Key:Props.GetSubpropertiesThatAreBranches("Gemstone/Widgets")){
-//                LOG.debug("TEST item '" + Key + "'");
+//                Log.debug("util","TEST item '" + Key + "'");
 //            }
-//            LOG.debug("test1: start of LEAVES");
+//            Log.debug("util","test1: start of LEAVES");
 //            for (String Key:Props.GetSubpropertiesThatAreLeaves("Gemstone/Widgets")){
-//                LOG.debug("TEST item '" + Key + "'");
+//                Log.debug("util","TEST item '" + Key + "'");
 //            }
 //        }
 //        
 //    }
     
     private static void print(Map map) {
-        LOG.debug("One=" + map.get("One"));
-        LOG.debug("Two=" + map.get("Two"));
-        LOG.debug("Three=" + map.get("Three"));
-        LOG.debug("Four=" + map.get("Four"));
-        LOG.debug("Five=" + map.get("Five"));
+        Log.debug("util","One=" + map.get("One"));
+        Log.debug("util","Two=" + map.get("Two"));
+        Log.debug("util","Three=" + map.get("Three"));
+        Log.debug("util","Four=" + map.get("Four"));
+        Log.debug("util","Five=" + map.get("Five"));
     }
     private static void print2(Map map, Integer items) {
         for(int i=1; i<=items; i++){
-            LOG.debug("TEST " + map.getClass() + " ITEMS '" + items + "' - " + TempName(i) + "=" + map.get(TempName(i)) + " Mem = '" + FreeMem() + "'");
+            Log.debug("util","TEST " + map.getClass() + " ITEMS '" + items + "' - " + TempName(i) + "=" + map.get(TempName(i)) + " Mem = '" + FreeMem() + "'");
         }
     }
     private static void testMap(Map map, Integer Multiplier) {
-        LOG.debug("Testing " + map.getClass());
+        Log.debug("util","Testing " + map.getClass());
         for(int i=1; i<=Multiplier; i++){
             map.put(TempName(i), new byte[10*1024*1024]);
             print2(map,i);
         }
-//        LOG.debug("Adding 10MB * " + Multiplier);
+//        Log.debug("util","Adding 10MB * " + Multiplier);
 ////        for(int i=1; i<=Multiplier; i++){
 //        byte[] block = new byte[10*1024*1024*Multiplier]; // 10 MB
 ////        }
@@ -126,11 +124,11 @@ public class util {
         for (int i = 0;i<repeat;i++){
             java.lang.System.gc();
         }
-        LOG.debug("gc: run " + repeat + " times. Before/After: " + Before + FreeMem());
+        Log.debug("util","gc: run " + repeat + " times. Before/After: " + Before + FreeMem());
     }
     private static Timer gcTimer;
     public static void gcback(final int repeat){
-        LOG.debug("gc: Starting the background gc " + repeat + " times.");
+        Log.debug("util","gc: Starting the background gc " + repeat + " times.");
         final String Before = FreeMem();
         //run the gc in a thread
         gcTimer = new Timer();
@@ -141,7 +139,7 @@ public class util {
                     java.lang.System.gc();
                 }
                 gcTimer.cancel();
-                LOG.debug("gc: run " + repeat + " times. Before/After: " + Before + FreeMem());
+                Log.debug("util","gc: run " + repeat + " times. Before/After: " + Before + FreeMem());
             }
         };
         //wait 1 second and then run the gc
@@ -158,21 +156,21 @@ public class util {
         Long total = Runtime.getRuntime().totalMemory();
         Long free = Runtime.getRuntime().freeMemory();
         String InfoText = Math.round((total-free)/1000000.0) + "MB";
-        LOG.debug(Message + " FreeMem '" + InfoText + "'");
+        Log.debug("util",Message + " FreeMem '" + InfoText + "'");
     }
     private static String TempName(Integer i) {
         return "Item_" + i;
     }
     
 //    private static void testMap(Map map, Integer Multiplier) {
-//        LOG.debug("Testing " + map.getClass());
+//        Log.debug("util","Testing " + map.getClass());
 //        map.put("One", new Integer(1));
 //        map.put("Two", new Integer(2));
 //        map.put("Three", new Integer(3));
 //        map.put("Four", new Integer(4));
 //        map.put("Five", new Integer(5));
 //        print(map);
-//        LOG.debug("Adding 10MB * " + Multiplier);
+//        Log.debug("util","Adding 10MB * " + Multiplier);
 ////        for(int i=1; i<=Multiplier; i++){
 //        byte[] block = new byte[10*1024*1024*Multiplier]; // 10 MB
 ////        }
@@ -192,7 +190,7 @@ public class util {
         try {
             a = Float.parseFloat(Input);
         } catch (NumberFormatException nfe) {
-            LOG.error("StringNumberFormat - NumberFormatException for '" + Input + "'");
+            Log.error("util","StringNumberFormat - NumberFormatException for '" + Input + "'");
             return Input;
         }
         NumberFormat df = DecimalFormat.getInstance();
@@ -347,7 +345,16 @@ public class util {
             return Boolean.TRUE;
         }
     }
-    
+
+    public static Boolean HasServerProperty(String Property){
+        String tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        if (tValue==null || tValue.equals(OptionNotFound)){
+            return Boolean.FALSE;
+        }else{
+            return Boolean.TRUE;
+        }
+    }
+
     public static String GetProperty(String Property, String DefaultValue){
         return GetProperty(Property, DefaultValue, Boolean.FALSE);
     }
@@ -364,9 +371,17 @@ public class util {
             return tValue;
         }
     }
-    
+
     public static Boolean GetPropertyAsBoolean(String Property, Boolean DefaultValue){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        return GetPropertyAsBoolean(Property,DefaultValue,false);
+    }
+    public static Boolean GetPropertyAsBoolean(String Property, Boolean DefaultValue, Boolean serverProp){
+        String tValue = null;
+        if (serverProp){
+            tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }else{
+            tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }
         if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }else{
@@ -411,19 +426,35 @@ public class util {
             return TriState.YES;
         }
     }
-    
+
     public static List<String> GetPropertyAsList(String Property){
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        return GetPropertyAsList(Property, false);
+    }
+    public static List<String> GetPropertyAsList(String Property, Boolean serverProp){
+        String tValue = null;
+        if (serverProp){
+            tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }else{
+            tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }
         if (tValue==null || tValue.equals(OptionNotFound)){
             return new LinkedList<String>();
         }else{
             return ConvertStringtoList(tValue);
         }
     }
-    
+
     public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue){
+        return GetPropertyAsInteger(Property,DefaultValue,false);
+    }
+    public static Integer GetPropertyAsInteger(String Property, Integer DefaultValue, Boolean serverProp){
         //read in the Sage Property and force convert it to an Integer
-        String tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        String tValue = null;
+        if (serverProp){
+            tValue = sagex.api.Configuration.GetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }else{
+            tValue = sagex.api.Configuration.GetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, null);
+        }
         if (tValue==null || tValue.equals(OptionNotFound)){
             return DefaultValue;
         }
@@ -487,11 +518,22 @@ public class util {
     }
 
     public static void SetPropertyAsList(String Property, List<String> ListValue){
+        SetPropertyAsList(Property,ListValue,false);
+    }
+    public static void SetPropertyAsList(String Property, List<String> ListValue, Boolean serverProp){
         String Value = ConvertListtoString(ListValue);
         if (ListValue.size()>0){
-            sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+            if(serverProp){
+                sagex.api.Configuration.SetServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+            }else{
+                sagex.api.Configuration.SetProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property, Value);
+            }
         }else{
-            RemoveProperty(Property);
+            if(serverProp){
+                RemoveServerProperty(Property);
+            }else{
+                RemoveProperty(Property);
+            }
         }
     }
 
@@ -508,7 +550,14 @@ public class util {
     }
 
     public static void RemoveProperty(String Property){
-        sagex.api.Configuration.RemoveProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+        RemoveProperty(Property,false);
+    }
+    public static void RemoveProperty(String Property, Boolean serverProp){
+        if(serverProp){
+            sagex.api.Configuration.RemoveServerProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+        }else{
+            sagex.api.Configuration.RemoveProperty(new UIContext(sagex.api.Global.GetUIContextName()),Property);
+        }
     }
 
     public static void RemoveServerPropertyAndChildren(String Property){
@@ -543,14 +592,14 @@ public class util {
     }
     
     public static String EvaluateAttribute(String Attribute){
-        //LOG.debug("EvaluateAttribute: Attribute = '" + Attribute + "'");
+        //Log.debug("util","EvaluateAttribute: Attribute = '" + Attribute + "'");
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), Attribute);
         if (passvalue[0]==null){
-            LOG.debug("EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
+            Log.debug("util","EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
             return OptionNotFound;
         }else{
-            //LOG.debug("EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
+            //Log.debug("util","EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
             return passvalue[0].toString();
         }
         
@@ -568,41 +617,41 @@ public class util {
     
     public static void OptionsLastFocusedSet(Integer CurrentLevel, String FocusedItem){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsFocused + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsFocusedItem;
-        //LOG.debug("OptionsLastFocusedSet: CurrentLevel = '" + CurrentLevel + "' FocusedItem = '" + FocusedItem + "'");
+        //Log.debug("util","OptionsLastFocusedSet: CurrentLevel = '" + CurrentLevel + "' FocusedItem = '" + FocusedItem + "'");
         SetProperty(tProp, FocusedItem);
     }
 
     public static String OptionsLastFocusedGet(Integer CurrentLevel){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsFocused + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsFocusedItem;
         String FocusedItem = GetProperty(tProp, OptionNotFound);
-        //LOG.debug("OptionsLastFocusedGet: CurrentLevel = '" + CurrentLevel + "' FocusedItem = '" + FocusedItem + "'");
+        //Log.debug("util","OptionsLastFocusedGet: CurrentLevel = '" + CurrentLevel + "' FocusedItem = '" + FocusedItem + "'");
         return FocusedItem;
     }
 
     public static String OptionsTypeGet(Integer CurrentLevel){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsType + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsTypeName;
         String OptionsType = GetProperty(tProp, OptionNotFound);
-        //LOG.debug("OptionsTypeGet: CurrentLevel = '" + CurrentLevel + "' OptionsType = '" + OptionsType + "'");
+        //Log.debug("util","OptionsTypeGet: CurrentLevel = '" + CurrentLevel + "' OptionsType = '" + OptionsType + "'");
         return OptionsType;
     }
 
     public static Integer OptionsTypeSet(Integer CurrentLevel, String OptionsType){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsType + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsTypeName;
-        //LOG.debug("OptionsTypeSet: CurrentLevel = '" + CurrentLevel + "' OptionsType = '" + OptionsType + "'");
+        //Log.debug("util","OptionsTypeSet: CurrentLevel = '" + CurrentLevel + "' OptionsType = '" + OptionsType + "'");
         SetProperty(tProp, OptionsType);
         return CurrentLevel;
     }
 
     public static void OptionsTitleSet(Integer CurrentLevel, String Title){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsTitle + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsTitleName;
-        //LOG.debug("OptionsTitleSet: CurrentLevel = '" + CurrentLevel + "' Title = '" + Title + "'");
+        //Log.debug("util","OptionsTitleSet: CurrentLevel = '" + CurrentLevel + "' Title = '" + Title + "'");
         SetProperty(tProp, Title);
     }
 
     public static String OptionsTitleGet(Integer CurrentLevel){
         String tProp = Const.BaseProp + Const.PropDivider + Const.OptionsTitle + Const.PropDivider + CurrentLevel.toString() + Const.PropDivider + Const.OptionsTitleName;
         String Title = GetProperty(tProp, OptionNotFound);
-        //LOG.debug("OptionsTitleGet: CurrentLevel = '" + CurrentLevel + "' Title = '" + Title + "'");
+        //Log.debug("util","OptionsTitleGet: CurrentLevel = '" + CurrentLevel + "' Title = '" + Title + "'");
         return Title;
     }
 
@@ -614,6 +663,9 @@ public class util {
         return GetTrueFalseOptionBase(Boolean.FALSE, PropSection, PropName, DefaultValue);
     }
     public static Boolean GetTrueFalseOptionBase(Boolean bFlow, String PropSection, String PropName, Boolean DefaultValue){
+        return GetTrueFalseOptionBase(bFlow,PropSection,PropName,DefaultValue,false);
+    }
+    public static Boolean GetTrueFalseOptionBase(Boolean bFlow, String PropSection, String PropName, Boolean DefaultValue, Boolean serverProp){
         String tProp = "";
         if (PropName.equals("")){  //expect the full property string in the PropSection
             tProp = PropSection;
@@ -624,7 +676,7 @@ public class util {
                 tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
             }
         }
-        return util.GetPropertyAsBoolean(tProp, DefaultValue);
+        return util.GetPropertyAsBoolean(tProp, DefaultValue, serverProp);
     }
     public static String GetTrueFalseOptionName(String PropSection, String TrueValue, String FalseValue, Boolean DefaultValue){
         return GetTrueFalseOptionNameBase(Boolean.FALSE, PropSection, "", TrueValue, FalseValue, DefaultValue);
@@ -639,6 +691,9 @@ public class util {
         return GetTrueFalseOptionNameBase(Boolean.FALSE, PropSection, PropName, TrueValue, FalseValue, DefaultValue);
     }
     public static String GetTrueFalseOptionNameBase(Boolean bFlow, String PropSection, String PropName, String TrueValue, String FalseValue, Boolean DefaultValue){
+        return GetTrueFalseOptionNameBase(bFlow,PropSection,PropName,TrueValue,FalseValue,DefaultValue,false);
+    }
+    public static String GetTrueFalseOptionNameBase(Boolean bFlow, String PropSection, String PropName, String TrueValue, String FalseValue, Boolean DefaultValue, Boolean serverProp){
         String tProp = "";
         if (PropName.equals("")){  //expect the full property string in the PropSection
             tProp = PropSection;
@@ -649,7 +704,7 @@ public class util {
                 tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
             }
         }
-        Boolean CurrentValue = util.GetPropertyAsBoolean(tProp, DefaultValue);
+        Boolean CurrentValue = util.GetPropertyAsBoolean(tProp, DefaultValue,serverProp);
         if (CurrentValue){
             return TrueValue;
         }else{
@@ -673,6 +728,9 @@ public class util {
         SetTrueFalseOptionNextBase(Boolean.FALSE, PropSection, PropName, DefaultValue);
     }
     public static void SetTrueFalseOptionNextBase(Boolean bFlow, String PropSection, String PropName, Boolean DefaultValue){
+        SetTrueFalseOptionNextBase(bFlow,PropSection,PropName,DefaultValue,false);
+    }
+    public static void SetTrueFalseOptionNextBase(Boolean bFlow, String PropSection, String PropName, Boolean DefaultValue, Boolean serverProp){
         String tProp = "";
         if (PropName.equals("")){  //expect the full property string in the PropSection
             tProp = PropSection;
@@ -683,8 +741,8 @@ public class util {
                 tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
             }
         }
-        Boolean NewValue = !util.GetPropertyAsBoolean(tProp, DefaultValue);
-        util.SetProperty(tProp, NewValue.toString());
+        Boolean NewValue = !util.GetPropertyAsBoolean(tProp, DefaultValue, serverProp);
+        util.SetProperty(tProp, NewValue.toString(),serverProp);
     }
     
     //option for full Property string passed in
@@ -695,6 +753,9 @@ public class util {
         SetTrueFalseOptionBase(Boolean.FALSE, PropSection, PropName, NewValue);
     }
     public static void SetTrueFalseOptionBase(Boolean bFlow, String PropSection, String PropName, Boolean NewValue){
+        SetTrueFalseOptionBase(bFlow,PropSection,PropName,NewValue,false);
+    }
+    public static void SetTrueFalseOptionBase(Boolean bFlow, String PropSection, String PropName, Boolean NewValue, Boolean serverProp){
         String tProp = "";
         if (PropName.equals("")){  //expect the full property string in the PropSection
             tProp = PropSection;
@@ -705,7 +766,7 @@ public class util {
                 tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
             }
         }
-        util.SetProperty(tProp, NewValue.toString());
+        util.SetProperty(tProp, NewValue.toString(),serverProp);
     }
     
     //Set of functions for Get/Set of generic passed in List
@@ -713,7 +774,13 @@ public class util {
     public static String GetListOptionName(String PropSection, String PropName, String OptionList, String DefaultValue){
         return GetListOptionNameBase(Boolean.FALSE, PropSection, PropName, OptionList, DefaultValue);
     }
+    public static String GetListOptionName(String PropSection, String PropName, String OptionList, String DefaultValue, Boolean serverProp){
+        return GetListOptionNameBase(Boolean.FALSE, PropSection, PropName, OptionList, DefaultValue, serverProp);
+    }
     public static String GetListOptionNameBase(Boolean bFlow, String PropSection, String PropName, String OptionList, String DefaultValue){
+        return GetListOptionNameBase(bFlow,PropSection,PropName,OptionList,DefaultValue,false);
+    }
+    public static String GetListOptionNameBase(Boolean bFlow, String PropSection, String PropName, String OptionList, String DefaultValue, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
@@ -721,6 +788,11 @@ public class util {
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
         String CurrentValue = util.GetProperty(tProp, DefaultValue);
+        if (serverProp){
+            CurrentValue = util.GetServerProperty(tProp, DefaultValue);
+        }else{
+            CurrentValue = util.GetProperty(tProp, DefaultValue);
+        }
         if (ConvertStringtoList(OptionList).contains(CurrentValue)){
             return CurrentValue;
         }else{
@@ -741,14 +813,14 @@ public class util {
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
         String CurrentValue = util.GetProperty(tProp, OptionNotFound, serverProp);
-        //LOG.debug("SetListOptionNextBase: currentvalue '" + CurrentValue + "' for '" + tProp + "'");
+        //Log.debug("util","SetListOptionNextBase: currentvalue '" + CurrentValue + "' for '" + tProp + "'");
         List<String> FullList = ConvertStringtoList(OptionList);
         if (CurrentValue.equals(OptionNotFound)){
-            //LOG.debug("SetListOptionNextBase: Not Found so setting to 2nd item '" + FullList.get(1) + "' for '" + tProp + "'");
+            //Log.debug("util","SetListOptionNextBase: Not Found so setting to 2nd item '" + FullList.get(1) + "' for '" + tProp + "'");
             util.SetProperty(tProp, FullList.get(1),serverProp);  //default to the 2nd item
         }else{
             Integer pos = FullList.indexOf(CurrentValue);
-            //LOG.debug("SetListOptionNextBase: Found - pos = " + pos + "' for '" + tProp + "'");
+            //Log.debug("util","SetListOptionNextBase: Found - pos = " + pos + "' for '" + tProp + "'");
             if (pos==-1){ //not found
                 util.SetProperty(tProp, FullList.get(0),serverProp);
             }else if(pos==FullList.size()-1){ //last item
@@ -773,7 +845,7 @@ public class util {
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        //LOG.debug("GetOptionNameBase: property '" + tProp + "'");
+        //Log.debug("util","GetOptionNameBase: property '" + tProp + "'");
         return util.GetProperty(tProp, DefaultValue, serverProp);
     }
     public static void SetOption(String PropSection, String PropName, String NewValue){
@@ -797,32 +869,45 @@ public class util {
         RemoveOptionBase(Boolean.FALSE, PropSection, PropName);
     }
     public static void RemoveOptionBase(Boolean bFlow, String PropSection, String PropName){
+        RemoveOptionBase(bFlow,PropSection,PropName,false);
+    }
+    public static void RemoveOptionBase(Boolean bFlow, String PropSection, String PropName, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        RemoveProperty(tProp);
+        if(serverProp){
+            RemoveServerProperty(tProp);
+        }else{
+            RemoveProperty(tProp);
+        }
     }
     
     public static String PropertyListasString(String PropSection, String PropName){
         return PropertyListasStringBase(Boolean.FALSE, PropSection, PropName);
     }
     public static String PropertyListasStringBase(Boolean bFlow, String PropSection, String PropName){
+        return PropertyListasStringBase(bFlow,PropSection,PropName,false);
+    }
+    public static String PropertyListasStringBase(Boolean bFlow, String PropSection, String PropName, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        return ConvertListtoString(GetPropertyAsList(tProp),",");
+        return ConvertListtoString(GetPropertyAsList(tProp,serverProp),",");
     }
     
     public static List<String> PropertyList(String PropSection, String PropName){
         return PropertyListBase(Boolean.FALSE, PropSection, PropName);
     }
     public static List<String> PropertyListBase(Boolean bFlow, String PropSection, String PropName){
+        return PropertyListBase(bFlow,PropSection,PropName,false);
+    }
+    public static List<String> PropertyListBase(Boolean bFlow, String PropSection, String PropName, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
@@ -830,7 +915,7 @@ public class util {
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
         TreeSet<String> tList = new TreeSet<String>();
-        tList.addAll(GetPropertyAsList(tProp));
+        tList.addAll(GetPropertyAsList(tProp,serverProp));
         return new ArrayList<String>(tList);
     }
     
@@ -838,56 +923,72 @@ public class util {
         PropertyListAddBase(Boolean.FALSE, PropSection, PropName, NewValue);
     }
     public static void PropertyListAddBase(Boolean bFlow, String PropSection, String PropName, String NewValue){
+        PropertyListAddBase(bFlow,PropSection,PropName,NewValue,false);
+    }
+    public static void PropertyListAddBase(Boolean bFlow, String PropSection, String PropName, String NewValue, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        ArrayList<String> tList = new ArrayList<String>(GetPropertyAsList(tProp));
+        ArrayList<String> tList = new ArrayList<String>(GetPropertyAsList(tProp,serverProp));
         tList.add(NewValue);
-        SetPropertyAsList(tProp, tList);
+        SetPropertyAsList(tProp, tList, serverProp);
     }
     
     public static void PropertyListRemove(String PropSection, String PropName, String NewValue){
         PropertyListRemoveBase(Boolean.FALSE, PropSection, PropName, NewValue);
     }
     public static void PropertyListRemoveBase(Boolean bFlow, String PropSection, String PropName, String NewValue){
+        PropertyListRemoveBase(bFlow,PropSection,PropName,NewValue,false);
+    }
+    public static void PropertyListRemoveBase(Boolean bFlow, String PropSection, String PropName, String NewValue, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        ArrayList<String> tList = new ArrayList<String>(GetPropertyAsList(tProp));
+        ArrayList<String> tList = new ArrayList<String>(GetPropertyAsList(tProp, serverProp));
         tList.remove(NewValue);
-        SetPropertyAsList(tProp, tList);
+        SetPropertyAsList(tProp, tList, serverProp);
     }
     
     public static void PropertyListRemoveAll(String PropSection, String PropName){
         PropertyListRemoveAllBase(Boolean.FALSE, PropSection, PropName);
     }
     public static void PropertyListRemoveAllBase(Boolean bFlow, String PropSection, String PropName){
+        PropertyListRemoveAllBase(bFlow,PropSection,PropName, false);
+    }
+    public static void PropertyListRemoveAllBase(Boolean bFlow, String PropSection, String PropName, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        RemoveProperty(tProp);
+        if(serverProp){
+            RemoveServerProperty(tProp);
+        }else{
+            RemoveProperty(tProp);
+        }
     }
     
     public static Boolean PropertyListContains(String PropSection, String PropName, String NewValue){
         return PropertyListContainsBase(Boolean.FALSE, PropSection, PropName, NewValue);
     }
     public static Boolean PropertyListContainsBase(Boolean bFlow, String PropSection, String PropName, String NewValue){
+        return PropertyListContainsBase(bFlow,PropSection,PropName,NewValue,false);
+    }
+    public static Boolean PropertyListContainsBase(Boolean bFlow, String PropSection, String PropName, String NewValue, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        List<String> tList = GetPropertyAsList(tProp);
+        List<String> tList = GetPropertyAsList(tProp, serverProp);
         if (tList.contains(NewValue)){
             return Boolean.TRUE;
         }else{
@@ -898,13 +999,16 @@ public class util {
         return PropertyListContainsBase(Boolean.FALSE, PropSection, PropName, Folder);
     }
     public static Boolean PropertyListContainsBase(Boolean bFlow, String PropSection, String PropName, ViewFolder Folder){
+        return PropertyListContainsBase(bFlow,PropSection,PropName,Folder,false);
+    }
+    public static Boolean PropertyListContainsBase(Boolean bFlow, String PropSection, String PropName, ViewFolder Folder, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        List<String> tList = GetPropertyAsList(tProp);
+        List<String> tList = GetPropertyAsList(tProp, serverProp);
         if (tList.size()>0){
             for (IMediaResource Child: Folder.getChildren()){
                 String NewValue = Child.getTitle();
@@ -922,13 +1026,16 @@ public class util {
         return PropertyListCountBase(Boolean.FALSE, PropSection, PropName);
     }
     public static Integer PropertyListCountBase(Boolean bFlow, String PropSection, String PropName){
+        return PropertyListCountBase(bFlow,PropSection,PropName,false);
+    }
+    public static Integer PropertyListCountBase(Boolean bFlow, String PropSection, String PropName, Boolean serverProp){
         String tProp = "";
         if (bFlow){
             tProp = Flow.GetFlowBaseProp(PropSection) + Const.PropDivider + PropName;
         }else{
             tProp = Const.BaseProp + Const.PropDivider + PropSection + Const.PropDivider + PropName;
         }
-        List<String> tList = GetPropertyAsList(tProp);
+        List<String> tList = GetPropertyAsList(tProp, serverProp);
         return tList.size();
     }
 
@@ -1109,24 +1216,24 @@ public class util {
             boolean ret = false;
             ret = sagex.api.PluginAPI.DisablePlugin(tUI, thisPlugin);
             if (ret){
-                LOG.debug("DisableGemstonePlugin: Gemstone plugin found and disabled");
+                Log.debug("util","DisableGemstonePlugin: Gemstone plugin found and disabled");
             }else{
-                LOG.debug("DisableGemstonePlugin: Gemstone plugin found but could not be disabled");
+                Log.debug("util","DisableGemstonePlugin: Gemstone plugin found but could not be disabled");
             }
             return ret;
         }else{
-            LOG.debug("DisableGemstonePlugin: Gemstone plugin was not enabled");
+            Log.debug("util","DisableGemstonePlugin: Gemstone plugin was not enabled");
             return false;
         }
         
     }
 
     public static void LogPlugins(){
-        if (LOG.isDebugEnabled()){
+        if (Log.isDebugEnabled()){
             UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
             //List system plugins
             Object[] plugins = PluginAPI.GetInstalledPlugins(tUI);
-            LOG.debug("LogPlugins: checking system plugins: " + LogInfo());
+            Log.debug("util","LogPlugins: checking system plugins: " + LogInfo());
             if (plugins != null && plugins.length > 0) {
                 String enabledText;
                 for (Object plugin : plugins) {
@@ -1135,14 +1242,14 @@ public class util {
                     }else{
                         enabledText = "N";
                     }
-                    LOG.debug("    : System Plugin: Enabled '" + enabledText + "' ID '" + PluginAPI.GetPluginIdentifier(tUI,plugin)+ "' Name: '" + PluginAPI.GetPluginName(tUI, plugin) + "'");
+                    Log.debug("util","    : System Plugin: Enabled '" + enabledText + "' ID '" + PluginAPI.GetPluginIdentifier(tUI,plugin)+ "' Name: '" + PluginAPI.GetPluginName(tUI, plugin) + "'");
                 }
             }else{
-                LOG.debug("    : None found");
+                Log.debug("util","    : None found");
             }
             //List client plugins
             plugins = PluginAPI.GetInstalledClientPlugins(tUI);
-            LOG.debug("LogPlugins: checking client plugins: " + LogInfo());
+            Log.debug("util","LogPlugins: checking client plugins: " + LogInfo());
             if (plugins != null && plugins.length > 0) {
                 String enabledText;
                 for (Object plugin : plugins) {
@@ -1151,26 +1258,26 @@ public class util {
                     }else{
                         enabledText = "N";
                     }
-                    LOG.debug("    : Client Plugin: Enabled '" + enabledText + "' ID '" + PluginAPI.GetPluginIdentifier(tUI,plugin)+ "' Name: '" + PluginAPI.GetPluginName(tUI, plugin) + "'");
+                    Log.debug("util","    : Client Plugin: Enabled '" + enabledText + "' ID '" + PluginAPI.GetPluginIdentifier(tUI,plugin)+ "' Name: '" + PluginAPI.GetPluginName(tUI, plugin) + "'");
                 }
             }else{
-                LOG.debug("    : None found");
+                Log.debug("util","    : None found");
             }
         }
     }
     
     public static void LogConnectedClients(){
-        if (LOG.isDebugEnabled()){
+        if (Log.isDebugEnabled()){
             UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
-            LOG.debug("LogConnectedClients: checking remote connected clients: " + LogInfo());
+            Log.debug("util","LogConnectedClients: checking remote connected clients: " + LogInfo());
             for (String client:GemstonePlugin.getNonPCClients()){
-                LOG.debug("    : Internal List: '" + client + "'");
+                Log.debug("util","    : Internal List: '" + client + "'");
             }
         }
     }
     
     public static Boolean HandleNonCompatiblePlugins(){
-        LOG.debug("HandleNonCompatiblePlugins: start checking for non-compatible plugins: " + LogInfo());
+        Log.debug("util","HandleNonCompatiblePlugins: start checking for non-compatible plugins: " + LogInfo());
         Boolean DisableForConflict = Boolean.TRUE;
         Boolean ReloadUI = Boolean.FALSE;
         //Boolean DisableForConflict = GetTrueFalseOption("Utility", "PluginConflictMode", Boolean.FALSE);
@@ -1180,12 +1287,12 @@ public class util {
 //        Object[] plugins = PluginAPI.GetAllAvailablePlugins();
 //        if (plugins != null && plugins.length > 0) {
 //            for (Object plugin : plugins) {
-//                LOG.debug("HandleNonCompatiblePlugins: Plugin '" + PluginAPI.GetPluginIdentifier(plugin)+ "' Installed '" + PluginAPI.IsPluginInstalled(plugin) + "' Enabled '" + PluginAPI.IsPluginEnabled(plugin) + "' C Installed '" + PluginAPI.IsClientPluginInstalled(plugin) + "'");
+//                Log.debug("util","HandleNonCompatiblePlugins: Plugin '" + PluginAPI.GetPluginIdentifier(plugin)+ "' Installed '" + PluginAPI.IsPluginInstalled(plugin) + "' Enabled '" + PluginAPI.IsPluginEnabled(plugin) + "' C Installed '" + PluginAPI.IsClientPluginInstalled(plugin) + "'");
 //            }
 //        }
 //        
         //check for CVF
-        //LOG.debug("HandleNonCompatiblePlugins: checking for CVF: " + LogInfo());
+        //Log.debug("util","HandleNonCompatiblePlugins: checking for CVF: " + LogInfo());
         Object thisPlugin = sagex.api.PluginAPI.GetAvailablePluginForID(tUI,"jusjokencvf");
         if (sagex.api.PluginAPI.IsPluginEnabled(tUI,thisPlugin)){
             if(DisableForConflict){
@@ -1193,17 +1300,17 @@ public class util {
                 String tMessage = "CVF Plugin is NOT compatible with Gemstone as Gemstone now contains similar functions.\n \n* CVF Plugin has been disabled.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelInfo, tMessage);
                 ReloadUI = Boolean.TRUE;
-                LOG.debug("HandleNonCompatiblePlugins: CVF found and disabled");
+                Log.debug("util","HandleNonCompatiblePlugins: CVF found and disabled");
             }else{
                 String tMessage = "CVF Plugin is NOT compatible with Gemstone as Gemstone now contains similar functions.\n \n* Please disable the CVF Plugin and reload the UI.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelError, tMessage);
-                LOG.debug("HandleNonCompatiblePlugins: CVF found and System Error message created");
+                Log.debug("util","HandleNonCompatiblePlugins: CVF found and System Error message created");
             }
         }else{
-            LOG.debug("HandleNonCompatiblePlugins: checking for CVF - not found");
+            Log.debug("util","HandleNonCompatiblePlugins: checking for CVF - not found");
         }
         //check for ADM
-        //LOG.debug("HandleNonCompatiblePlugins: checking for ADM: " + LogInfo());
+        //Log.debug("util","HandleNonCompatiblePlugins: checking for ADM: " + LogInfo());
         thisPlugin = sagex.api.PluginAPI.GetAvailablePluginForID(tUI,"jusjokenadm");
         if (sagex.api.PluginAPI.IsPluginEnabled(tUI, thisPlugin)){
             if(DisableForConflict){
@@ -1211,17 +1318,17 @@ public class util {
                 String tMessage = "ADM Plugin is NOT compatible with Gemstone as Gemstone now contains similar functions.\n \n* ADM Plugin has been disabled.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelInfo, tMessage);
                 ReloadUI = Boolean.TRUE;
-                LOG.debug("HandleNonCompatiblePlugins: ADM found and disabled");
+                Log.debug("util","HandleNonCompatiblePlugins: ADM found and disabled");
             }else{
                 String tMessage = "ADM Plugin is NOT compatible with Gemstone as Gemstone now contains similar functions.\n \n* Please disable the ADM Plugin and reload the UI.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelError, tMessage);
-                LOG.debug("HandleNonCompatiblePlugins: ADM found and System Error message created");
+                Log.debug("util","HandleNonCompatiblePlugins: ADM found and System Error message created");
             }
         }else{
-            LOG.debug("HandleNonCompatiblePlugins: checking for ADM - not found");
+            Log.debug("util","HandleNonCompatiblePlugins: checking for ADM - not found");
         }
         //check for Diamond Legacy
-        //LOG.debug("HandleNonCompatiblePlugins: checking for DiamondLegacy: " + LogInfo());
+        //Log.debug("util","HandleNonCompatiblePlugins: checking for DiamondLegacy: " + LogInfo());
         thisPlugin = sagex.api.PluginAPI.GetAvailablePluginForID(tUI,"DiamondLegacySTVi");
         if (sagex.api.PluginAPI.IsPluginEnabled(tUI, thisPlugin)){
             if(DisableForConflict){
@@ -1229,16 +1336,16 @@ public class util {
                 String tMessage = "Diamond Legacy Plugin is NOT compatible with Gemstone as Gemstone now replaces Diamond.\n \n* Diamond Legacy Plugin has been disabled.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelInfo, tMessage);
                 ReloadUI = Boolean.TRUE;
-                LOG.debug("HandleNonCompatiblePlugins: Diamond Legacy found and disabled");
+                Log.debug("util","HandleNonCompatiblePlugins: Diamond Legacy found and disabled");
             }else{
                 String tMessage = "Diamond Legacy Plugin is NOT compatible with Gemstone as Gemstone now replaces Diamond.\n \n* Please disable the Diamond Legacy Plugin and reload the UI.";
                 PostSytemMessage(Const.SystemMessagePluginConflictCode, Const.SystemMessagePluginConflictName, Const.SystemMessageAlertLevelError, tMessage);
-                LOG.debug("HandleNonCompatiblePlugins: Diamond Legacy found and System Error message created");
+                Log.debug("util","HandleNonCompatiblePlugins: Diamond Legacy found and System Error message created");
             }
         }else{
-            LOG.debug("HandleNonCompatiblePlugins: checking for Diamond Legacy - not found");
+            Log.debug("util","HandleNonCompatiblePlugins: checking for Diamond Legacy - not found");
         }
-        LOG.debug("HandleNonCompatiblePlugins: complete - checking for non-compatible plugins: " + LogInfo());
+        Log.debug("util","HandleNonCompatiblePlugins: complete - checking for non-compatible plugins: " + LogInfo());
         return ReloadUI;
     }
     
@@ -1275,7 +1382,7 @@ public class util {
         } 
         o = buf.toString();
         o = o.toLowerCase();
-        LOG.debug("SidewaysText: text in '" + text + "' text out '" + o + "'");
+        Log.debug("util","SidewaysText: text in '" + text + "' text out '" + o + "'");
         return o;
     }
 
@@ -1286,7 +1393,7 @@ public class util {
 //        Object[] Menus = sagex.api.WidgetAPI.GetWidgetsByType(tUI,"Menu");
 //        for (Object item: Menus){
 //            String tName = sagex.api.WidgetAPI.GetWidgetName(item);
-//            //LOG.debug("BuildActions: Menu '" + tName + "'");
+//            //Log.debug("util","BuildActions: Menu '" + tName + "'");
 //            if (tName.startsWith("PlayOn::")){
 //                String tTitle = tName.substring(8);
 //                if (tTitle.startsWith("Custom")){
@@ -1296,7 +1403,7 @@ public class util {
 //                String ActionVal = tTitle.replaceAll("::", " ");
 //                ActionName = "xItemPlayOn_" + ActionName.replaceAll(" ", "_");
 //                String ActionTitle = tTitle.replaceAll("::", " - ");
-//                LOG.debug("BuildActions: Item '" + ActionName + "' Title '" + ActionTitle + "'");
+//                Log.debug("util","BuildActions: Item '" + ActionName + "' Title '" + ActionTitle + "'");
 //                String Start = "ADM/custom_actions/";
 //                Props.put(Start + ActionName + "/ActionCategory/1", "Online");
 //                Props.put(Start + ActionName + "/ActionCategory/2", "PlayOn");
@@ -1316,10 +1423,10 @@ public class util {
 //                    Props.store(out, Const.PropertyComment);
 //                    out.close();
 //                } catch (IOException ex) {
-//                    LOG.debug("Execute: error exporting properties " + util.class.getName() + ex);
+//                    Log.debug("util","Execute: error exporting properties " + util.class.getName() + ex);
 //                }
 //            } catch (FileNotFoundException ex) {
-//                LOG.debug("Execute: error exporting properties " + util.class.getName() + ex);
+//                Log.debug("util","Execute: error exporting properties " + util.class.getName() + ex);
 //            }
 //            
 //        }
@@ -1329,7 +1436,24 @@ public class util {
         UIContext uic = new UIContext(sagex.api.Global.GetUIContextName());
         return sagex.api.Global.IsClient(uic) || (!sagex.api.Global.IsClient(uic) && !sagex.api.Global.IsRemoteUI(uic) && (GetProperty("client","")=="true"));
     }
-    
+
+    public static boolean IsRemote() {
+        UIContext uic = new UIContext(sagex.api.Global.GetUIContextName());
+        return sagex.api.Global.IsRemoteUI(uic);
+    }
+
+    //Will only be true on a PC Client (not on a client run on the server in service mode nor server mode)
+    public static boolean IsClientSage(){
+        UIContext uic = new UIContext(sagex.api.Global.GetUIContextName());
+        return sagex.api.Global.IsClient(uic);
+    }
+
+    public static String IsClientProp(){
+        UIContext uic = new UIContext(sagex.api.Global.GetUIContextName());
+        return GetProperty("client","");
+    }
+
+
     public static ArrayList<Integer> GetNumberList(int Start, int Max){
         if (Start>Max){
             return new ArrayList<Integer>();
@@ -1351,7 +1475,7 @@ public class util {
             outMediaFiles.add(phoenix.media.GetSageMediaFile(inMediaFile));
             counter++;
         }
-        LOG.debug("GetSageMediaFiles: converted '" + MediaFiles.size() + "' MediaFiles to SageMediaFiles");
+        Log.debug("util","GetSageMediaFiles: converted '" + MediaFiles.size() + "' MediaFiles to SageMediaFiles");
         return outMediaFiles;
     }
 
@@ -1394,7 +1518,7 @@ public class util {
         if (IncludeInfo){
             tMessage = tMessage + ": " + LogInfo();
         }
-        LOG.debug(tMessage);
+        Log.debug("util",tMessage);
     }
 
     public static void InfoLog(String message){
@@ -1405,7 +1529,7 @@ public class util {
         if (IncludeInfo){
             tMessage = tMessage + ": " + LogInfo();
         }
-        LOG.info(tMessage);
+        Log.info("util",tMessage);
     }
 
     public static void InitLocations(){
@@ -1414,7 +1538,7 @@ public class util {
             InitLocation(util.UserDataLocationTemp());
             locationsInit = true;
         }else{
-            LOG.debug("InitLocations: called but previously run so nothing completed this time");
+            Log.debug("util","InitLocations: called but previously run so nothing completed this time");
         }
     }
 
@@ -1422,13 +1546,13 @@ public class util {
         try{
             boolean success = (new File(LocationPath)).mkdirs();
             if (success) {
-                LOG.debug("InitLocation: Directories created for '" + LocationPath + "'");
+                Log.debug("util","InitLocation: Directories created for '" + LocationPath + "'");
             }else{
-                LOG.debug("InitLocation: mkdirs returned false for '" + LocationPath + "'");
+                Log.debug("util","InitLocation: mkdirs returned false for '" + LocationPath + "'");
             }
 
         }catch (Exception ex){//Catch exception if any
-            LOG.debug("InitLocation: - error creating '" + LocationPath + "'" + ex.getMessage());
+            Log.debug("util","InitLocation: - error creating '" + LocationPath + "'" + ex.getMessage());
         }
     }
 
@@ -1443,10 +1567,10 @@ public class util {
 
     public static String SeparatorsToSystem(String path){
     	if (path==null){
-            LOG.debug("SeparatorsToSystem: original path was null.");
+            Log.debug("util","SeparatorsToSystem: original path was null.");
     		return "";
     	}
-        LOG.debug("SeparatorsToSystem: original path = '" + path + "'");
+        Log.debug("util","SeparatorsToSystem: original path = '" + path + "'");
     	if (path.isEmpty()){
     		return "";
     	}
@@ -1454,10 +1578,10 @@ public class util {
         UIContext uic = new UIContext(sagex.api.Global.GetUIContextName());
         if (sagex.api.Global.IsLinuxOS(uic)){
         	retPath = FilenameUtils.separatorsToUnix(path);
-            LOG.debug("SeparatorsToSystem: returned path for Linux system = '" + retPath + "'");
+            Log.debug("util","SeparatorsToSystem: returned path for Linux system = '" + retPath + "'");
         }else{
         	retPath = FilenameUtils.separatorsToWindows(path);
-            LOG.debug("SeparatorsToSystem: returned path for Windows system = '" + retPath + "'");
+            Log.debug("util","SeparatorsToSystem: returned path for Windows system = '" + retPath + "'");
         }
     	return retPath;
     }

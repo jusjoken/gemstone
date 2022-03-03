@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 import sagex.phoenix.factory.IConfigurable;
 
 /**
@@ -18,7 +17,6 @@ import sagex.phoenix.factory.IConfigurable;
  * - 04/04/2012 - updated for Gemstone
  */
 public class PresentationOrg {
-    static private final Logger LOG = Logger.getLogger(PresentationOrg.class);
     private String thisFlowName = "";
     private String PropLocation = "";
     private String Name = SourceUI.OptionNotSet;

@@ -23,7 +23,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 
 /**
@@ -32,7 +31,6 @@ import sagex.UIContext;
  */
 public class ADMAction {
 
-    static private final Logger LOG = Logger.getLogger(ADMAction.class);
     private static final String Blank = "admActionBlank";
     private static final String VarNull = "VarNull";
     private static final String SageADMCustomActionsPropertyLocation = "ADM/custom_actions";
@@ -101,7 +99,7 @@ public class ADMAction {
     }
     
     public static void Init(){
-        LOG.debug("Init: Menu Manager Action Init started: " + util.LogInfo());
+        Log.debug("ADMAction","Init: Menu Manager Action Init started: " + util.LogInfo());
         //Clear existing Actions if any
         ActionList.clear();
         //Create the Actions for ADM to use
@@ -167,7 +165,7 @@ public class ADMAction {
         LoadDynamicLists();
 
         LoadSageTVRecordingViews();
-        LOG.debug("Init: Menu Manager Action Init completed: " + util.LogInfo());
+        Log.debug("ADMAction","Init: Menu Manager Action Init completed: " + util.LogInfo());
     }
 
     private static void InitBrowseFileFolder(String bType, String bTypeKey, String TitleAdd, String FolderAdd){
@@ -202,13 +200,13 @@ public class ADMAction {
         String IconName = "";
         String tActionType = ADMMenuNode.GetMenuItemActionType(MenuItemName);
         String tActionAttribute = ADMMenuNode.GetMenuItemAction(MenuItemName);
-        //LOG.debug("GetDefaultIcon - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
+        //Log.debug("ADMAction","GetDefaultIcon - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
         if (!tActionType.equals(ActionTypeDefault)){
             if (tActionType.equals(StandardMenuAction)){
                 IconName = SageMenuActions.get(tActionAttribute).DefaultIcon;
             }
         }
-        //LOG.debug("GetDefaultIcon - MenuItemName: " + MenuItemName + " IconName:" + IconName);
+        //Log.debug("ADMAction","GetDefaultIcon - MenuItemName: " + MenuItemName + " IconName:" + IconName);
         return IconName;
     }
     
@@ -248,10 +246,10 @@ public class ADMAction {
 
     public static Boolean IsValidAction(String Type){
         if (Type.equals(ActionTypeDefault)){
-            LOG.debug("IsValidAction - FALSE for = '" + Type + "'");
+            Log.debug("ADMAction","IsValidAction - FALSE for = '" + Type + "'");
             return Boolean.FALSE;
         }else{
-            LOG.debug("IsValidAction - Lookup for = '" + Type + "' = '" + ActionList.containsKey(Type) + "'");
+            Log.debug("ADMAction","IsValidAction - Lookup for = '" + Type + "' = '" + ActionList.containsKey(Type) + "'");
             return ActionList.containsKey(Type);
         }
     }
@@ -267,7 +265,7 @@ public class ADMAction {
         //the AAType is made up of the ActionType + ListToken + Attribute (Key)
         String tAttribute = GetAllActionsAttribute(AAType);
         String tType = GetAllActionsType(AAType);
-        //LOG.debug("GetAllActionsAttributeButtonText - AAType '" + AAType + "' Type/Attribute '" + tType + "' - '" + tAttribute + "'");
+        //Log.debug("ADMAction","GetAllActionsAttributeButtonText - AAType '" + AAType + "' Type/Attribute '" + tType + "' - '" + tAttribute + "'");
         if (tAttribute.equals(ADMutil.OptionNotFound)){
             if(tType.equals(ADMutil.OptionNotFound)){
                 //bad conversion
@@ -338,7 +336,7 @@ public class ADMAction {
     public static void Execute(String MenuItemName){
         String tActionType = ADMMenuNode.GetMenuItemActionType(MenuItemName);
         String tActionAttribute = ADMMenuNode.GetMenuItemAction(MenuItemName);
-        LOG.debug("Execute - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
+        Log.debug("ADMAction","Execute - ActionType = '" + tActionType + "' Action = '" + tActionAttribute + "'");
         if (!tActionType.equals(ActionTypeDefault)){
             if (tActionType.equals(StandardMenuAction)){
                 SageMenuActions.get(tActionAttribute).Execute(tActionAttribute);
@@ -373,15 +371,15 @@ public class ADMAction {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            LOG.debug("ExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            Log.debug("ADMAction","ExecuteWidget - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
         }else{
-            LOG.debug("ExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
+            Log.debug("ADMAction","ExecuteWidget - ExecuteWidgetChain called with WidgetSymbol = '" + WidgetSymbol + "'");
 
             try {
                 sage.SageTV.apiUI(new UIContext(sagex.api.Global.GetUIContextName()).toString(), "ExecuteWidgetChainInCurrentMenuContext", passvalue);
             } catch (InvocationTargetException ex) {
-                LOG.debug("ExecuteWidget: error executing widget" + ADMutil.class.getName() + ex);
+                Log.debug("ADMAction","ExecuteWidget: error executing widget" + ADMutil.class.getName() + ex);
                 return Boolean.FALSE;
             }
             return Boolean.TRUE;
@@ -395,10 +393,10 @@ public class ADMAction {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            LOG.debug("IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            Log.debug("ADMAction","IsWidgetValid - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.FALSE;
         }else{
-            LOG.debug("IsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
+            Log.debug("ADMAction","IsWidgetValid - FindWidgetSymbol passed for WidgetSymbol = '" + WidgetSymbol + "'");
             return Boolean.TRUE;
         }
                
@@ -408,11 +406,11 @@ public class ADMAction {
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.FindWidgetBySymbol(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
         if (passvalue[0]==null){
-            LOG.debug("GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
+            Log.debug("ADMAction","GetWidgetName - FindWidgetSymbol failed for WidgetSymbol = '" + WidgetSymbol + "'");
             return ADMutil.OptionNotFound;
         }else{
             String WidgetName = sagex.api.WidgetAPI.GetWidgetName(new UIContext(sagex.api.Global.GetUIContextName()), WidgetSymbol);
-            LOG.debug("GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
+            Log.debug("ADMAction","GetWidgetName for Symbol = '" + WidgetSymbol + "' = '" + WidgetName + "'");
             return WidgetName;
         }
                
@@ -462,15 +460,15 @@ public class ADMAction {
             }else{
                 ADMMenuNode.SetMenuItemIsDefault(FirstNameforDefault, Boolean.TRUE);
             }
-            LOG.debug("GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            Log.debug("ADMAction","GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicVideoPlaylist)){
             TempMenuItems = GetPlayList(Boolean.TRUE, dParent);
-            LOG.debug("GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            Log.debug("ADMAction","GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicMusicPlaylist)){
             TempMenuItems = GetPlayList(Boolean.FALSE, dParent);
-            LOG.debug("GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            Log.debug("ADMAction","GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }else if(Attribute.equals(DynamicGemstoneFlows)){
             Counter = 0;
@@ -490,7 +488,7 @@ public class ADMAction {
             }
             return TempMenuItems;
         }else{
-            LOG.debug("GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
+            Log.debug("ADMAction","GetDynamicListItems: Parent '" + dParent + "' Attribute '" + Attribute + "' Items '" + TempMenuItems + "'");
             return TempMenuItems;
         }
     }
@@ -555,7 +553,7 @@ public class ADMAction {
                 }
             }
         }
-        //LOG.debug("GetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
+        //Log.debug("ADMAction","GetAllActionsList: complete List '" + AllActionsSorted.keySet() + "' Values '" + AllActionsSorted.values() + "'");
         AllActionsListCount = AllActionsSorted.size();
         return AllActionsSorted.values();
     }
@@ -563,7 +561,7 @@ public class ADMAction {
     private static void AllActionsListAdd(SortedMap<String,String> AllActionsSorted, String bButtonText, String bType, String bAttribute){
         //filter the list based on the selected Category Filter
         if (GetActionCategoryFilter().equals(ActionCategoryShowAll)){
-            //LOG.debug("AllActionsListAdd: No Filter - adding '" + bButtonText + "' Type/Attribute '" + bType + "' - '" + bAttribute + "'");
+            //Log.debug("ADMAction","AllActionsListAdd: No Filter - adding '" + bButtonText + "' Type/Attribute '" + bType + "' - '" + bAttribute + "'");
             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
         }else{
             String tFilter = GetActionCategoryFilter();
@@ -571,12 +569,12 @@ public class ADMAction {
             if (SageMenuActions.containsKey(bAttribute)){
                 if (tFilter.equals(ActionCategoryOther)){
                     if (SageMenuActions.get(bAttribute).ActionCategories.isEmpty()){
-                        //LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding as No Categories and Other");
+                        //Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bAttribute + "' Adding as No Categories and Other");
                         AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                     }
                 }else{
                     if (SageMenuActions.get(bAttribute).HasCategory(tFilter)){
-                        //LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bType + "' - '" + bAttribute + "' Adding");
+                        //Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' CustomAction for '" + bType + "' - '" + bAttribute + "' Adding");
                         AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                     }
                 }
@@ -585,24 +583,24 @@ public class ADMAction {
                 if (ActionList.containsKey(bType)){
                     String CheckType = bType;
                     if (bType.equals(DynamicList)){
-                        //LOG.debug("AllActionsListAdd: Dynamic List item - Attribute '" + bAttribute + "'");
+                        //Log.debug("ADMAction","AllActionsListAdd: Dynamic List item - Attribute '" + bAttribute + "'");
                         CheckType = bAttribute;
                     }
-                    //LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
+                    //Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' checking Other Action for '" + bType + "' Attribute '" + bAttribute + "'");
                     if (tFilter.equals(ActionCategoryOther)){
                         if (ActionList.get(CheckType).ActionCategories.isEmpty()){
-                            //LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
+                            //Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' Other Action for '" + bType + "' Adding as No Categories and Other");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
                     }else{
                         if (ActionList.get(CheckType).ActionCategories.contains(tFilter)){
-                            //LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
+                            //Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' Found Match for Type '" + bType + "' Adding");
                             AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                         }
                     }
                 }else{
                     //do an Add so you don't miss anything that didn't match either of the above checks - should be nothing
-                    LOG.debug("AllActionsListAdd: Filter '" + tFilter + "' NO MATCH SO ADDING ANYWAY '" + bType + "' ButtonText '" + bButtonText + "'");
+                    Log.debug("ADMAction","AllActionsListAdd: Filter '" + tFilter + "' NO MATCH SO ADDING ANYWAY '" + bType + "' ButtonText '" + bButtonText + "'");
                     AllActionsSorted.put(bButtonText, GetAllActionsKey(bType, bAttribute));
                 }
             }
@@ -640,7 +638,7 @@ public class ADMAction {
     public static String GetAllActionsAttribute(String AAType){
         //the AAType is made up of the ActionType + ListToken + Attribute (Key)
         List<String> tList = ADMutil.ConvertStringtoList(AAType);
-        LOG.debug("GetAllActionsAttribute: AAType '" + AAType + "' List '" + tList + "'");
+        Log.debug("ADMAction","GetAllActionsAttribute: AAType '" + AAType + "' List '" + tList + "'");
         if (tList.size()==2){
             return tList.get(1);
         }else{
@@ -755,7 +753,7 @@ public class ADMAction {
                 in.close();
             }
         } catch (Exception ex) {
-            LOG.debug("LoadStandardActionList: file not found loading actions " + ADMutil.class.getName() + ex);
+            Log.debug("ADMAction","LoadStandardActionList: file not found loading actions " + ADMutil.class.getName() + ex);
             return;
         }
 
@@ -776,7 +774,7 @@ public class ADMAction {
         if (CustomActionNames.length>0){
             String PropLocation = "";
             for (String tCustomActionName : CustomActionNames){
-                LOG.debug("LoadStandardActionList: loading '" + tCustomActionName + "' Custom Menu Action");
+                Log.debug("ADMAction","LoadStandardActionList: loading '" + tCustomActionName + "' Custom Menu Action");
                 PropLocation = SageADMCustomActionsPropertyLocation + "/" + tCustomActionName;
                 String tButtonText = ADMutil.GetProperty(PropLocation + "/ButtonText", ADMutil.ButtonTextDefault);
                 String tDefaultIcon = ADMutil.GetProperty(PropLocation + "/DefaultIcon", "");
@@ -798,7 +796,7 @@ public class ADMAction {
                         tVar.Var = ADMutil.GetProperty(AVPropLocation + "/Var", "");
                         tVar.Val = ADMutil.GetProperty(AVPropLocation + "/Val", "");
                         SageMenuActions.get(tCustomActionName).ActionVariables.add(tVar);
-                        LOG.debug("LoadStandardActionList: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
+                        Log.debug("ADMAction","LoadStandardActionList: Loading Vars from '" + AVPropLocation + "' VarType='" + tVar.VarType + "' Var='" + tVar.Var + "' Val ='" + tVar.Val + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -815,7 +813,7 @@ public class ADMAction {
                     if (ADMutil.HasProperty(AVPropLocation)){
                         tCategory = ADMutil.GetProperty(AVPropLocation, Blank);
                         SageMenuActions.get(tCustomActionName).AddCategory(tCategory);
-                        LOG.debug("LoadStandardActionList: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "' Categories '" + CustomAction.AllActionCategories + "'");
+                        Log.debug("ADMAction","LoadStandardActionList: Loading Category from '" + AVPropLocation + "' Category='" + tCategory + "' Categories '" + CustomAction.AllActionCategories + "'");
                     }else{
                         Found = Boolean.FALSE;
                     }
@@ -825,7 +823,7 @@ public class ADMAction {
         
         //clean up existing Custom Actions from the SageTV properties file as they are no longer needed
         ADMutil.RemovePropertyAndChildren(SageADMCustomActionsPropertyLocation);
-        LOG.debug("LoadStandardActionList: completed loading '" + SageMenuActions.size() + "' Custom Menu Actions");
+        Log.debug("ADMAction","LoadStandardActionList: completed loading '" + SageMenuActions.size() + "' Custom Menu Actions");
     }
 
     private static void LoadSageTVRecordingViews(){
@@ -879,11 +877,11 @@ public class ADMAction {
     
     public static void ActionCategoryFilterReset(){
         if (GetActionCategoryFilterSticky().equals(ADMutil.TriState.OTHER)){
-            LOG.debug("ActionCategoryFilterReset: sticky found so no change");
+            Log.debug("ADMAction","ActionCategoryFilterReset: sticky found so no change");
             //leave it as is as it is supposed to be sticky
         }else{
             //reset the Filter to the ShowAll filter
-            LOG.debug("ActionCategoryFilterReset: reseting to Show All");
+            Log.debug("ADMAction","ActionCategoryFilterReset: reseting to Show All");
             ADMutil.SetPropertyAsTriState(ActionCategoryFilterStickyPropertyLocation, ADMutil.TriState.NO);
             ADMutil.SetProperty(ActionCategoryFilterPropertyLocation, ActionCategoryShowAll);
         }
@@ -992,7 +990,7 @@ public class ADMAction {
             }else if (this.VarType.equals(VarTypeSetProp)){
                 ADMutil.SetProperty(this.Var, tVal.toString());
             }
-            LOG.debug("EvaluateVariable - Type '" + this.VarType + "' setting '" + this.Var + "' to '" + tVal + "' for Attribute '" + Attribute + "' original Val ='" + this.Val + "'");
+            Log.debug("ADMAction","EvaluateVariable - Type '" + this.VarType + "' setting '" + this.Var + "' to '" + tVal + "' for Attribute '" + Attribute + "' original Val ='" + this.Val + "'");
         }
     }
 
@@ -1225,7 +1223,7 @@ public class ADMAction {
                         cmd[0] = "cmd.exe" ;
                         cmd[1] = "/C" ;
                     }else {
-                        LOG.debug("ExternalAction.Execute: unknown OS:"+osName+" assuming newer Windows OS");
+                        Log.debug("ADMAction","ExternalAction.Execute: unknown OS:"+osName+" assuming newer Windows OS");
                         cmd[0] = "cmd.exe" ;
                         cmd[1] = "/C" ;
                     }
@@ -1244,12 +1242,12 @@ public class ADMAction {
 
                     // append command -- first for window title, second for exe name
                     cmd[2]=cmd[2]+"\""+command+"\" " + arguments;
-                    LOG.debug("ExternalAction.Execute: Command = '" + cmd[0] + " " + cmd[1] + " " + cmd[2] + "'");
+                    Log.debug("ADMAction","ExternalAction.Execute: Command = '" + cmd[0] + " " + cmd[1] + " " + cmd[2] + "'");
                 } else {
                     cmd = new String[2];
                     cmd[0]=command;
                     cmd[1]=arguments;
-                    LOG.debug("ExternalAction.Execute: for unknown OS '" + osName + "' Command = '" + cmd[0] + " " + cmd[1] + "'" );
+                    Log.debug("ADMAction","ExternalAction.Execute: for unknown OS '" + osName + "' Command = '" + cmd[0] + " " + cmd[1] + "'" );
 
                 }
                 //determine what to do with Sage - before
@@ -1280,7 +1278,7 @@ public class ADMAction {
 
                 // any error???
                 int exitVal = proc.waitFor();
-                LOG.debug("ExternalAction.Execute: ExitValue: '" + exitVal + "'"); 
+                Log.debug("ADMAction","ExternalAction.Execute: ExitValue: '" + exitVal + "'"); 
 
                 //determine what to do with Sage - after
                 if (sageStatus.equals(SageStatusSleep)){
@@ -1298,7 +1296,7 @@ public class ADMAction {
                 
             } catch (Throwable t)
             {
-                LOG.debug("ExternalAction.Execute: ERROR - Exception = '" + t + "'"); 
+                Log.debug("ADMAction","ExternalAction.Execute: ERROR - Exception = '" + t + "'"); 
                 //t.printStackTrace();
             }
             
@@ -1330,7 +1328,7 @@ public class ADMAction {
                         System.out.println(type + ">" + line);
                 } catch (IOException ioe)
                 {
-                    LOG.debug("ExternalAction.StreamGobbler: ERROR - Exception = '" + ioe + "'"); 
+                    Log.debug("ADMAction","ExternalAction.StreamGobbler: ERROR - Exception = '" + ioe + "'"); 
                     //ioe.printStackTrace();
                 }
             }

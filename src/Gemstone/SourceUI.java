@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 import sagex.phoenix.factory.IConfigurable;
 import sagex.phoenix.vfs.views.ViewFactory;
 
@@ -20,7 +19,6 @@ import sagex.phoenix.vfs.views.ViewFactory;
  * - 04/04/2012 - updated for Gemstone
  */
 public class SourceUI {
-    static private final Logger LOG = Logger.getLogger(SourceUI.class);
     private String thisFlowName = "";
     private String PropLocation = "";
     private Integer thisLevels = 0;
@@ -61,7 +59,7 @@ public class SourceUI {
             }
         } while (tUI.HasContent());
         thisLevels = thisUIList.size();
-        LOG.debug(LogMessage());
+        Log.debug("SourceUI",LogMessage());
     }
     
     public String Source(){

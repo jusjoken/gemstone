@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Properties;
-import java.util.TimerTask;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.api.Global;
 import sagex.phoenix.Phoenix;
@@ -21,7 +19,6 @@ import static java.lang.Thread.sleep;
  * @author jusjoken
  */
 public class Export {
-    static private final Logger LOG = Logger.getLogger(Export.class);
     private String FileName = "";
     private String FilePath = "";
     private String ServerCopySourcePath = "";
@@ -319,14 +316,14 @@ public class Export {
     }
     
     public void Execute(){
-        //LOG.debug("Execute: MENUS '" + this.MENUS + "' FLOWS '" + this.FLOWS + "' GENERAL '" + this.GENERAL + "' WIDGETS '" + this.WIDGETS + "' ConvertedADMMenus '" + this.ConvertedADMMenus + "'");
+        //Log.debug("Export","Execute: MENUS '" + this.MENUS + "' FLOWS '" + this.FLOWS + "' GENERAL '" + this.GENERAL + "' WIDGETS '" + this.WIDGETS + "' ConvertedADMMenus '" + this.ConvertedADMMenus + "'");
         Boolean ContinueProcessing = Boolean.TRUE;
         if (this.FilePath.equals("")){
             if (this.FileName.equals("")){
                 this.FileName = BuildFileName();
                 if (this.FileName.equals("")){
                     ContinueProcessing = Boolean.FALSE;
-                    LOG.debug("Execute: stopped as no FileName specified or nothing to Export");
+                    Log.debug("Export","Execute: stopped as no FileName specified or nothing to Export");
                 }
             }
             if (this.UseServerFilePath){
@@ -345,7 +342,7 @@ public class Export {
         }
         if (ContinueProcessing){
 
-            LOG.debug("Execute: starting export to '" + this.FilePath + "'");
+            Log.debug("Export","Execute: starting export to '" + this.FilePath + "'");
             
             Properties ExportProps = new Properties();
             ExportProps.put(Const.ExportDateTimeKey, util.PrintDateTime(ExportDateTime));
@@ -392,7 +389,7 @@ public class Export {
             }
 
             if (ExportProps.size()>0){
-                LOG.debug("Execute: attempting properties Write - count '" + ExportProps.size() + "'");
+                Log.debug("Export","Execute: attempting properties Write - count '" + ExportProps.size() + "'");
                 //write the properties to the properties file
                 try {
                     FileOutputStream out = new FileOutputStream(this.FilePath);
@@ -402,13 +399,13 @@ public class Export {
                         out.close();
                     }
                 } catch (Exception ex) {
-                    LOG.debug("Execute: error exporting properties " + util.class.getName() + ex);
+                    Log.debug("Export","Execute: error exporting properties " + util.class.getName() + ex);
                 }
                 if (this.CopyExporttoServer){
                     //the saved file now needs to be copied to the server and then removed from the local client
                     String tFileName = this.FileName + ".properties";
                     Object success = sagex.api.Global.StartFileCopy(UIContext.SAGETV_PROCESS_LOCAL_UI, tFileName, this.ServerCopySourcePath, new File(this.ServerCopyDestPath));
-                    LOG.debug("Execute: CopyExporttoServer success = '" + success + "' filename '" + tFileName + "' source '" + this.ServerCopySourcePath + "' dest '" + this.ServerCopyDestPath + "'");
+                    Log.debug("Export","Execute: CopyExporttoServer success = '" + success + "' filename '" + tFileName + "' source '" + this.ServerCopySourcePath + "' dest '" + this.ServerCopyDestPath + "'");
                     if ((Boolean) success){
                         //start a background process to try and delete the source file after the copy is complete
                         //TimerUtil.runOnce(0, new TimerTask() {
@@ -426,21 +423,21 @@ public class Export {
                                             //Boolean success = sagex.api.Utility.DeleteLocalFilePath(UIContext.SAGETV_PROCESS_LOCAL_UI, new File(sagex.api.Utility.GetAbsoluteFilePath(UIContext.SAGETV_PROCESS_LOCAL_UI, new File(FilePath))));
                                             Boolean success = new File(FilePath).delete();
                                             if (success){
-                                                LOG.debug("Execute: CopyExporttoServer - deleted local source on try '" + tries + "' for File '" + FilePath + "'");
+                                                Log.debug("Export","Execute: CopyExporttoServer - deleted local source on try '" + tries + "' for File '" + FilePath + "'");
                                             }else{
-                                                LOG.debug("Execute: CopyExporttoServer - failed to delete local source on try '" + tries + "' for File '" + FilePath + "'");
-                                                LOG.debug("Execute: CopyExporttoServer - deleteOnExit of VM will be tried when Sage Exits for File '" + FilePath + "'");
+                                                Log.debug("Export","Execute: CopyExporttoServer - failed to delete local source on try '" + tries + "' for File '" + FilePath + "'");
+                                                Log.debug("Export","Execute: CopyExporttoServer - deleteOnExit of VM will be tried when Sage Exits for File '" + FilePath + "'");
                                                 new File(FilePath).deleteOnExit();
                                             }
                                             break;
                                         }
                                         if (DownloadUtil.isDownloadError(status)) {
-                                            LOG.debug("Execute: CopyExporttoServer - deleteting local source failed - error '" + (String) status + "' for file '" + FilePath + "'");
+                                            Log.debug("Export","Execute: CopyExporttoServer - deleteting local source failed - error '" + (String) status + "' for file '" + FilePath + "'");
                                             error = true;
                                             break;
                                         }
                                         if (tries>=maxtries){
-                                            LOG.debug("Execute: CopyExporttoServer - deleteting local source - failed due to max retires");
+                                            Log.debug("Export","Execute: CopyExporttoServer - deleteting local source - failed due to max retires");
                                             error = true;
                                             break;
                                         }
@@ -458,46 +455,46 @@ public class Export {
                                 }
                             }
                         });
-                        LOG.debug("Execute: properties saved to Server location '" + this.ServerCopyDestPath + File.separator + tFileName + "'");
+                        Log.debug("Export","Execute: properties saved to Server location '" + this.ServerCopyDestPath + File.separator + tFileName + "'");
                     }else{
-                        LOG.debug("Execute: properties could not be saved to Server so saved local to '" + this.FilePath + "'");
+                        Log.debug("Export","Execute: properties could not be saved to Server so saved local to '" + this.FilePath + "'");
                     }
                 }else{
-                    LOG.debug("Execute: properties saved to '" + this.FilePath + "'");
+                    Log.debug("Export","Execute: properties saved to '" + this.FilePath + "'");
                 }
             }else{
-                LOG.debug("Execute: no properties to export");
+                Log.debug("Export","Execute: no properties to export");
             }
             
         }
     }
 
     public static void LoadAllProperties(String PropLocation, Properties PropContainer, Boolean SkipEnabled){
-        //LOG.debug("LoadAllProperties: started for '" + PropLocation + "' SkipEnabled '" + SkipEnabled + "'");
+        //Log.debug("Export","LoadAllProperties: started for '" + PropLocation + "' SkipEnabled '" + SkipEnabled + "'");
         PropLocation = CleanPropLocation(PropLocation);
         LoadProperties(PropLocation, PropContainer, SkipEnabled);
         LoadSubProperties(PropLocation, PropContainer, SkipEnabled);
-        LOG.debug("LoadAllProperties: completed for '" + PropLocation + "'");
+        Log.debug("Export","LoadAllProperties: completed for '" + PropLocation + "'");
     }
     
     private static void LoadProperties(String PropLocation, Properties PropContainer, Boolean SkipEnabled){
         String[] PropNames = sagex.api.Configuration.GetSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation);
-        //LOG.debug("LoadProperties: for PropLocation '" + PropLocation + "' PropNames size = '" + PropNames.length + "'");
+        //Log.debug("Export","LoadProperties: for PropLocation '" + PropLocation + "' PropNames size = '" + PropNames.length + "'");
         for (String PropItem: PropNames){
             String tProp = PropLocation + Const.PropDivider + PropItem;
             if (SkipEnabled && (tProp.startsWith(Const.BaseProp + Const.PropDivider + Const.FlowProp) || tProp.startsWith(Const.BaseProp + Const.PropDivider + Const.WidgetProp))){
                 //skip this property
-                //LOG.debug("LoadProperties: skipping '" + tProp + "'");
+                //Log.debug("Export","LoadProperties: skipping '" + tProp + "'");
             }else{
                 String tValue = util.GetProperty(tProp, util.OptionNotFound);
                 PropContainer.put(tProp, tValue);
-                //LOG.debug("LoadProperties: '" + tProp + "' = '" + tValue + "'");
+                //Log.debug("Export","LoadProperties: '" + tProp + "' = '" + tValue + "'");
             }
         }
     }
     private static void LoadSubProperties(String PropLocation, Properties PropContainer, Boolean SkipEnabled){
         String[] PropNames = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),PropLocation);
-        //LOG.debug("LoadSubProperties: for PropLocation '" + PropLocation + "' PropNames size = '" + PropNames.length + "'");
+        //Log.debug("Export","LoadSubProperties: for PropLocation '" + PropLocation + "' PropNames size = '" + PropNames.length + "'");
         for (String PropItem: PropNames){
             String tProp = PropLocation + Const.PropDivider + PropItem;
             LoadProperties(tProp, PropContainer, SkipEnabled);

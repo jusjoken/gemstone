@@ -4,8 +4,6 @@
  */
 package Gemstone;
 
-import org.apache.log4j.Logger;
-
 /**
  *
  * @author jusjoken
@@ -13,7 +11,6 @@ import org.apache.log4j.Logger;
  */
 public class StopWatch {
     
-    static private final Logger LOG = Logger.getLogger(StopWatch.class);
     private long startTime = 0;
     private long stopTime = 0;
     private Boolean running = Boolean.FALSE;
@@ -41,13 +38,13 @@ public class StopWatch {
     public void StopandLog() {
         this.stopTime = System.currentTimeMillis();
         this.running = Boolean.FALSE;
-        LOG.debug(StopWatchName + ": completed in '" + getElapsedTime() + "' milliseconds");
+        Log.debug("StopWatch",StopWatchName + ": completed in '" + getElapsedTime() + "' milliseconds");
     }
     
     public void LogCurrent(String LogText) {
         this.stopTime = System.currentTimeMillis();
         this.running = Boolean.FALSE;
-        LOG.debug(StopWatchName + ": " + LogText + " in '" + getElapsedTime() + "' milliseconds");
+        Log.debug("StopWatch",StopWatchName + ": " + LogText + " in '" + getElapsedTime() + "' milliseconds");
         this.startTime = System.currentTimeMillis();
         this.running = Boolean.TRUE;
     }

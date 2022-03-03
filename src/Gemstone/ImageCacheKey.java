@@ -6,7 +6,6 @@ package Gemstone;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.metadata.MediaArtifactType;
 
@@ -27,7 +26,6 @@ public class ImageCacheKey {
     private Boolean KeepFilenameOnKey = Boolean.FALSE;
     private Boolean RefreshAll = Boolean.FALSE;
     private SortedSet<String> UIList = new TreeSet();
-    static private final Logger LOG = Logger.getLogger(ImageCache.class);
 
     public ImageCacheKey() {
         UIList.add(sagex.api.Global.GetUIContextName());
@@ -172,7 +170,7 @@ public class ImageCacheKey {
             }
         }
         if (changed){
-            LOG.debug("MergeKey: already in the Queue but updated '" + inKey.getKey() + "' defaultImage returned '" + inKey.getDefaultImage() + "' RefreshArea '" + this.RefreshArea + "' RefreshAll '" + this.RefreshAll + "' RefreshKey '" + this.RefreshKey + "' UIList '" + this.UIList + "'");
+            Log.debug("ImageCacheKey","MergeKey: already in the Queue but updated '" + inKey.getKey() + "' defaultImage returned '" + inKey.getDefaultImage() + "' RefreshArea '" + this.RefreshArea + "' RefreshAll '" + this.RefreshAll + "' RefreshKey '" + this.RefreshKey + "' UIList '" + this.UIList + "'");
         }
     }
 

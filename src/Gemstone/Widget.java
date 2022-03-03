@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -17,7 +16,6 @@ import org.apache.log4j.Logger;
  * - 04/04/2012 - updated for Gemstone
  */
 public class Widget {
-    static private final Logger LOG = Logger.getLogger(Widget.class);
     public static final String WidgetProps = Const.BaseProp + Const.PropDivider + Const.WidgetProp + Const.PropDivider;
     public static enum WidgetSize{XL,L,M,S};
     public static List<String> InternalWidgetList = new ArrayList<String>();
@@ -114,13 +112,13 @@ public class Widget {
                         SortNeedsSaving = Boolean.TRUE;
                     }
                     tSortedList.put(thisSort, tWidget);
-                    //LOG.debug("GetWidgetList: '" + tWidget + "' added at '" + thisSort + "'");
+                    //Log.debug("Widget","GetWidgetList: '" + tWidget + "' added at '" + thisSort + "'");
                 }
             }
             if (SortNeedsSaving){
                 for (Map.Entry<Integer,String> tWidget:tSortedList.entrySet()){
                     SetWidgetSort(tWidget.getValue(),tWidget.getKey());
-                    //LOG.debug("GetWidgetList: Saving sort for '" + tWidget.getValue() + "' at '" + tWidget.getKey() + "'");
+                    //Log.debug("Widget","GetWidgetList: Saving sort for '" + tWidget.getValue() + "' at '" + tWidget.getKey() + "'");
                 }
             }
             return new ArrayList<String>(tSortedList.values()); 
@@ -197,7 +195,7 @@ public class Widget {
         ArrayList<String> Widgets = GetWidgetList();
         Integer currentPos = Widgets.indexOf(WidgetType);
         Integer newPos = currentPos + Delta;
-        //LOG.debug("MoveWidget: WidgetType '" + WidgetType + "' newPos '" + newPos + " currentPos '" + currentPos + " Size = '" + Widgets.size() + " Delta '" + Delta + "'");
+        //Log.debug("Widget","MoveWidget: WidgetType '" + WidgetType + "' newPos '" + newPos + " currentPos '" + currentPos + " Size = '" + Widgets.size() + " Delta '" + Delta + "'");
         if (newPos>Widgets.size() || newPos<0){
             //do not move the widget out of bounds
         }else{
@@ -206,13 +204,13 @@ public class Widget {
             for (Integer i=0;i<Widgets.size();i++){
                 if (i.equals(currentPos)){
                     SetWidgetSort(WidgetType, newPos+1);
-                    //LOG.debug("MoveWidget: WidgetType original '" + WidgetType + "' to: '" + (newPos+1) + " Delta '" + Delta + "'");
+                    //Log.debug("Widget","MoveWidget: WidgetType original '" + WidgetType + "' to: '" + (newPos+1) + " Delta '" + Delta + "'");
                 }else if (i.equals(newPos)){
                     SetWidgetSort(newWidget, currentPos+1);
-                    //LOG.debug("MoveWidget: WidgetType replaced '" + newWidget + "' to: '" + (currentPos+1) + " Delta '" + Delta + "'");
+                    //Log.debug("Widget","MoveWidget: WidgetType replaced '" + newWidget + "' to: '" + (currentPos+1) + " Delta '" + Delta + "'");
                 }else{
                     SetWidgetSort(Widgets.get(i), i+1);
-                    //LOG.debug("MoveWidget: WidgetType saving   '" + Widgets.get(i) + "' to: '" + (i+1) + " Delta '" + Delta + "'");
+                    //Log.debug("Widget","MoveWidget: WidgetType saving   '" + Widgets.get(i) + "' to: '" + (i+1) + " Delta '" + Delta + "'");
                 }
             }
         }
@@ -239,17 +237,17 @@ public class Widget {
     public static Double GetHeightbyType(String WidgetType){
         String tWidgetSize = GetSize(WidgetType);
         Double tRetVal = GetHeight(tWidgetSize);
-        //LOG.debug("GetHeightbyType: for Widget '" + WidgetType + "' height = '" + tRetVal + "'");
+        //Log.debug("Widget","GetHeightbyType: for Widget '" + WidgetType + "' height = '" + tRetVal + "'");
         return tRetVal;
     }
     public static Double GetHeight(String tWidgetSize){
         Double tRetVal = StringtoDouble(util.GetProperty(WidgetProps + "WidgetHeight" + tWidgetSize,"0.00"));
-        //LOG.debug("GetHeight: for WidgetSize '" + tWidgetSize + "' height = '" + tRetVal + "'");
+        //Log.debug("Widget","GetHeight: for WidgetSize '" + tWidgetSize + "' height = '" + tRetVal + "'");
         return tRetVal;
     }
     
     public static void SetHeight(String tWidgetSize, Double Height){
-        //LOG.debug("SetHeight: for Widget Size = '" + tWidgetSize + "' height = '" + Height + "'");
+        //Log.debug("Widget","SetHeight: for Widget Size = '" + tWidgetSize + "' height = '" + Height + "'");
         util.SetProperty(WidgetProps + "WidgetHeight" + tWidgetSize, Height.toString());
     }
     
@@ -259,7 +257,7 @@ public class Widget {
     }
     public static Double GetTitleHeight(String tWidgetSize){
         Double tRetVal = StringtoDouble(util.GetProperty(WidgetProps + "WidgetTitleHeight" + tWidgetSize,"0.00"));
-        //LOG.debug("GetTitleHeight: for Widget Size = '" + tWidgetSize + "' height = '" + tRetVal + "'");
+        //Log.debug("Widget","GetTitleHeight: for Widget Size = '" + tWidgetSize + "' height = '" + tRetVal + "'");
         return tRetVal;
     }
     
@@ -275,7 +273,7 @@ public class Widget {
         }
         catch (NumberFormatException nfe)
         {
-            LOG.debug("StringtoDouble: Error converting '" + s + "' ERROR: '" + nfe + "'");
+            Log.debug("Widget","StringtoDouble: Error converting '" + s + "' ERROR: '" + nfe + "'");
             return 0.00;
         }
     }
@@ -302,10 +300,9 @@ public class Widget {
         if (WidgetType.equals("WeatherForecast")){
             //Section 1 is the title
             //make sure we return false if the section is larger than the number of forecast days available
-            if (phoenix.weather2.IsConfigured()){
-                if (Section > phoenix.weather2.GetForecastDays()+1){
-                    return false;
-                }
+            int OWMForecastDays = 8;
+            if (Section > OWMForecastDays+1){
+                return false;
             }
         }
         String tProp = WidgetProps + WidgetType + Const.PropDivider + Section.toString() + Const.PropDivider + "Enabled";
@@ -319,10 +316,10 @@ public class Widget {
 
     public static Integer GetDefaultListSize(String WidgetType){
         if (InternalWidgetListDefaultListSize.containsKey(WidgetType)){
-            //LOG.debug("GetDefaultListSize: for '" + WidgetType + "' returning '" + InternalWidgetListDefaultListSize.get(WidgetType) + "'");
+            //Log.debug("Widget","GetDefaultListSize: for '" + WidgetType + "' returning '" + InternalWidgetListDefaultListSize.get(WidgetType) + "'");
             return InternalWidgetListDefaultListSize.get(WidgetType);
         }
-        //LOG.debug("GetDefaultListSize: for '" + WidgetType + "' returning 1 as not found");
+        //Log.debug("Widget","GetDefaultListSize: for '" + WidgetType + "' returning 1 as not found");
         return 1;
     }
     public static Integer GetListSize(String WidgetType){
@@ -330,10 +327,10 @@ public class Widget {
         Integer tRetVal = util.GetPropertyAsInteger(tProp,InternalWidgetListDefaultListSize.get(WidgetType));
         Integer tCurrentSize = GetWidgetListCurrentSize(WidgetType);
         if (tCurrentSize<tRetVal){
-            //LOG.debug("GetListSize: for '" + WidgetType + "' returning Current '" + tCurrentSize + "'");
+            //Log.debug("Widget","GetListSize: for '" + WidgetType + "' returning Current '" + tCurrentSize + "'");
             return tCurrentSize;
         }else{
-            //LOG.debug("GetListSize: for '" + WidgetType + "' returning Max '" + tRetVal + "'");
+            //Log.debug("Widget","GetListSize: for '" + WidgetType + "' returning Max '" + tRetVal + "'");
             return tRetVal;
         }
     }
@@ -370,7 +367,7 @@ public class Widget {
         for (String tWidget:GetWidgetList()){
             tHeight = tHeight + GetWidgetHeight(tWidget);
         }
-        //LOG.debug("GetAllHeights: returning ='" + tHeight + "'");
+        //Log.debug("Widget","GetAllHeights: returning ='" + tHeight + "'");
         return tHeight;
     }
 
@@ -382,7 +379,7 @@ public class Widget {
         for (Integer i=1;i<InternalWidgetListSections.get(WidgetType)+1;i++){
             tHeight = tHeight + GetWidgetSectionHeight(WidgetType, i);
         }
-        //LOG.debug("GetWidgetHeight: returning ='" + tHeight + "'");
+        //Log.debug("Widget","GetWidgetHeight: returning ='" + tHeight + "'");
         return tHeight;
     }
     public static Double GetWidgetSectionHeightP(String WidgetType, Integer Section){
@@ -402,7 +399,7 @@ public class Widget {
             }
             Double thisHeight = (GetSpaceSize()*GetSectionSize(WidgetType, Section)*ListItems*ListExtraInfo);
             tHeight = tHeight + thisHeight;
-            //LOG.debug("GetWidgetHeight: for Widget ='" + WidgetType + "' Section = '" + Section + "' Height = '" + thisHeight + "' totalHeight = '" + tHeight + "' ListItems = '" + ListItems + "'");
+            //Log.debug("Widget","GetWidgetHeight: for Widget ='" + WidgetType + "' Section = '" + Section + "' Height = '" + thisHeight + "' totalHeight = '" + tHeight + "' ListItems = '" + ListItems + "'");
         }
         return tHeight;
     }
@@ -412,7 +409,7 @@ public class Widget {
         Double tHeight = 0.00;
         Double thisHeight = (GetSpaceSize()*GetSectionSize(WidgetType, Section));
         tHeight = tHeight + thisHeight;
-        //LOG.debug("GetWidgetHeight: for Widget ='" + WidgetType + "' Section = '" + Section + "' Height = '" + thisHeight + "' totalHeight = '" + tHeight + "' ListItems = '" + ListItems + "'");
+        //Log.debug("Widget","GetWidgetHeight: for Widget ='" + WidgetType + "' Section = '" + Section + "' Height = '" + thisHeight + "' totalHeight = '" + tHeight + "' ListItems = '" + ListItems + "'");
         return tHeight/GetWidgetHeight(WidgetType);
     }
     

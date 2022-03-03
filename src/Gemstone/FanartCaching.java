@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -20,7 +19,6 @@ import org.apache.log4j.Logger;
  */
 public class FanartCaching {
 
-    static private final Logger LOG = Logger.getLogger(FanartCaching.class);
 //    public static HashMap<String,HashMap<Object,FanartCacheObject>> FanartCacheMap = new HashMap<String,HashMap<Object,FanartCacheObject>> ();
     public static final Pattern MetaImage = Pattern.compile("id=([0-9]+)\\s");
     public static String CacheLocation = sagex.api.Configuration.GetProperty(Const.BaseProp + Const.PropDivider + "Fanart/CacheLocation", "cache/GemstoneImages/");

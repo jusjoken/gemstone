@@ -15,10 +15,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-
-import sagex.UIContext;
 import sagex.api.AiringAPI;
 import sagex.api.FavoriteAPI;
 import sagex.api.MediaFileAPI;
@@ -48,7 +44,6 @@ import sagex.phoenix.vfs.views.ViewItem;
  * - 04/04/2012 - updated for Gemstone
  */
 public class Source {
-    static private final Logger LOG = Logger.getLogger(Source.class);
     public static HashMap<String,String> InternalFilterTypes = new HashMap<String,String>();
     public static HashMap<String,String> InternalMediaTypeFilters = new HashMap<String,String>();
     public static HashMap<String,String> InternalGroupsList = new HashMap<String,String>();
@@ -98,7 +93,7 @@ public class Source {
         return new ArrayList<String>(OrganizerTypesList.values());
     }
     public static String GetOrganizerName(String OrgName, String OrgType){
-        //LOG.debug("GetOrganizerName: OrgName '" + OrgName + "' OrgType '" + OrgType + "'" );
+        //Log.debug("Source","GetOrganizerName: OrgName '" + OrgName + "' OrgType '" + OrgType + "'" );
         if (OrgType.equals(SourceUI.OrganizerType.GROUP.toString())){
             return GetOrganizerGroupName(OrgName);
         }else if (OrgType.equals(SourceUI.OrganizerType.SORT.toString())){
@@ -157,9 +152,9 @@ public class Source {
     public static void AddFilterType(String FilterName, String FilterType){
         if (IsFilterTypeValid(FilterType)){
             InternalFilterTypes.put(FilterName, FilterType);
-            LOG.debug("AddFilterType: added '" + FilterName + "' with type '" + FilterType + "' InternalFilterTypes [" + InternalFilterTypes + "]");
+            Log.debug("Source","AddFilterType: added '" + FilterName + "' with type '" + FilterType + "' InternalFilterTypes [" + InternalFilterTypes + "]");
         }else{
-            LOG.debug("AddFilterType: invalid FilterType '" + FilterType + "' so '" + FilterName + "' not added to InternalFilterTypes [" + InternalFilterTypes + "]");
+            Log.debug("Source","AddFilterType: invalid FilterType '" + FilterType + "' so '" + FilterName + "' not added to InternalFilterTypes [" + InternalFilterTypes + "]");
         }
     }
     //can be used in the STV to see if the filter has been added before using it or setting it's settings
@@ -179,7 +174,7 @@ public class Source {
     }
    
     public static Set<Filter> GetFilters(String ViewName){
-        //LOG.debug("ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' Before Count = '" + phoenix.media.GetAllChildren(Folder).size() + "' Types '" + InternalFilterTypes + "'");
+        Log.debug("Source","ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' Types '" + InternalFilterTypes + "'");
         Set<Filter> AllFilters = new HashSet<Filter>();
         //Apply genre filter if any
         if (HasGenreFilter(ViewName)){
@@ -203,10 +198,10 @@ public class Source {
                     //grab the value from the filtername if passed in - example "mediatype:tv"
                     //the filtername remains the same to differentiate the different filters in the properties
 //                    if (FilterName.contains(":")){
-//                        //LOG.debug("ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
+//                        //Log.debug("Source","ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
 //                        FilterValue = FilterName.split(":")[1];
 //                        FilterTypeforCreate = FilterName.split(":")[0];
-//                        LOG.debug("GetFilters 1: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
+//                        Log.debug("Source","GetFilters 1: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
 //                    }
                     if (FilterType.equals("pql")){
                         FilterTypeforCreate = "pql";
@@ -235,21 +230,23 @@ public class Source {
                         }
                     }
                     if (!FilterValue.equals("")){
-                        //LOG.debug("GetFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
+                        Log.debug("Source","GetFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' filter '" + FilterValue + "'");
                         tOption = phoenix.umb.GetOption(NewFilter, "value");
                         phoenix.opt.SetValue(tOption, FilterValue);
                     }
                     phoenix.umb.SetChanged(NewFilter);
                     AllFilters.add(NewFilter);
                 }else{
-                    //LOG.debug("GetFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' Filter is turned Off");
+                    Log.debug("Source","GetFilters: '" + Flow.GetFlowName(ViewName) + "' processing filter '" + FilterName + "' FilterType '" + FilterType + "' Filter is turned Off");
                 }
             }else{
-                LOG.debug("GetFilters: '" + Flow.GetFlowName(ViewName) + "' invalid filtertype passed '" + FilterName + "' FilterType '" + FilterType + "'");
+                Log.debug("Source","GetFilters: '" + Flow.GetFlowName(ViewName) + "' invalid filtertype passed '" + FilterName + "' FilterType '" + FilterType + "'");
             }
         }
+        Log.debug("Source", "GetFilters for flow:" + Flow.GetFlowName(ViewName) + AllFilters);
+
         return AllFilters;
-        //LOG.debug("ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' After Count = '" + phoenix.media.GetAllChildren(Folder).size() + "'");
+        //Log.debug("Source","ApplyFilters: '" + Flow.GetFlowName(ViewName) + "' After Count = '" + phoenix.media.GetAllChildren(Folder).size() + "'");
     }
     
     public static String BuildPQL(String ViewName, String FilterName, String FieldName, String FieldVerb, Boolean AndValues){
@@ -271,7 +268,7 @@ public class Source {
     
     public static Map GetAllFolderRestrictions(String ViewName) {
         String ExclusionFolders = Flow.GetOptionName(ViewName, Const.FlowPathFilters, "");
-        LOG.debug("GetAllFolderRestrictions: = '" + ExclusionFolders + "'");
+        Log.debug("Source","GetAllFolderRestrictions: = '" + ExclusionFolders + "'");
         Map rest = new HashMap<String, Boolean>();
         if (!ExclusionFolders.equals("")) {
             String[] AllValues = ExclusionFolders.split(";");
@@ -292,17 +289,17 @@ public class Source {
     }
     
     public static String FolderFilterAppend(String filters, String filter){
-        //LOG.debug("FilterAppend: called '" + filters + "' add '" + filter + "'");
+        Log.debug("Source","FilterAppend: called '" + filters + "' add '" + filter + "'");
         String tFilter = filter;
         //format the filter as a RegEx compatible string
         tFilter = filter.replaceAll("\\\\","\\\\\\\\").replaceAll("\\(","\\\\(").replaceAll("\\)","\\\\)");
-        //LOG.debug("FilterAppend: after replaceall '" + tFilter + "'");
+        Log.debug("Source","FilterAppend: after replaceall '" + tFilter + "'");
         if (filters.equals("")){
             filters = tFilter;
         }else{
             filters = filters + "|" + tFilter;
         }
-        //LOG.debug("FilterAppend: adding '" + filter + "' to '" + filters + "'");
+        Log.debug("Source","FilterAppend: adding '" + filter + "' to '" + filters + "'");
         return filters;
     }
 
@@ -326,10 +323,10 @@ public class Source {
                 tOption = phoenix.umb.GetOption(NewFilter, "scope");
                 if (IncludeFilters.equals("")){
                     phoenix.opt.SetValue(tOption, "exclude");
-                    //LOG.debug("ApplyFilters: exclude = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
+                    Log.debug("Source","ApplyFilters: exclude = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
                 }else{
                     phoenix.opt.SetValue(tOption, "include");
-                    //LOG.debug("ApplyFilters: include = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
+                    Log.debug("Source","ApplyFilters: include = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
                 }
                 tOption = phoenix.umb.GetOption(NewFilter, "value");
                 phoenix.opt.SetValue(tOption, FilterString);
@@ -385,6 +382,7 @@ public class Source {
         } else {
             result = "0";
         }
+        Log.debug("Source", "RemoveFolderFilter - View:" + ViewName + " Path:" + Path + " include:" + include + " result:" + result);
         return result;
 
     }
@@ -393,13 +391,13 @@ public class Source {
         //remove any existing groupers - there should not be any but to be safe
         while (phoenix.umb.GetGroupers(Folder).size()>0){
             Grouper curGrouper = phoenix.umb.GetGroupers(Folder).get(0);
-            LOG.debug("GetGenres: removing existing grouper prior to adding one '" + curGrouper.getLabel() + "' Name '" + curGrouper.getName() + "'");
+            Log.debug("Source","GetGenres: removing existing grouper prior to adding one '" + curGrouper.getLabel() + "' Name '" + curGrouper.getName() + "'");
             phoenix.umb.RemoveGrouper(Folder, curGrouper);
         }
         //remove any existing sorters - there should not be any but to be safe
         while (phoenix.umb.GetSorters(Folder).size()>0){
             Sorter curSorter = phoenix.umb.GetSorters(Folder).get(0);
-            LOG.debug("GetGenres: removing existing Sorters prior to adding one '" + curSorter.getLabel() + "' Name '" + curSorter.getName() + "'");
+            Log.debug("Source","GetGenres: removing existing Sorters prior to adding one '" + curSorter.getLabel() + "' Name '" + curSorter.getName() + "'");
             phoenix.umb.RemoveSorter(Folder, curSorter);
         }
     }
@@ -407,10 +405,10 @@ public class Source {
     public static ArrayList<String> GetGenres(ViewFolder Folder){
         //TODO: replace this with a fixed XML View to load and return results
         if (Folder==null){
-            LOG.debug("GetGenres: request for null Folder returned empty list");
+            Log.debug("Source","GetGenres: request for null Folder returned empty list");
             return new ArrayList<String>();
         }
-        //LOG.debug("GetGenres: first child check before '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
+        //Log.debug("Source","GetGenres: first child check before '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
         TreeSet<String> GenreList = new TreeSet<String>();
         CleanFolderPresentation(Folder);
         //add a group for genre
@@ -420,16 +418,16 @@ public class Source {
         phoenix.umb.SetChanged(NewGrouper);
         phoenix.umb.SetGrouper(Folder, NewGrouper);
         phoenix.umb.Refresh(Folder);
-        //LOG.debug("GetGenres: first child check during '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
+        //Log.debug("Source","GetGenres: first child check during '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
         for (Object Item: phoenix.media.GetChildren(Folder)){
-            //LOG.debug("GetGenres: proecessing '" + phoenix.media.GetTitle(Item) + "'");
+            //Log.debug("Source","GetGenres: proecessing '" + phoenix.media.GetTitle(Item) + "'");
             if (!phoenix.media.GetTitle(Item).equals("NONE")){
                 GenreList.add(phoenix.media.GetTitle(Item));
             }
         }
         phoenix.umb.RemoveGrouper(Folder, NewGrouper);
         phoenix.umb.Refresh(Folder);
-        //LOG.debug("GetGenres: first child check after '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
+        //Log.debug("Source","GetGenres: first child check after '" + phoenix.media.GetTitle(phoenix.umb.GetChild(Folder, 0)) + "'");
         return new ArrayList<String>(GenreList);
     }
     
@@ -442,7 +440,7 @@ public class Source {
             if (md5Key!=null){
                 Object tView = ViewCache.get(md5Key);
                 if (tView!=null){
-                    LOG.debug("LoadView: " + ViewName + " Using Cached view for Key '" + md5Key + "'");
+                    Log.debug("Source","LoadView: " + ViewName + " Using Cached view for Key '" + md5Key + "'");
                     return (ViewFolder) tView;
                 }
             }
@@ -465,7 +463,7 @@ public class Source {
             try {
                 source = (ViewFactory) Phoenix.getInstance().getVFSManager().getVFSViewFactory().getFactory(mySource.Source()).clone();
             } catch (Exception e) {
-                LOG.debug("LoadView: unable to create source from '" + mySource.Source() + "'");
+                Log.debug("Source","LoadView: unable to create source from '" + mySource.Source() + "'");
                 return null;
             }
             vf.addViewSource((ViewFactory) source);
@@ -479,7 +477,7 @@ public class Source {
             for (PresentationUI tUI: mySource.UIList()){
                 ViewPresentation vp = new ViewPresentation(tUI.Level());
 //                if (HasFilter(ViewName) && tUI.Level()==0){  //only add filter to the first presentation level
-//                    LOG.debug("LoadView: adding filters within presentation level '" + tUI.Level() + "'");
+//                    Log.debug("Source","LoadView: adding filters within presentation level '" + tUI.Level() + "'");
 //                    for (Filter f:ApplyFilters(ViewName)){
 //                        vp.getFilters().add(f);
 //                    }
@@ -507,7 +505,7 @@ public class Source {
                     vp.getSorters().add(sort);
                 }
                 vf.addViewPresentations(vp);
-                //LOG.debug("LoadView: Level '" + tUI.Level() + "' GroupBy '" + tGroup + "' SortBy '" + tSort + "'");
+                //Log.debug("Source","LoadView: Level '" + tUI.Level() + "' GroupBy '" + tGroup + "' SortBy '" + tSort + "'");
             }
             view = vf.create(null);
         }else{
@@ -528,23 +526,24 @@ public class Source {
         if (HasFilter(ViewName)){
             AndResourceFilter andFilter = new AndResourceFilter();
             for (Filter thisFilter: GetFilters(ViewName)){
+                Log.debug("Source", "LoadView:" + Flow.GetFlowName(ViewName) + " addFilter:" + thisFilter);
                 andFilter.addFilter(thisFilter);
             }
             WrappedResourceFilter f = new WrappedResourceFilter(andFilter);
             f.setLabel(Const.WrappedFilter);
             if (HasValidPresentation(view.getViewFactory().getViewPresentation(0))){
-                LOG.debug("LoadView: adding filters to Presentation level 0");
+                Log.debug("Source", "LoadView:" + Flow.GetFlowName(ViewName) + " adding filters to Presentation level 0");
                 view.getViewFactory().getViewPresentation(0).getFilters().add(f);
             }else{
-                LOG.debug("LoadView: adding filters direct to the view");
+                Log.debug("Source", "LoadView:" + Flow.GetFlowName(ViewName) + " adding filters direct to the view");
                 view.getFilters().add(f);
             }
         }
-        LOG.debug("LoadView: View Created as follows....");
+        Log.debug("Source","LoadView: View Created as follows....");
         DescribeViewToLog(view, ViewName);
         // if Caching ON - store this view in the cache for future retrieval
         if (Flow.GetTrueFalseOption(ViewName, Const.FlowViewCache, Boolean.FALSE)){
-            LOG.debug("LoadView: " + ViewName + " Storing Cached view for Key '" + md5Key + "'");
+            Log.debug("Source", "LoadView:" + Flow.GetFlowName(ViewName) + " Storing Cached view for Key '" + md5Key + "'");
             ViewCache.put(md5Key, view);
         }
         return view;
@@ -555,7 +554,7 @@ public class Source {
         if (md5Key!=null){
             Object tView = ViewCache.get(md5Key);
             if (tView!=null){
-                LOG.debug("ViewCacheRemove: " + ViewName + " Removing view for Key '" + md5Key + "'");
+                Log.debug("Source","ViewCacheRemove: " + ViewName + " Removing view for Key '" + md5Key + "'");
                 ViewCache.remove(md5Key);
             }
         }
@@ -568,33 +567,33 @@ public class Source {
     public static int GetLevel(ViewFolder view){
         //get the current level
         Integer tLevel = view.getPresentation().getLevel() + 1;
-        LOG.debug("GetLevel: returning '" + tLevel + "' in '" + view + "'");
+        Log.debug("Source","GetLevel: returning '" + tLevel + "' in '" + view + "'");
         return tLevel;
     }
 
     public static Boolean IsLastLevel(ViewFolder view){
         //get the current level
-        LOG.debug("IsLastLevel: checking levels in '" + view + "'");
+        Log.debug("Source","IsLastLevel: checking levels in '" + view + "'");
         Integer tLevel = view.getPresentation().getLevel() + 1;
         Integer tLevels = view.getViewFactory().getViewPresentations().size();
         Integer tChildren = view.getChildren().size();
-        LOG.debug("IsLastLevel: this level '" + tLevel + "' or '" + tLevels + "' Contains '" + tChildren + "' items");
+        Log.debug("Source","IsLastLevel: this level '" + tLevel + "' or '" + tLevels + "' Contains '" + tChildren + "' items");
         return Boolean.FALSE;
     }
     
     public static Boolean IsTitleSortByParent(IMediaResource imr){
         if (imr==null){
-            LOG.debug("IsTitleSort: null IMediaResource passed in so returning FALSE");
+            Log.debug("Source","IsTitleSort: null IMediaResource passed in so returning FALSE");
             return Boolean.FALSE;
         }else{
             ViewFolder view = (ViewFolder) phoenix.umb.GetParent(imr);
-            LOG.debug("IsTitleSortByParent: calling IsTitleSource for view '" + view + "' based on item '" + imr + "'");
+            Log.debug("Source","IsTitleSortByParent: calling IsTitleSource for view '" + view + "' based on item '" + imr + "'");
             return IsTitleSort(view);
         }
     }
     public static Boolean IsTitleSort(ViewFolder view){
         if (view==null){
-            LOG.debug("IsTitleSort: null view passed in so returning FALSE");
+            Log.debug("Source","IsTitleSort: null view passed in so returning FALSE");
             return Boolean.FALSE;
         }
         //get the current level
@@ -602,14 +601,14 @@ public class Source {
             String tSortName = view.getPresentation().getSorters().get(0).getName();
             String tSortLabel = view.getPresentation().getSorters().get(0).getLabel();
             if (tSortName.equals("title")){
-                LOG.debug("IsTitleSort: title sort found so returning TRUE - SortLabel '" + tSortLabel + "' for '" + view + "'");
+                Log.debug("Source","IsTitleSort: title sort found so returning TRUE - SortLabel '" + tSortLabel + "' for '" + view + "'");
                 return Boolean.TRUE;
             }else{
-                LOG.debug("IsTitleSort: returning FALSE for SortName '" + tSortName + "' SortLabel '" + tSortLabel + "' for '" + view + "'");
+                Log.debug("Source","IsTitleSort: returning FALSE for SortName '" + tSortName + "' SortLabel '" + tSortLabel + "' for '" + view + "'");
                 return Boolean.FALSE;
             }
         }else{
-            LOG.debug("IsTitleSort: returning FALSE as No sorters for view '" + view + "'");
+            Log.debug("Source","IsTitleSort: returning FALSE as No sorters for view '" + view + "'");
             return Boolean.FALSE;
         }
     }
@@ -665,7 +664,7 @@ public class Source {
     private static void DescribeViewToLog(ViewFolder view, String ViewName){
         //output the DescribeDetails to the log
         for (String d: CreateDescribeView(view, ViewName)){
-            LOG.debug("DescribeView: " + d);
+            Log.debug("Source","DescribeView: " + d);
         }
     }
     public static String DescribeView(ViewFolder view, String ViewName){
@@ -703,18 +702,18 @@ public class Source {
         for (String Prop:MD5Props.stringPropertyNames()){
             buf.append(Prop + "=" + MD5Props.getProperty(Prop) + "|");
         }
-        buf.append(Const.FlowSource + "=" + util.GetProperty(PropLocation + Const.FlowSource,"") + "|");
+        buf.append(Const.FlowSource + "=" + util.GetProperty(PropLocation + Const.FlowSource,"", Flow.IsServerFlow(ViewName)) + "|");
         //replace all FlowName specific strings so the match can be for Any Flow using the same Source info
         String s = buf.toString();
         s = s.replaceAll(ViewName, "AnyFlow");
-        LOG.debug("ViewtoMD5: for '" + ViewName + "' from '" + s + "'");
+        Log.debug("Source","ViewtoMD5: for '" + ViewName + "' from '" + s + "'");
         return util.MD5(s);
     }
     
     public static ArrayList<String> GetRatings(ViewFolder Folder){
         //TODO: replace this with a fixed XML View to load and return results
         if (Folder==null){
-            LOG.debug("GetRatings: request for null Folder returned empty list");
+            Log.debug("Source","GetRatings: request for null Folder returned empty list");
             return new ArrayList<String>();
         }
         TreeSet<String> RatingList = new TreeSet<String>();
@@ -728,7 +727,7 @@ public class Source {
         phoenix.umb.Refresh(Folder);
         for (Object Item: phoenix.media.GetChildren(Folder)){
             String thisRating = phoenix.media.GetTitle(Item);
-            //LOG.debug("GetRating: proecessing '" + phoenix.media.GetTitle(Item) + "' Ratings '" + thisRating + "' type '" + phoenix.media.GetId(Item) + "' Item '" +  Item + "'");
+            //Log.debug("Source","GetRating: proecessing '" + phoenix.media.GetTitle(Item) + "' Ratings '" + thisRating + "' type '" + phoenix.media.GetId(Item) + "' Item '" +  Item + "'");
             if (!thisRating.equals("") && !thisRating.equals("null") && !thisRating.equals("NONE") && thisRating!=null && thisRating.equals(phoenix.media.GetId(Item))){
                 RatingList.add(thisRating);
             }
@@ -749,16 +748,16 @@ public class Source {
         for (Object Item: phoenix.media.GetChildren((ViewFolder) tSource)){
             if (Item instanceof IMediaFile) {
                 Item = ((IMediaFile) Item).getMediaObject();
-                //LOG.debug("GetUserCategories: checking for usercateries '" + Item + "'");
+                //Log.debug("Source","GetUserCategories: checking for usercateries '" + Item + "'");
                 Cats = MediaFileAPI.GetMediaFileMetadata(Item, "UserCategory");
                 for (String Cat:Cats.split(delim)){
                     //add each found cat to the list
                     if (!Cat.trim().equals("")){
                         if (!AllCatList.contains(Cat.trim())){
                             AllCatList.add(Cat.trim());
-                            LOG.debug("GetUserCategories: added Mediafile Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
+                            Log.debug("Source","GetUserCategories: added Mediafile Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
                         }else{
-                            LOG.debug("GetUserCategories: MediaFile Cat '" + Cat + "' already in '" + AllCatList + "'");
+                            Log.debug("Source","GetUserCategories: MediaFile Cat '" + Cat + "' already in '" + AllCatList + "'");
                         }
                     }
                 }
@@ -770,9 +769,9 @@ public class Source {
                         if (!Cat.trim().equals("")){
                             if (!AllCatList.contains(Cat.trim())){
                                 AllCatList.add(Cat.trim());
-                                LOG.debug("GetUserCategories: added ManualRecord Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
+                                Log.debug("Source","GetUserCategories: added ManualRecord Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
                             }else{
-                                LOG.debug("GetUserCategories: ManualRecord Cat '" + Cat + "' already in '" + AllCatList + "'");
+                                Log.debug("Source","GetUserCategories: ManualRecord Cat '" + Cat + "' already in '" + AllCatList + "'");
                             }
                         }
                     }
@@ -785,15 +784,15 @@ public class Source {
                         if (!Cat.trim().equals("")){
                             if (!AllCatList.contains(Cat.trim())){
                                 AllCatList.add(Cat.trim());
-                                LOG.debug("GetUserCategories: added Favorite Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
+                                Log.debug("Source","GetUserCategories: added Favorite Cat '" + Cat + "' to '" + AllCatList + "' from Media Item '" + Item + "'");
                             }else{
-                                LOG.debug("GetUserCategories: Favorite Cat '" + Cat + "' already in '" + AllCatList + "'");
+                                Log.debug("Source","GetUserCategories: Favorite Cat '" + Cat + "' already in '" + AllCatList + "'");
                             }
                         }
                     }
                 }
             } else {
-                LOG.debug("GetUserCategories: not a MediaFile so skipping '" + Item + "'");
+                Log.debug("Source","GetUserCategories: not a MediaFile so skipping '" + Item + "'");
             }
         }
         //add in the user added categories from the server properties
@@ -802,9 +801,9 @@ public class Source {
             if (!Cat.trim().equals("")){
                 if (!AllCatList.contains(Cat.trim())){
                     AllCatList.add(Cat.trim());
-                    LOG.debug("GetUserCategories: added user added Cat '" + Cat + "' to '" + AllCatList + "'");
+                    Log.debug("Source","GetUserCategories: added user added Cat '" + Cat + "' to '" + AllCatList + "'");
                 }else{
-                    LOG.debug("GetUserCategories: user added Cat '" + Cat + "' already in '" + AllCatList + "'");
+                    Log.debug("Source","GetUserCategories: user added Cat '" + Cat + "' already in '" + AllCatList + "'");
                 }
             }
         }
@@ -813,7 +812,7 @@ public class Source {
     
     public static Boolean HasUserCategoryFilter(String ViewName){
         String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowUserCategoryFilters;
-        List<String> FilterList = util.GetPropertyAsList(tProp);
+        List<String> FilterList = util.GetPropertyAsList(tProp, Flow.IsServerFlow(ViewName));
         if (FilterList.isEmpty()){
             return Boolean.FALSE;
         }else{
@@ -823,7 +822,7 @@ public class Source {
     
     public static Boolean HasGenreFilter(String ViewName){
         String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowGenreFilters;
-        List<String> FilterList = util.GetPropertyAsList(tProp);
+        List<String> FilterList = util.GetPropertyAsList(tProp, Flow.IsServerFlow(ViewName));
         if (FilterList.isEmpty()){
             return Boolean.FALSE;
         }else{
@@ -832,11 +831,11 @@ public class Source {
     }
     
     public static Filter GetGenreFilter(String ViewName){
-        //LOG.debug("ApplyFilters: = '" + ViewName + "'");
+        Log.debug("Source","GetGenreFilter: = '" + ViewName + "'");
         //make sure we have a filter
         String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowGenreFilters;
         String FilterString = util.ConvertListtoString(util.GetPropertyAsList(tProp),"|");
-        //LOG.debug("GetGenreFilter: FilterString = '" + FilterString + "'");
+        Log.debug("Source","GetGenreFilter: FilterString = '" + FilterString + "'");
         if (!FilterString.equals("")){
             FilterString = "(" + FilterString + ")";
             Filter NewFilter = phoenix.umb.CreateFilter("genre");
@@ -846,10 +845,10 @@ public class Source {
             tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowGenreFilterMode;
             if (util.GetPropertyAsBoolean(tProp, Boolean.TRUE)){
                 phoenix.opt.SetValue(tOption, "include");
-                //LOG.debug("GetGenreFilter: include = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
+                Log.debug("Source","GetGenreFilter: include = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
             }else{
                 phoenix.opt.SetValue(tOption, "exclude");
-                //LOG.debug("GetGenreFilter: exclude = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
+                Log.debug("Source","GetGenreFilter: exclude = '" + Flow.GetFlowName(ViewName) + "' RegExFilter = '" + FilterString + "'");
             }
             tOption = phoenix.umb.GetOption(NewFilter, "value");
             phoenix.opt.SetValue(tOption, FilterString);
@@ -860,21 +859,21 @@ public class Source {
     }
 
     public static Filter GetUserCategoryFilter(String ViewName){
-        //LOG.debug("ApplyFilters: = '" + ViewName + "'");
+        Log.debug("Source","GetUserCategoryFilter: = '" + ViewName + "'");
         //make sure we have a filter
         String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowUserCategoryFilters;
-        String FilterString = util.ConvertListtoString(util.GetPropertyAsList(tProp),",");
-        LOG.debug("GetUserCategoryFilter: FilterString = '" + FilterString + "'");
+        String FilterString = util.ConvertListtoString(util.GetPropertyAsList(tProp, Flow.IsServerFlow(ViewName)),",");
+        Log.debug("Source","GetUserCategoryFilter: FilterString = '" + FilterString + "'");
         if (!FilterString.equals("")){
             Filter NewFilter = phoenix.umb.CreateFilter("usercategory");
             ConfigurableOption tOption = phoenix.umb.GetOption(NewFilter, "scope");
             tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowUserCategoryFilterMode;
-            if (util.GetPropertyAsBoolean(tProp, Boolean.TRUE)){
+            if (util.GetPropertyAsBoolean(tProp, Boolean.TRUE, Flow.IsServerFlow(ViewName))){
                 phoenix.opt.SetValue(tOption, "include");
-                LOG.debug("GetUserCategoryFilter: include = '" + Flow.GetFlowName(ViewName) + "' Filter = '" + FilterString + "'");
+                Log.debug("Source","GetUserCategoryFilter: include = '" + Flow.GetFlowName(ViewName) + "' Filter = '" + FilterString + "'");
             }else{
                 phoenix.opt.SetValue(tOption, "exclude");
-                LOG.debug("GetUserCategoryFilter: exclude = '" + Flow.GetFlowName(ViewName) + "' Filter = '" + FilterString + "'");
+                Log.debug("Source","GetUserCategoryFilter: exclude = '" + Flow.GetFlowName(ViewName) + "' Filter = '" + FilterString + "'");
             }
             tOption = phoenix.umb.GetOption(NewFilter, "value");
             phoenix.opt.SetValue(tOption, FilterString);
@@ -893,7 +892,7 @@ public class Source {
             //String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowFilters;
             //String[] FilterProps = sagex.api.Configuration.GetSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),tProp);
             for (String FilterItem: InternalFilterTypes.keySet()){
-                //LOG.debug("HasFilter: checking '" + FilterItem + "'");
+                //Log.debug("Source","HasFilter: checking '" + FilterItem + "'");
                 if (FilterItem.equals(Const.FlowGenreFilters) || FilterItem.equals(Const.FlowPathFilters)){
                     //skip as already checked above
                 }else{
@@ -908,7 +907,13 @@ public class Source {
 
     public static void ClearAllFilters(String ViewName){
         String tProp = Flow.GetFlowBaseProp(ViewName) + Const.PropDivider + Const.FlowFilters;
-        util.RemovePropertyAndChildren(tProp);
+        if(Flow.IsServerFlow(ViewName)){
+            Log.debug("Source", "ClearAllFilters Server - View:" + ViewName + " tProp:" + tProp);
+            util.RemoveServerPropertyAndChildren(tProp);
+        }else{
+            Log.debug("Source", "ClearAllFilters Client - View:" + ViewName + " tProp:" + tProp);
+            util.RemovePropertyAndChildren(tProp);
+        }
     }
 
     //calls to handle generic TriState Filters - Off, Include or Exclude types - example watched, dvd etc
@@ -961,7 +966,7 @@ public class Source {
             //see if the tag is valid for a ViewFactory
             if (!phoenix.umb.GetViewFactories (tKey).isEmpty()){
                 TagList.put(phoenix.umb.GetTagLabel(tKey), tKey);
-                //LOG.debug("GetTags: Tag '" + tKey + "' Label '" + phoenix.umb.GetTagLabel(tKey) + "'");
+                //Log.debug("Source","GetTags: Tag '" + tKey + "' Label '" + phoenix.umb.GetTagLabel(tKey) + "'");
             }
         }
         return new ArrayList<String>(TagList.values());
@@ -987,7 +992,7 @@ public class Source {
         if (tSource==null){
             tSource = phoenix.umb.CreateView(Const.BaseSource);
             BaseSourceCache.put(Const.BaseSource, tSource);
-            LOG.debug("GetBaseSource: Loaded Source and placed in cache");
+            Log.debug("Source","GetBaseSource: Loaded Source and placed in cache");
         }
         return tSource;
     }
@@ -998,7 +1003,7 @@ public class Source {
         if (tSource==null){
             tSource = phoenix.umb.CreateView(Const.BaseTitleSource);
             BaseSourceCache.put(Const.BaseTitleSource, tSource);
-            LOG.debug("GetBaseTitleSource: Loaded Source and placed in cache");
+            Log.debug("Source","GetBaseTitleSource: Loaded Source and placed in cache");
         }
         return tSource;
     }
@@ -1009,7 +1014,7 @@ public class Source {
         if (tSource==null){
             tSource = GetGenres((ViewFolder) GetBaseSource());
             BaseSourceCache.put(Const.BaseGenreSource, tSource);
-            LOG.debug("GetBaseGenreSource: Loaded Source and placed in cache");
+            Log.debug("Source","GetBaseGenreSource: Loaded Source and placed in cache");
         }
         return tSource;
     }
@@ -1020,14 +1025,14 @@ public class Source {
         if (tSource==null){
             tSource = GetRatings((ViewFolder) GetBaseSource());
             BaseSourceCache.put(Const.BaseRatingsSource, tSource);
-            LOG.debug("GetBaseRatingsSource: Loaded Source and placed in cache");
+            Log.debug("Source","GetBaseRatingsSource: Loaded Source and placed in cache");
         }
         return tSource;
     }
 
     public static void BaseSourceClear(){
         BaseSourceCache.clear();
-        LOG.debug("BaseSourceClear: Base Source Cache cleared");
+        Log.debug("Source","BaseSourceClear: Base Source Cache cleared");
     }
     
     //<editor-fold defaultstate="collapsed" desc="phoenix api additions">
@@ -1035,7 +1040,7 @@ public class Source {
     //check for special handling types - genre, episode or other
     public static String GetSpecialType(IMediaResource imediaresource){
         if (imediaresource==null){
-            LOG.debug("GetSpecialType: called with null imediaresource");
+            Log.debug("Source","GetSpecialType: called with null imediaresource");
             return "null";
         }
         String Grouping = "NoGroup";
@@ -1045,7 +1050,7 @@ public class Source {
             if (phoenix.umb.GetGroupers(Parent).size() > 0){
                 Grouping = phoenix.umb.GetName( phoenix.umb.GetGroupers(Parent).get(0) );
                 Grouping = Grouping.toLowerCase();
-                //LOG.debug("GetSpecialType: Group '" + Grouping + "' found");
+                //Log.debug("Source","GetSpecialType: Group '" + Grouping + "' found");
                 if (Grouping.equals("show")){
                     if (IsChildTV(imediaresource)){
                         Grouping = "series";
@@ -1063,9 +1068,9 @@ public class Source {
                 }else{
                     Grouping = "tv";
                 }
-                //LOG.debug("GetSpecialType: TV - subtype       FILE '" + phoenix.media.IsMediaType( imediaresource , "FILE" ) + "' for '" + imediaresource.getTitle() + "'");
-                //LOG.debug("              : TV - subtype  RECORDING '" + phoenix.media.IsMediaType( imediaresource , "RECORDING" ) + "' for '" + imediaresource.getTitle() + "'");
-                //LOG.debug("              : TV - subtype EPG_AIRING '" + phoenix.media.IsMediaType( imediaresource , "EPG_AIRING" ) + "' for '" + imediaresource.getTitle() + "'");
+                //Log.debug("Source","GetSpecialType: TV - subtype       FILE '" + phoenix.media.IsMediaType( imediaresource , "FILE" ) + "' for '" + imediaresource.getTitle() + "'");
+                //Log.debug("Source","              : TV - subtype  RECORDING '" + phoenix.media.IsMediaType( imediaresource , "RECORDING" ) + "' for '" + imediaresource.getTitle() + "'");
+                //Log.debug("Source","              : TV - subtype EPG_AIRING '" + phoenix.media.IsMediaType( imediaresource , "EPG_AIRING" ) + "' for '" + imediaresource.getTitle() + "'");
             }else if (phoenix.media.IsMediaType( imediaresource , "VIDEO" )){
                 Grouping = "movie";
             }else if (phoenix.media.IsMediaType( imediaresource , "DVD" )){
@@ -1076,7 +1081,7 @@ public class Source {
                 Grouping = "music";
             }
         }
-        //LOG.debug("GetSpecialType: returning '" + Grouping + "' for '" + imediaresource.getTitle() + "'");
+        //Log.debug("Source","GetSpecialType: returning '" + Grouping + "' for '" + imediaresource.getTitle() + "'");
         return Grouping;
     }
     //Convenience method that will convert the incoming object parameter to a IMediaResource type 
@@ -1085,17 +1090,17 @@ public class Source {
     }
 
     public static Boolean HasTVEpisodes(ViewFolder view){
-        //LOG.debug("HasTVEpisodes: Checking '" + view + "'");
+        //Log.debug("Source","HasTVEpisodes: Checking '" + view + "'");
         if (phoenix.media.IsMediaType( view , "FOLDER" )){
             if (view.getChildren().size()>0){
                 IMediaResource child = view.getChildren().get(0);
                 if (phoenix.media.IsMediaType( child , "TV" )){
-                    //LOG.debug("HasTVEpisodes: TV child item found '" + child + "'");
+                    //Log.debug("Source","HasTVEpisodes: TV child item found '" + child + "'");
                     return Boolean.TRUE;
                 }
             }
         }
-        //LOG.debug("HasTVEpisodes: no TV child item found");
+        //Log.debug("Source","HasTVEpisodes: no TV child item found");
         return Boolean.FALSE;
     }
     
@@ -1113,18 +1118,18 @@ public class Source {
             IMediaResource childmediaresource = null;
             childmediaresource = ImageCache.GetChild(imediaresource, Boolean.FALSE);
             if (childmediaresource==null){
-                //LOG.debug("IsChildTV: null for first child");
+                //Log.debug("Source","IsChildTV: null for first child");
                 return Boolean.FALSE;
             }
             if (phoenix.media.IsMediaType( childmediaresource , "TV" )){
-                //LOG.debug("IsChildTV: First child is a TV item '" + childmediaresource + "'");
+                //Log.debug("Source","IsChildTV: First child is a TV item '" + childmediaresource + "'");
                 return Boolean.TRUE;
             }
         }else{
-            //LOG.debug("IsChildTV: not a FOLDER");
+            //Log.debug("Source","IsChildTV: not a FOLDER");
             return Boolean.FALSE;
         }
-        //LOG.debug("IsChildTV: no TV child item found");
+        //Log.debug("Source","IsChildTV: no TV child item found");
         return Boolean.FALSE;
     }
     //Convenience method that will convert the incoming object parameter to a IMediaResource type 
@@ -1134,13 +1139,13 @@ public class Source {
 
     public static IMediaResource ConvertToIMR(Object imediaresource){
         if (imediaresource == null || imediaresource.toString().isEmpty() || imediaresource.toString().contains("BlankItem")) {
-            //LOG.debug("ConvertToIMR: returning null for '" + imediaresource + "'");
+            //Log.debug("Source","ConvertToIMR: returning null for '" + imediaresource + "'");
             return null;
         }
-        //LOG.debug("ConvertToIMR: Convenience method called with Class = '" + imediaresource.getClass() + "'");
+        //Log.debug("Source","ConvertToIMR: Convenience method called with Class = '" + imediaresource.getClass() + "'");
         IMediaResource proxy = phoenix.media.GetMediaResource(imediaresource);
         if (proxy==null) {
-            LOG.debug("ConvertToIMR: GetMediaResource failed to convert '" + imediaresource + "'");
+            Log.debug("Source","ConvertToIMR: GetMediaResource failed to convert '" + imediaresource + "'");
             return null; // do nothing
         }
         return proxy;

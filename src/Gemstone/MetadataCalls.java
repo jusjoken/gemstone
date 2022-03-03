@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.log4j.Logger;
 import sagex.phoenix.vfs.IMediaFile;
 import sagex.phoenix.vfs.IMediaResource;
 import sagex.phoenix.vfs.views.ViewFolder;
@@ -22,7 +21,6 @@ import sagex.phoenix.vfs.views.ViewFolder;
  */
 public class MetadataCalls {
 
-    static private final Logger LOG = Logger.getLogger(MetadataCalls.class);
     public static String PlayonDirectory = sagex.api.Configuration.GetServerProperty("PlayonPlayback/ImportDirectory", "/SageOnlineServicesEXEs\\UPnPBrowser\\PlayOn") + "\\TV\\";
     public static String HuluFile = "Quicktime[H.264/50Kbps 480x368@24fps]";
     public static String NetflixFile = "Quicktime[H.264/50Kbps 480x368@25fps]";
@@ -214,7 +212,7 @@ public class MetadataCalls {
             return 0;
         } //System.out.println("OriginalAirDateString = '" + OrigAirDateString + "'");
         else {
-//                        LOG.debug("OriginalAiringDate="+s1);
+//                        Log.debug("MetadataCalls","OriginalAiringDate="+s1);
             Long l1 = Long.parseLong(s1);
 
 //			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -285,7 +283,7 @@ public class MetadataCalls {
     
 //    public static String GetShowCategory(Object MediaObject) {
 //        String Cat = sagex.api.ShowAPI.GetShowCategory(MediaObject);
-//        LOG.debug("GetShowCategory = '" + Cat + "'");
+//        Log.debug("MetadataCalls","GetShowCategory = '" + Cat + "'");
 //        if (Cat.startsWith("Movie") && Cat.contains("/")) {
 //
 //            Cat = Cat.substring(Cat.indexOf("/"));
@@ -397,8 +395,8 @@ public class MetadataCalls {
     
     //get a list of all the categories with Movies/Film removed and unknown assigned if no category exists
     public static ArrayList<String> GetAllShowCategories(Object MediaObject) {
-        //LOG.debug("====== " + GetMediaTitle(MediaObject) + "========");
-        //LOG.debug("GetShowCategoriesString = '" + sagex.api.ShowAPI.GetShowCategoriesString(MediaObject) + "'");
+        //Log.debug("MetadataCalls","====== " + GetMediaTitle(MediaObject) + "========");
+        //Log.debug("MetadataCalls","GetShowCategoriesString = '" + sagex.api.ShowAPI.GetShowCategoriesString(MediaObject) + "'");
         String SplitChars = "[,;/]";
         String[] Cats = sagex.api.ShowAPI.GetShowCategoriesString(MediaObject).split(SplitChars);
         
@@ -412,18 +410,18 @@ public class MetadataCalls {
                 cat1 = cat1.trim();
                 String cat2 = andsplit[1];
                 cat2 = cat2.trim();
-                //LOG.debug("Adding Category ='" + cat1 + "'");
+                //Log.debug("MetadataCalls","Adding Category ='" + cat1 + "'");
                 AllCats.add(cat1);
-                //LOG.debug("Adding Category ='" + cat2 + "'");
+                //Log.debug("MetadataCalls","Adding Category ='" + cat2 + "'");
                 AllCats.add(cat2);
             } else if (curr.toLowerCase().equals("movie") || curr.toLowerCase().equals("film")) {
                 //do not add as we want to skip these
-                //LOG.debug("Skipping 'movie or film' category");
+                //Log.debug("MetadataCalls","Skipping 'movie or film' category");
             } else if (curr.equals("")) {
-                //LOG.debug("Adding 'unknown' category");
+                //Log.debug("MetadataCalls","Adding 'unknown' category");
                 AllCats.add("unknown");
             } else {
-                //LOG.debug("Adding single categories = '" + curr + "'");
+                //Log.debug("MetadataCalls","Adding single categories = '" + curr + "'");
                 AllCats.add(curr);
             }
         }
@@ -451,7 +449,7 @@ public class MetadataCalls {
                         Value = Value + Separator + ListItem;
                     }
                 }
-                //LOG.debug("GetGenresasString: checked '" + ListItem + "' result '" + Value + "'");
+                //Log.debug("MetadataCalls","GetGenresasString: checked '" + ListItem + "' result '" + Value + "'");
             }
         }
         return Value;
@@ -478,11 +476,11 @@ public class MetadataCalls {
     //return a consistent Title dependent on the media item and the type
     public static String GetTitle(IMediaResource imediaresource, boolean IncludeDiscNo){
         if (imediaresource==null){
-            LOG.debug("GetTitle: null imediaresource");
+            Log.debug("MetadataCalls","GetTitle: null imediaresource");
             return "";
         }
         if (imediaresource.toString().contains("BlankItem")){
-            LOG.debug("GetTitle: title request for BlankItem");
+            Log.debug("MetadataCalls","GetTitle: title request for BlankItem");
             return "";
         }
         String specialType = Source.GetSpecialType(imediaresource);
@@ -491,33 +489,33 @@ public class MetadataCalls {
             String eTitle = null;
             if ("tv".equals(specialType)){
                 eTitle = phoenix.metadata.GetEpisodeName(imediaresource);
-                //LOG.debug("GetTitle: tv - eTitle from phoenix '" + eTitle + "'");
+                //Log.debug("MetadataCalls","GetTitle: tv - eTitle from phoenix '" + eTitle + "'");
             }else{ //special handling for airings (EPG) to use the show object
                 eTitle = sagex.api.ShowAPI.GetShowEpisode(phoenix.media.GetMediaObject(imediaresource));
-                //LOG.debug("GetTitle: airing - eTitle from ShowAPI.GetShowEpisode '" + eTitle + "'");
+                //Log.debug("MetadataCalls","GetTitle: airing - eTitle from ShowAPI.GetShowEpisode '" + eTitle + "'");
             }
             if (eTitle==null){
-                LOG.debug("GetTitle: sType '" + specialType + "' no episode title so using default Title '" + tTitle + "'");
+                Log.debug("MetadataCalls","GetTitle: sType '" + specialType + "' no episode title so using default Title '" + tTitle + "'");
                 return tTitle;
             }else if (eTitle.equals("")){
-                LOG.debug("GetTitle: sType '" + specialType + "' no episode title so using default Title '" + tTitle + "'");
+                Log.debug("MetadataCalls","GetTitle: sType '" + specialType + "' no episode title so using default Title '" + tTitle + "'");
                 return tTitle;
             }else{
-                LOG.debug("GetTitle: sType '" + specialType + "' episode title found '" + eTitle + "'");
+                Log.debug("MetadataCalls","GetTitle: sType '" + specialType + "' episode title found '" + eTitle + "'");
                 return eTitle;
             }
         }
         if (IncludeDiscNo){
             //see if there is a Disc or Part number to append
             int Disc = phoenix.metadata.GetDiscNumber(imediaresource);
-            //LOG.debug("GetTitle: Disc '" + Disc + "' for tTitle '" + tTitle + "'");
+            //Log.debug("MetadataCalls","GetTitle: Disc '" + Disc + "' for tTitle '" + tTitle + "'");
             if (Disc==0){
                 //do not append the Disc/Part
             }else{
                 tTitle = tTitle + " (" + Disc + ")";
             }
         }
-        LOG.debug("GetTitle: sType '" + specialType + "' non tv type so using default Title '" + tTitle + "'");
+        Log.debug("MetadataCalls","GetTitle: sType '" + specialType + "' non tv type so using default Title '" + tTitle + "'");
         return tTitle;
     }
     public static String GetTitle(Object imediaresource){
@@ -536,19 +534,19 @@ public class MetadataCalls {
             //special handling for Airing (EPG) items
             if (specialType.equals("airing") || specialType.equals("recording")){
                 tReturn = sagex.api.AiringAPI.GetAiringTitle(phoenix.media.GetMediaObject(imediaresource));
-                //LOG.debug("GetSeriesTitle: SpecialType '" + Source.GetSpecialType(imediaresource) + "' returned '" + tReturn + "' for '" + imediaresource + "'");
+                //Log.debug("MetadataCalls","GetSeriesTitle: SpecialType '" + Source.GetSpecialType(imediaresource) + "' returned '" + tReturn + "' for '" + imediaresource + "'");
             }else{
                 tReturn = phoenix.series.GetTitle(phoenix.media.GetSeriesInfo(phoenix.media.GetMediaFile(imediaresource)));
-                //LOG.debug("GetSeriesTitle: series.GetTitle returned '" + tReturn + "' for '" + imediaresource + "'");
+                //Log.debug("MetadataCalls","GetSeriesTitle: series.GetTitle returned '" + tReturn + "' for '" + imediaresource + "'");
             }
             if (tReturn==null){
-                LOG.debug("GetSeriesTitle: type '" + specialType + "' null found so using GetTitle instead '" + GetTitle(imediaresource) + "' for '" + imediaresource + "'");
+                Log.debug("MetadataCalls","GetSeriesTitle: type '" + specialType + "' null found so using GetTitle instead '" + GetTitle(imediaresource) + "' for '" + imediaresource + "'");
                 return GetTitle(imediaresource);
             }else if (tReturn.isEmpty()){
-                LOG.debug("GetSeriesTitle: type '" + specialType + "' empty found so using GetTitle instead '" + GetTitle(imediaresource) + "' for '" + imediaresource + "'");
+                Log.debug("MetadataCalls","GetSeriesTitle: type '" + specialType + "' empty found so using GetTitle instead '" + GetTitle(imediaresource) + "' for '" + imediaresource + "'");
                 return GetTitle(imediaresource);
             }else{
-                LOG.debug("GetSeriesTitle: type '" + specialType + "' good return value found '" + tReturn + "' for '" + imediaresource + "'");
+                Log.debug("MetadataCalls","GetSeriesTitle: type '" + specialType + "' good return value found '" + tReturn + "' for '" + imediaresource + "'");
                 return tReturn;
             }
         }
@@ -566,7 +564,7 @@ public class MetadataCalls {
                 List Children = phoenix.media.GetAllChildren(Folder);
                 //see if any children are being recorded
                 Integer Count = sagex.api.Utility.Size(sagex.api.Utility.GetSubgroup(sagex.api.Database.GroupByMethod(Children,"Gemstone_MetadataCalls_IsFileCurrentlyRecording"),true));
-                //LOG.debug("IsCurrentlyRecording: FOLDER - Recording '" + Count + "' of '" + Children.size() + "' Items");
+                //Log.debug("MetadataCalls","IsCurrentlyRecording: FOLDER - Recording '" + Count + "' of '" + Children.size() + "' Items");
                 if (Count>0){
                     return Boolean.TRUE;
                 }else{
@@ -633,7 +631,7 @@ public class MetadataCalls {
         IMediaResource imediaresource = Source.GetTVIMediaResource(IMR);
         if (imediaresource!=null){ 
             String tReturn = phoenix.series.GetFinaleDate(phoenix.media.GetSeriesInfo(phoenix.media.GetMediaFile(imediaresource)));
-            //LOG.debug("GetRunningInfo: GetFinaleDate returned '" + tReturn + "' for '" + imediaresource + "'");
+            //Log.debug("MetadataCalls","GetRunningInfo: GetFinaleDate returned '" + tReturn + "' for '" + imediaresource + "'");
             if (tReturn==null || tReturn.isEmpty()){
                 return "Series continuing";
             }else{
@@ -648,7 +646,7 @@ public class MetadataCalls {
         IMediaResource imediaresource = Source.GetTVIMediaResource(IMR);
         if (imediaresource!=null){ 
             String tReturn = phoenix.series.GetNetwork(phoenix.media.GetSeriesInfo(phoenix.media.GetMediaFile(imediaresource)));
-            //LOG.debug("GetNetwork: GetGetNetwork returned '" + tReturn + "' for '" + imediaresource + "'");
+            //Log.debug("MetadataCalls","GetNetwork: GetGetNetwork returned '" + tReturn + "' for '" + imediaresource + "'");
             if (tReturn==null || tReturn.isEmpty()){
                 return "";
             }else{
@@ -662,7 +660,7 @@ public class MetadataCalls {
         IMediaResource imediaresource = Source.GetChildIMediaResource(IMR);
         if (imediaresource!=null){ 
             String tReturn = phoenix.metadata.GetRated(imediaresource);
-            //LOG.debug("GetRated: GetRated returned '" + tReturn + "' for '" + imediaresource + "'");
+            //Log.debug("MetadataCalls","GetRated: GetRated returned '" + tReturn + "' for '" + imediaresource + "'");
             if (tReturn==null || tReturn.isEmpty() || tReturn.equals("null")){
                 return "";
             }else{
@@ -690,7 +688,7 @@ public class MetadataCalls {
         IMediaResource imediaresource = Source.GetTVIMediaResource(IMR);
         if (imediaresource!=null){ 
             String tReturn = phoenix.series.GetDescription(phoenix.media.GetSeriesInfo(phoenix.media.GetMediaFile(imediaresource)));
-            //LOG.debug("GetSeriesDescription: GetDescription returned '" + tReturn + "' for '" + imediaresource + "'");
+            //Log.debug("MetadataCalls","GetSeriesDescription: GetDescription returned '" + tReturn + "' for '" + imediaresource + "'");
             if (tReturn==null || tReturn.isEmpty()){
                 return "";
             }else{
@@ -705,7 +703,7 @@ public class MetadataCalls {
         IMediaResource imediaresource = Source.GetTVIMediaResource(IMR);
         if (imediaresource!=null){ 
             Boolean tReturn = phoenix.metadata.IsHDTV(imediaresource);
-            //LOG.debug("IsHDTV: IsHDTV returned '" + tReturn + "' for '" + imediaresource + "'");
+            //Log.debug("MetadataCalls","IsHDTV: IsHDTV returned '" + tReturn + "' for '" + imediaresource + "'");
             return tReturn;
         }
         return Boolean.FALSE;
@@ -721,7 +719,7 @@ public class MetadataCalls {
                 //Object[] tList = (Object[]) sagex.api.Database.Sort(Children, true, "phoenix_metadata_GetOriginalAirDate");
                 //Get all the Watched items
                 Integer WatchedCount = sagex.api.Utility.Size(sagex.api.Utility.GetSubgroup(sagex.api.Database.GroupByMethod(Children,"phoenix_media_IsWatched"),true));
-                //LOG.debug("IsWatched: FOLDER - Watched '" + WatchedCount + "' of '" + Children.size() + "' Items");
+                //Log.debug("MetadataCalls","IsWatched: FOLDER - Watched '" + WatchedCount + "' of '" + Children.size() + "' Items");
                 if (Children.size()==WatchedCount){
                     return Boolean.TRUE;
                 }

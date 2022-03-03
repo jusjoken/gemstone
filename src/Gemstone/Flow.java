@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.vfs.IMediaResource;
 import sagex.phoenix.vfs.views.ViewFactory;
@@ -24,11 +23,12 @@ import sagex.phoenix.vfs.views.ViewFolder;
  * @author jusjoken
  * - 10/10/2011 - class for all Flow related calls - for 4.x this will be replaced with a Flow class to encapsulate Flow as an object
  * - 04/04/2012 - updated for Gemstone
- * 
+ *
+ * Potential Change: if client is REMOTE then check if the flow exists on the server and use server properties
+ *  - if the flow is NOT on the server then use client properties
  */
 public class Flow {
     
-    static private final Logger LOG = Logger.getLogger(Flow.class);
     public static HashMap<String,String> InternalFlowTypes = new HashMap<String,String>();
     
     public static String GetFlowsBaseProp(){
@@ -39,72 +39,78 @@ public class Flow {
     }
     
     public static Boolean GetTrueFalseOption(String PropSection, String PropName, Boolean DefaultValue){
-        return util.GetTrueFalseOptionBase(Boolean.TRUE, PropSection, PropName, DefaultValue);
+        return util.GetTrueFalseOptionBase(Boolean.TRUE, PropSection, PropName, DefaultValue, IsServerFlow(PropSection));
     }
     
     public static String GetTrueFalseOptionName(String PropSection, String PropName, String TrueValue, String FalseValue){
         return util.GetTrueFalseOptionNameBase(Boolean.TRUE, PropSection, PropName, TrueValue, FalseValue, Boolean.FALSE);
     }
     public static String GetTrueFalseOptionName(String PropSection, String PropName, String TrueValue, String FalseValue, Boolean DefaultValue){
-        return util.GetTrueFalseOptionNameBase(Boolean.TRUE, PropSection, PropName, TrueValue, FalseValue, DefaultValue);
+        return util.GetTrueFalseOptionNameBase(Boolean.TRUE, PropSection, PropName, TrueValue, FalseValue, DefaultValue, IsServerFlow(PropSection));
     }
 
     public static void SetTrueFalseOptionNext(String PropSection, String PropName){
-        util.SetTrueFalseOptionNextBase(Boolean.TRUE, PropSection, PropName, Boolean.FALSE);
+        util.SetTrueFalseOptionNextBase(Boolean.TRUE, PropSection, PropName, Boolean.FALSE, IsServerFlow(PropSection));
     }
     public static void SetTrueFalseOptionNext(String PropSection, String PropName, Boolean DefaultValue){
         util.SetTrueFalseOptionNextBase(Boolean.TRUE, PropSection, PropName, DefaultValue);
     }
     public static void SetTrueFalseOption(String PropSection, String PropName, Boolean NewValue){
-        util.SetTrueFalseOptionBase(Boolean.TRUE, PropSection, PropName, NewValue);
+        util.SetTrueFalseOptionBase(Boolean.TRUE, PropSection, PropName, NewValue, IsServerFlow(PropSection));
     }
     
     public static String GetOptionName(String PropSection, String PropName, String DefaultValue){
-        return util.GetOptionNameBase(Boolean.TRUE, PropSection, PropName, DefaultValue, Boolean.FALSE);
+        return util.GetOptionNameBase(Boolean.TRUE, PropSection, PropName, DefaultValue, IsServerFlow(PropSection));
     }
     
     public static void SetOption(String PropSection, String PropName, String NewValue){
-        util.SetOptionBase(Boolean.TRUE, PropSection, PropName, NewValue, Boolean.FALSE);
+        util.SetOptionBase(Boolean.TRUE, PropSection, PropName, NewValue, IsServerFlow(PropSection));
     }
     
     public static void RemoveOption(String PropSection, String PropName){
-        util.RemoveOptionBase(Boolean.TRUE, PropSection, PropName);
+        util.RemoveOptionBase(Boolean.TRUE, PropSection, PropName, IsServerFlow(PropSection));
     }
     
     public static String GetListOptionName(String PropSection, String PropName, String OptionList, String DefaultValue){
-        return util.GetListOptionNameBase(Boolean.TRUE, PropSection, PropName, OptionList, DefaultValue);
+        return util.GetListOptionNameBase(Boolean.TRUE, PropSection, PropName, OptionList, DefaultValue, IsServerFlow(PropSection));
     }
     
     public static void SetListOptionNext(String PropSection, String PropName, String OptionList){
-        util.SetListOptionNextBase(Boolean.TRUE, PropSection, PropName, OptionList, Boolean.FALSE);
+        util.SetListOptionNextBase(Boolean.TRUE, PropSection, PropName, OptionList, IsServerFlow(PropSection));
     }
 
     public static String PropertyListasString(String PropSection, String PropName){
-        return util.PropertyListasStringBase(Boolean.TRUE, PropSection, PropName);
+        return util.PropertyListasStringBase(Boolean.TRUE, PropSection, PropName, IsServerFlow(PropSection));
     }
     public static List<String> PropertyList(String PropSection, String PropName){
-        return util.PropertyListBase(Boolean.TRUE, PropSection, PropName);
+        return util.PropertyListBase(Boolean.TRUE, PropSection, PropName, IsServerFlow(PropSection));
     }
     public static void PropertyListAdd( String PropSection, String PropName, String NewValue){
-        util.PropertyListAddBase(Boolean.TRUE, PropSection, PropName, NewValue);
+        util.PropertyListAddBase(Boolean.TRUE, PropSection, PropName, NewValue, IsServerFlow(PropSection));
     }
     public static void PropertyListRemove(String PropSection, String PropName, String NewValue){
-        util.PropertyListRemoveBase(Boolean.TRUE, PropSection, PropName, NewValue);
+        util.PropertyListRemoveBase(Boolean.TRUE, PropSection, PropName, NewValue, IsServerFlow(PropSection));
     }
     public static void PropertyListRemoveAll(String PropSection, String PropName){
-        util.PropertyListRemoveAllBase(Boolean.TRUE, PropSection, PropName);
+        util.PropertyListRemoveAllBase(Boolean.TRUE, PropSection, PropName, IsServerFlow(PropSection));
     }
     public static Boolean PropertyListContains(String PropSection, String PropName, String NewValue){
-        return util.PropertyListContainsBase(Boolean.TRUE, PropSection, PropName, NewValue);
+        return util.PropertyListContainsBase(Boolean.TRUE, PropSection, PropName, NewValue, IsServerFlow(PropSection));
     }
     public static Boolean PropertyListContains(String PropSection, String PropName, ViewFolder Folder){
-        return util.PropertyListContainsBase(Boolean.TRUE, PropSection, PropName, Folder);
+        return util.PropertyListContainsBase(Boolean.TRUE, PropSection, PropName, Folder, IsServerFlow(PropSection));
     }
     public static Integer PropertyListCount(String PropSection, String PropName){
-        return util.PropertyListCountBase(Boolean.TRUE, PropSection, PropName);
+        return util.PropertyListCountBase(Boolean.TRUE, PropSection, PropName, IsServerFlow(PropSection));
     }
-    
+
     public static ArrayList<String> GetFlows(){
+        return GetFlows(false);
+    }
+    public static ArrayList<String> GetFlows(Boolean ShowHidden){
+        UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
+        Log.debug("Flows","GetFlows - ShowHidden = '" + ShowHidden + "'");
+
         String[] FlowItems = sagex.api.Configuration.GetSubpropertiesThatAreBranches(new UIContext(sagex.api.Global.GetUIContextName()),GetFlowsBaseProp());
         if (FlowItems.length>0){
             //Add the flows in Sort Order
@@ -113,6 +119,12 @@ public class Flow {
             for (String tFlow:FlowItems){
                 //make sure this is a real Flow entry with a name property
                 if (!GetFlowName(tFlow).equals(Const.FlowNameNotFound)){
+                    //only add to the list if it's not to be hidden
+                    if (!ShowHidden && GetFlowHiddenOnClient(tFlow) ){
+                        Log.debug("Flows","GetFlows - Skipping:" + tFlow);
+                        continue;
+                    }
+                    Log.debug("Flows", "GetFlows - Adding:" + tFlow);
                     counter++;
                     Integer thisSort = GetFlowSort(tFlow);
                     if (thisSort==0){
@@ -175,11 +187,11 @@ public class Flow {
     }
     
     public static Integer GetFlowSort(String Element){
-        return util.GetPropertyAsInteger(GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowSort, 0);
+        return util.GetPropertyAsInteger(GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowSort, 0, IsServerFlow(Element));
     }
     
     public static void SetFlowSort(String Element, Integer iSort){
-        util.SetProperty(GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowSort, iSort.toString());
+        util.SetProperty(GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowSort, iSort.toString(), IsServerFlow(Element));
     }
     
     public static void SaveFlowOrder(ArrayList<String> inFlows){
@@ -194,7 +206,7 @@ public class Flow {
         Integer CurrentFlowLocation = inFlows.indexOf(thisFlow);
         //Boolean Moved = Boolean.FALSE;
         if (CurrentFlowLocation==-1){
-            LOG.debug("MoveFlowinList: '" + thisFlow + "' not found in list");
+            Log.debug("Flows", "MoveFlowinList: '" + thisFlow + "' not found in list");
             return inFlows;
         }else{
             if (Delta>0){ //move down in list
@@ -219,18 +231,18 @@ public class Flow {
     }
     public static String CreateNewFlow(String ViewName, String ViewType) {
         if (ViewName==null){
-            LOG.debug("CreateNewFlow: request for null name returned 0");
+            Log.debug("Flows", "CreateNewFlow: request for null name returned 0");
             return "0";
         }
         String Element = util.GenerateRandomName();
-        System.out.print("CreateNewFlow: Element '" + Element + "'");
+        Log.debug("Flows","CreateNewFlow: Element '" + Element + "'");
         Integer NewSort = GetFlows().size()+1;  //sort numbers are base of 1 - 0 is invalid
         //Save the Name and Type for the Flow
         String FlowNameProp = GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowName;
-        System.out.print("CreateNewFlow: FlowNameProp '" + FlowNameProp + "' ViewName '" + ViewName + "'");
+        Log.debug("Flows","CreateNewFlow: FlowNameProp '" + FlowNameProp + "' ViewName '" + ViewName + "'");
         util.SetProperty(FlowNameProp, ViewName);
         String FlowTypeProp = GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowType;
-        System.out.print("CreateNewFlow: FlowTypeProp '" + FlowTypeProp + "' ViewType '" + ViewType + "'");
+        Log.debug("Flows","CreateNewFlow: FlowTypeProp '" + FlowTypeProp + "' ViewType '" + ViewType + "'");
         util.SetProperty(FlowTypeProp, ViewType);
         //Save the sort order
         SetFlowSort(Element, NewSort);
@@ -239,11 +251,15 @@ public class Flow {
   
     public static String RemoveFlow(String Element) {
         if (Element==null){
-            LOG.debug("RemoveFlow: request for null name returned 0");
+            Log.debug("Flows","RemoveFlow: request for null name returned 0");
             return "0";
         }
         String OldCVPropName = GetFlowBaseProp(Element);
-        util.RemovePropertyAndChildren(OldCVPropName);
+        if(IsServerFlow(Element)){
+            util.RemoveServerPropertyAndChildren(OldCVPropName);
+        }else {
+            util.RemovePropertyAndChildren(OldCVPropName);
+        }
         return "1";
     }
     
@@ -255,8 +271,79 @@ public class Flow {
 
     public static String RenameFlow(String Element, String NewViewName) {
         String FlowNameProp = Flow.GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowName;
-        util.SetProperty(FlowNameProp, NewViewName);
+        util.SetProperty(FlowNameProp, NewViewName, IsServerFlow(Element));
         return "1";
+    }
+
+    public static String GetFlowSaveLocation(String name){
+        if (IsServerFlow(name)) {
+            return "Server";
+        }else{
+            return "Client";
+        }
+    }
+
+    public static boolean IsServerFlow(String name){
+        if(util.IsRemote()){
+            String FlowNameProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowName;
+            if(util.HasServerProperty(FlowNameProp)){
+                return true;
+            }
+        }else{
+            return false;
+        }
+        return false;
+    }
+
+    public static String GetFlowHiddenOnClientName(String name){
+        if(GetFlowHiddenOnClient(name)){
+            return "Yes";
+        }else{
+            return "No";
+        }
+    }
+    public static boolean GetFlowHiddenOnClient(String name){
+        Log.debug("Flows","GetFlowHiddenOnClient for flow:" + name);
+
+        if (name==null){
+            return false;
+        }
+        if(IsServerFlow(name)){
+            Log.debug("Flows","GetFlowHiddenOnClient for a Server Flow");
+            UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
+            String ClientID = tUI.getName();
+            String FlowHiddenProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + ClientID;
+            Log.debug("Flows","GetFlowHiddenOnClient - Prop:" + FlowHiddenProp);
+            return GetTrueFalseOption(FlowHiddenProp,Const.FlowHiddenOnClient, false);
+        }else{
+            Log.debug("Flows","GetFlowHiddenOnClient NOT Server Flow");
+            return false;
+        }
+    }
+
+    public static void SetFlowHiddenOnClient(String name, Boolean NewValue ){
+        if (name!=null){
+            if(IsServerFlow(name)) {
+                UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
+                String ClientID = tUI.getName();
+                String FlowHiddenProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + ClientID;
+                SetTrueFalseOption(FlowHiddenProp, Const.FlowHiddenOnClient, NewValue);
+            }
+        }
+    }
+
+    public static void SetFlowHiddenOnClientNext(String name ){
+        Log.debug("Flows", "SetFlowHiddenOnClientNext for flow:" + name);
+        if (name!=null){
+            if(IsServerFlow(name)) {
+                Log.debug("Flows","SetFlowHiddenOnClientNext for a Server Flow");
+                UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
+                String ClientID = tUI.getName();
+                String FlowHiddenProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + ClientID;
+                Log.debug("Flows", "SetFlowHiddenOnClientNext - Prop:" + FlowHiddenProp);
+                SetTrueFalseOptionNext(FlowHiddenProp, Const.FlowHiddenOnClient, false);
+            }
+        }
     }
 
     public static String GetFlowName(String name){
@@ -265,7 +352,7 @@ public class Flow {
             return util.OptionNotFound;
         }
         String FlowNameProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowName;
-        return util.GetProperty(FlowNameProp, Const.FlowNameNotFound);
+        return util.GetProperty(FlowNameProp, Const.FlowNameNotFound, IsServerFlow(name));
     }
     
     public static void AddFlowType(String FlowType, String ShortName){
@@ -279,7 +366,7 @@ public class Flow {
         }
         String FlowTypeProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowType;
         if (IsValidFlow(name)){
-            return util.GetProperty(FlowTypeProp, Const.FlowTypeDefault);
+            return util.GetProperty(FlowTypeProp, Const.FlowTypeDefault, IsServerFlow(name));
         }else{
             return Const.FlowTypeNotFound;
         }
@@ -287,11 +374,11 @@ public class Flow {
     
     public static String GetFlowTypeShortName(String name){
         if (name==null){
-            LOG.debug("GetFlowType: request for null name returned NotFound");
+            Log.debug("Flows", "GetFlowType: request for null name returned NotFound");
             return util.OptionNotFound;
         }
         String FlowTypeProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowType;
-        String tFlow = util.GetProperty(FlowTypeProp, Const.FlowTypeDefault);
+        String tFlow = util.GetProperty(FlowTypeProp, Const.FlowTypeDefault, IsServerFlow(name));
         if (InternalFlowTypes.containsKey(tFlow)){
             return InternalFlowTypes.get(tFlow);
         }else{
@@ -301,11 +388,11 @@ public class Flow {
 
     public static Boolean IsValidFlowType(String name){
         if (name==null){
-            LOG.debug("GetFlowType: request for null name returned NotFound");
+            Log.debug("Flows", "GetFlowType: request for null name returned NotFound");
             return Boolean.FALSE;
         }
         String FlowTypeProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowType;
-        String tFlow = util.GetProperty(FlowTypeProp, Const.FlowTypeDefault);
+        String tFlow = util.GetProperty(FlowTypeProp, Const.FlowTypeDefault, IsServerFlow(name));
         if (InternalFlowTypes.containsKey(tFlow)){
             return Boolean.TRUE;
         }else{
@@ -317,7 +404,7 @@ public class Flow {
         String FlowTypeProp = Flow.GetFlowBaseProp(Element) + Const.PropDivider + Const.FlowType;
         String OldType = GetFlowType(Element);
         String OldName = GetFlowName(Element);
-        util.SetProperty(FlowTypeProp, NewViewType);
+        util.SetProperty(FlowTypeProp, NewViewType, IsServerFlow(Element));
         if (OldType.equals(OldName)){
             RenameFlow(Element, NewViewType);
         }
@@ -326,10 +413,10 @@ public class Flow {
     
     public static void SetFlowType(String name, String FlowType){
         if (name==null){
-            LOG.debug("SetFlowType: request for null name returned NotFound");
+            Log.debug("Flows", "SetFlowType: request for null name returned NotFound");
         }
         String FlowTypeProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowType;
-        util.SetProperty(FlowTypeProp, FlowType);
+        util.SetProperty(FlowTypeProp, FlowType, IsServerFlow(name));
     }
 
     public static Collection<String> FlowTypes(){
@@ -359,7 +446,7 @@ public class Flow {
             return util.OptionNotFound;
         }
         String FlowSourceProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowSource;
-        return util.GetProperty(FlowSourceProp, util.OptionNotFound);
+        return util.GetProperty(FlowSourceProp, util.OptionNotFound, IsServerFlow(name));
     }
     public static String GetSourceName(String tSource){
         return GetSourceName(tSource, Boolean.FALSE);
@@ -367,11 +454,11 @@ public class Flow {
     public static String GetSourceName(String tSource, Boolean AllowNongemstoneSources){
         //LOG.debug("GetSourceName: getting source name for '" + tSource + "'");
         if (tSource==null){
-            LOG.debug("GetSourceName: request for null name returned NotFound");
+            Log.debug("Flows", "GetSourceName: request for null name returned NotFound");
             return Const.FlowSourceDefaultName;
         }
         if (tSource.equals(util.OptionNotFound)){
-            LOG.debug("GetSourceName: Not Found for '" + tSource + "'");
+            Log.debug("Flows", "GetSourceName: Not Found for '" + tSource + "'");
             return Const.FlowSourceDefaultName;
         }else{
             String tSourceName = Const.FlowSourceDefaultName;
@@ -390,7 +477,7 @@ public class Flow {
     }
     public static String GetFlowSourceName(String name, Boolean AllowNongemstoneSources){
         if (name==null){
-            LOG.debug("GetFlowSourceName: request for null name returned NotFound");
+            Log.debug("Flows", "GetFlowSourceName: request for null name returned NotFound");
             return Const.FlowSourceDefaultName;
         }
         String tSource = GetFlowSource(name);
@@ -399,10 +486,10 @@ public class Flow {
     //
     public static void SetFlowSource(String name, String FlowSource){
         if (name==null){
-            LOG.debug("SetFlowSource: request for null name returned NotFound");
+            Log.debug("Flows", "SetFlowSource: request for null name returned NotFound");
         }
         String FlowSourceProp = Flow.GetFlowBaseProp(name) + Const.PropDivider + Const.FlowSource;
-        util.SetProperty(FlowSourceProp, FlowSource);
+        util.SetProperty(FlowSourceProp, FlowSource, IsServerFlow(name));
     }
     
     public static Boolean IsValidSource(String tSource){
@@ -410,11 +497,11 @@ public class Flow {
     }
     public static Boolean IsValidSource(String tSource, Boolean AllowNongemstoneSources){
         if (tSource==null){
-            LOG.debug("IsValidSource: request for null name returned false");
+            Log.debug("Flows", "IsValidSource: request for null name returned false");
             return Boolean.FALSE;
         }
         if (tSource.equals(util.OptionNotFound)){
-            LOG.debug("IsValidSource: Not Found for '" + tSource + "'");
+            Log.debug("Flows", "IsValidSource: Not Found for '" + tSource + "'");
             return Boolean.FALSE;
         }else{
             for (sagex.phoenix.vfs.views.ViewFactory factory: SourceList(AllowNongemstoneSources)){
@@ -439,17 +526,17 @@ public class Flow {
     
     public static void Test(){
         for (sagex.phoenix.vfs.views.ViewFactory factory: phoenix.umb.GetVisibleViews()){
-            LOG.debug("Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
+            Log.debug("Flows", "Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
         }
         for (sagex.phoenix.vfs.views.ViewFactory factory: phoenix.umb.GetViewFactories()){
-            LOG.debug("Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
+            Log.debug("Flows", "Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
         }
         
     }
     public static void main(String[] args){
         
         for (sagex.phoenix.vfs.views.ViewFactory factory: phoenix.umb.GetVisibleViews()){
-            LOG.debug("Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
+            Log.debug("Flows", "Factory = '" + factory.getLabel() + "' Name = '" + factory.getName() + "'");
         }
 
     }
@@ -496,7 +583,7 @@ public class Flow {
     
     public static String GetOverrideFlow(String FlowName, int Level){
         if (FlowName==null){
-            LOG.debug("GetOverrideFlow: request for null name returned 0");
+            Log.debug("Flows", "GetOverrideFlow: request for null name returned 0");
             return "0";
         }
         if (Level<2){
@@ -524,16 +611,16 @@ public class Flow {
 
     private static String getOverrideFlow(String FlowName, int Level){
         String Prop = GetFlowBaseProp(FlowName) + Const.PropDivider + Const.FlowOverride + Const.PropDivider + Level;
-        return util.GetProperty(Prop, util.OptionNotFound);
+        return util.GetProperty(Prop, util.OptionNotFound, IsServerFlow(FlowName));
     }
 
     public static void SetOverrideFlow(String FlowName, int Level, String Override){
         String Prop = GetFlowBaseProp(FlowName) + Const.PropDivider + Const.FlowOverride + Const.PropDivider + Level;
         if (Override.equals(FlowName)){
             //clear the property as the Override is the same as the base flow
-            util.RemoveProperty(Prop);
+            util.RemoveProperty(Prop, IsServerFlow(FlowName));
         }else{
-            util.SetProperty(Prop, Override);
+            util.SetProperty(Prop, Override, IsServerFlow(FlowName));
         }
     }
     

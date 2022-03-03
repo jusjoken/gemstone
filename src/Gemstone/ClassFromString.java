@@ -7,7 +7,6 @@ package Gemstone;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 
 /**
@@ -17,8 +16,7 @@ import java.lang.reflect.Field;
  */
 public class ClassFromString {
 
-    static private final Logger LOG = Logger.getLogger(ClassFromString.class);
-    
+   
     public static Object GetSortDividerClass(String method,Object MediaObject) {
 	 Object returnValue = null;
         try {
@@ -111,22 +109,22 @@ public class ClassFromString {
 	           returnValue =  myMethod.invoke(whatInstance,
 	                    new Object[] { methodParameter });
 
-	            LOG.trace("The value returned make class method:"
+	            Log.debug("The value returned make class method:"
 	                    + returnValue);
 
 	        } catch (SecurityException e) {
-	            LOG.fatal(ClassFromString.class.getName()+e);
+	            Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 	        } catch (IllegalArgumentException e) {
-	             LOG.fatal(ClassFromString.class.getName()+e);
+	             Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 
 	        } catch (InstantiationException e) {
-	            LOG.fatal(ClassFromString.class.getName()+e);
+	            Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 	        } catch (IllegalAccessException e) {
-	             LOG.fatal(ClassFromString.class.getName()+e);
+	             Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 	        } catch (NoSuchMethodException e) {
-	            LOG.fatal(ClassFromString.class.getName()+e);
+	            Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 	        } catch (InvocationTargetException e) {
-	            LOG.fatal(ClassFromString.class.getName()+e);
+	            Log.fatal("ClassFromString",ClassFromString.class.getName()+e);
 	        }
          return returnValue;
     }
@@ -161,14 +159,14 @@ public class ClassFromString {
         }
 
          catch (InstantiationException ex) {
-            LOG.fatal(ClassFromString.class.getName()+ex);
+            Log.fatal("ClassFromString",ClassFromString.class.getName()+ex);
         } catch (IllegalAccessException ex) {
-            LOG.fatal(ClassFromString.class.getName()+ex);
+            Log.fatal("ClassFromString",ClassFromString.class.getName()+ex);
         }
         catch (NoSuchFieldException ex) {
-           LOG.fatal(ClassFromString.class.getName()+ex);
+           Log.fatal("ClassFromString",ClassFromString.class.getName()+ex);
         } catch (SecurityException ex) {
-            LOG.fatal(ClassFromString.class.getName()+ex);
+            Log.fatal("ClassFromString",ClassFromString.class.getName()+ex);
         }
             
 	           

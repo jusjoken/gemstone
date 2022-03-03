@@ -4,34 +4,76 @@
  */
 package Gemstone;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import org.apache.log4j.Logger;
-import sagex.UIContext;
-import sagex.util.Log4jConfigurator;
 
 /**
  *
  * @author jusjoken
  */
 public class Log {
-    static private final Logger LOG = Logger.getLogger(util.class);
+    static private String logLevelProp = Const.BaseProp + Const.PropDivider + Const.LogLevel;
+
     private Properties props = null;
-    public static enum LogLevels2{FATAL,ERROR,WARN,DEBUG,INFO};
-    private static List<String> LogLevels = Arrays.asList("DEBUG","INFO","WARN","ERROR"); 
-    private String DefaultLevel = "INFO";
+    private static List<String> LogLevels = Arrays.asList("DEBUG","INFO","WARN","ERROR");
+    private static String DefaultLevel = "INFO";
     private String originalLevel = "";
     
     public Log() {
-        props = GetLogProps();
         originalLevel = GetLevel();
+    }
+
+    public static void info(String message){
+        info(null,message);
+    }
+    public static void info(String caller, String message){
+        logMessage("INFO", caller, message);
+    }
+    public static void debug(String message){
+        debug(null,message);
+    }
+    public static void debug(String caller, String message){
+        logMessage("DEBUG", caller, message);
+    }
+    public static void error(String message){
+        error(null,message);
+    }
+    public static void error(String caller, String message){
+        logMessage("ERROR", caller, message);
+    }
+    public static void fatal(String message){
+        fatal(null,message);
+    }
+    public static void fatal(String caller, String message){
+        logMessage("FATAL", caller, message);
+    }
+    public static void warn(String message){
+        warn(null,message);
+    }
+    public static void warn(String caller, String message){
+        logMessage("WARN", caller, message);
+    }
+
+    private static void logMessage(String type, String caller, String message){
+        String currentType = util.GetServerProperty(logLevelProp,DefaultLevel);
+        if(type.equals(currentType) || type.equals("ERROR") || type.equals("INFO") || type.equals("FATAL") || type.equals("WARN")){
+            if(caller == null){
+                System.out.println("GEMSTONE: " + type + ": " + message);
+            }else{
+                System.out.println("GEMSTONE: " + type + ": " + caller + "; " + message);
+            }
+        }
+    }
+
+    public static Boolean isDebugEnabled(){
+        String currentType = util.GetServerProperty(logLevelProp,DefaultLevel);
+        if(currentType.equals("DEBUG")){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     public List<String> GetLevels(){
@@ -46,19 +88,13 @@ public class Log {
     }
     
     public String GetLevel(){
-        String tLevel = props.getProperty("log4j.logger.Gemstone", "INFO, GEMSTONE");
-        String parts[] = tLevel.split(",");
-        if (LogLevels.contains(parts[0])){
-            return parts[0];          
-        }else{
-            return DefaultLevel;
-        }
+        return util.GetServerProperty(logLevelProp, DefaultLevel);
     }
     
     public void SetLevel(String Level){
         //check if this is a valid level
         if (LogLevels.contains(Level)){
-            props.setProperty("log4j.logger.Gemstone", Level + ", GEMSTONE");
+            util.SetServerProperty(logLevelProp, Level);
         }
     }
     
@@ -86,25 +122,12 @@ public class Log {
     
     public void SaveSettings(){
         if (IsDirty()){
-            Log4jConfigurator.reconfigure("gemstone", props);
             originalLevel = GetLevel();
-            LOG.info("SaveSettings: log settings saved.");
+            Log.info("Log", "SaveSettings: log settings saved.");
         }
     }
     
     public void LoadDefaults(){
-        props.clear();
-        //make sure these match the gemstone.log4j.properties file imbeded in the JAR
-        props.setProperty("log4j.appender.GEMSTONE", "org.apache.log4j.RollingFileAppender");
-        props.setProperty("log4j.appender.GEMSTONE.MaxFileSize", "10000KB");
-        props.setProperty("log4j.appender.GEMSTONE.MaxBackupIndex", "2");
-        props.setProperty("log4j.appender.GEMSTONE.File", "logs/gemstone.log");
-        props.setProperty("log4j.appender.GEMSTONE.Append", "false");
-        props.setProperty("log4j.appender.GEMSTONE.layout", "org.apache.log4j.PatternLayout");
-        props.setProperty("log4j.appender.GEMSTONE.layout.ConversionPattern", "%d [%t] %-5p %c - %m%n");
-        props.setProperty("log4j.logger.Gemstone", "INFO, GEMSTONE");
-        props.setProperty("log4j.additivity.Gemstone", "false");
-        Log4jConfigurator.reconfigure("gemstone", props);
         originalLevel = GetLevel();
         //set the SageTV logging to it's default
         if (util.IsClient()){
@@ -113,74 +136,9 @@ public class Log {
         }else{
             setSageLogSettingServer(Boolean.FALSE);
         }
-        LOG.info("LoadDefaults: log settings set to defaults.");
+        Log.info("Log","LoadDefaults: log settings set to defaults.");
     }
 
-    public static String GetLogFileNameFull(){
-        return util.GetLocalWorkingDir() + File.separator + Const.LogFileName;
-    }
-    
-    public static Properties GetLogProps(){
-        //get the properties for the gemstone log either from the file if it exists or from the JAR
-        LOG.info("GetLogProps: starting");
-        File configFile = new File(GetLogFileNameFull());
-        Properties props = new Properties();
-        if (configFile.exists()){
-            LOG.info("GetLogProps: from File");
-            try {
-                props = getPropsAndCloseStream(Const.LogFileName, configFile, new FileInputStream(configFile));
-            } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(util.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }else{
-            props = getPropsfromJAR();
-        }
-        //temp output to test this
-        LOG.info("GetLogProps: level = '" + props.getProperty("log4j.logger.Gemstone", "NOT FOUND"));
-        return props;
-    }
-    
-    private static Properties getPropsfromJAR(){
-        File configFile = new File(GetLogFileNameFull());
-        LOG.info("getPropsfromJAR: from JAR");
-        ClassLoader loader = Log4jConfigurator.class.getClassLoader();
-        return getPropsAndCloseStream(Const.LogFileName, configFile, loader.getResourceAsStream(Const.LogFileName));
-    }
-    
-    private static Properties getPropsAndCloseStream(String id, File file, InputStream is) {
-        try {
-                return getPropsforStream(id, file, is);
-        } finally {
-                closeStream(is);
-        }
-    }
-
-    private static Properties getPropsforStream(String id, File file, InputStream is) {
-        if (is == null){
-            return new Properties();
-        }
-
-        // configure default logging
-        try {
-            Properties sProps = new Properties();
-            sProps.load(is);
-            return sProps;
-        } catch (Exception e) {
-            LOG.debug("Failed to load props for: " + id + " using file: " + file);
-        }
-        return new Properties();
-    }
-
-    private static void closeStream(InputStream fis) {
-        if (fis != null) {
-            try {
-                fis.close();
-            } catch (IOException e) {
-                LOG.debug("closeStream: Failed to close InputStream");
-            }
-        }
-    }
-    
     public static String GetSageLogSettingLabel(){
         if (util.IsClient()){
             return "Server/Client Debug Log";

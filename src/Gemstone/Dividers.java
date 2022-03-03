@@ -7,7 +7,6 @@ package Gemstone;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -18,23 +17,22 @@ import org.apache.log4j.Logger;
  */
 public class Dividers {
 
-    static private final Logger LOG = Logger.getLogger(Dividers.class);
     public static Class SageClass = null;
 
     public static List<Object> AddDividers(Object[] current,String SortMethod){
 
         List<Object> withdividers= new ArrayList<Object>();
-        LOG.debug("GettingDividerCall from sort method="+SortMethod);
+        Log.debug("Dividers","GettingDividerCall from sort method="+SortMethod);
         String CurrentClassCall = GetCurrentClassCall(SortMethod);
-        LOG.debug("DividerCall="+CurrentClassCall);
+        Log.debug("Dividers","DividerCall="+CurrentClassCall);
         Object CurrDivider=0;
 
         for(Object curr:current){
-            LOG.debug("Get current Divider");
+            Log.debug("Dividers","Get current Divider");
             Object ThisDivider =ClassFromString.GetDateClass(CurrentClassCall, curr);
-            LOG.debug("Checking CurrentGroup="+ThisDivider+" : Against"+CurrDivider);
+            Log.debug("Dividers","Checking CurrentGroup="+ThisDivider+" : Against"+CurrDivider);
             if(!CurrDivider.equals(ThisDivider)){
-                LOG.debug("NewGroupFor="+ThisDivider);
+                Log.debug("Dividers","NewGroupFor="+ThisDivider);
                 CurrDivider=ThisDivider;
                 withdividers.add(CurrDivider);
             }

@@ -22,11 +22,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.apache.log4j.Logger;
 
 public class ADMutil {
 
-    static private final Logger LOG = Logger.getLogger(ADMutil.class);
     public static final String DefaultBG = "gBackgroundImage";
     public static final String DefaultBGName = "Default";
     public static final String ListToken = ":&&:";
@@ -85,7 +83,7 @@ public class ADMutil {
     public static void SetDefaultsWorkingMode() {
         Boolean tValue = !GetDefaultsWorkingMode(); 
         SetProperty(MenuManagerBaseProp + "DefaultsWorkingMode", tValue.toString());
-        LOG.debug("DefaultsWorkingMode - set to '" + tValue.toString() + "'");
+        Log.debug("ADMutil","DefaultsWorkingMode - set to '" + tValue.toString() + "'");
     }
     
     //ADM Hidden Features are toggled in ADM by typing 5309 on the Close button on the Options Menu in ADM Manager
@@ -95,12 +93,12 @@ public class ADMutil {
     public static void SetADMHiddenFeaturesMode() {
         Boolean tValue = !GetADMHiddenFeaturesMode(); 
         SetProperty(MenuManagerBaseProp + "ADMHiddenFeaturesMode", tValue.toString());
-        LOG.debug("ADMHiddenFeaturesMode - set to '" + tValue.toString() + "'");
+        Log.debug("ADMutil","ADMHiddenFeaturesMode - set to '" + tValue.toString() + "'");
     }
     
     public static void LoadADM(){
         if (!ADMInitComplete) {
-            LOG.debug("LoadADM - One Time initialization started: " + util.LogInfo());
+            Log.debug("ADMutil","LoadADM - One Time initialization started: " + util.LogInfo());
             //initiate one time load items
             
             //Init Actions
@@ -110,22 +108,22 @@ public class ADMutil {
             try{
                 boolean success = (new File(util.UserDataLocation())).mkdirs();
                 if (success) {
-                    LOG.debug("LoadADM - Directories created for '" + util.UserDataLocation() + "'");
+                    Log.debug("ADMutil","LoadADM - Directories created for '" + util.UserDataLocation() + "'");
                    }
 
                 }catch (Exception ex){//Catch exception if any
-                    LOG.debug("LoadADM - error creating '" + util.UserDataLocation() + "'" + ex.getMessage());
+                    Log.debug("ADMutil","LoadADM - error creating '" + util.UserDataLocation() + "'" + ex.getMessage());
                 }
             
             //ensure the ADM menus location exists
             try{
                 boolean success = (new File(util.MenusLocation())).mkdirs();
                 if (success) {
-                    LOG.debug("LoadADM - Directories created for '" + util.MenusLocation() + "'");
+                    Log.debug("ADMutil","LoadADM - Directories created for '" + util.MenusLocation() + "'");
                    }
 
                 }catch (Exception ex){//Catch exception if any
-                    LOG.debug("LoadADM - error creating '" + util.MenusLocation() + "'" + ex.getMessage());
+                    Log.debug("ADMutil","LoadADM - error creating '" + util.MenusLocation() + "'" + ex.getMessage());
                 }
             
             //also load the BGVariables for BG Images on Top Level Menus
@@ -150,25 +148,25 @@ public class ADMutil {
             
             ADMInitComplete = true;
 
-            LOG.debug("LoadADM - One Time initialization complete: " + util.LogInfo());
+            Log.debug("ADMutil","LoadADM - One Time initialization complete: " + util.LogInfo());
         }
 
     }
 
     public static void ClientStart(){
         String UIContext = sagex.api.Global.GetUIContextName();
-        LOG.debug("ClientStart: started for '" + UIContext + "': " + util.LogInfo());
+        Log.debug("ADMutil","ClientStart: started for '" + UIContext + "': " + util.LogInfo());
         //first ensure that the One Time init has occured
         LoadADM();
         //initiate items that may differ per UIContext - the UI needs to ensure this only gets loaded once
         //Load the menu items
         ADMMenuNode.LoadMenus();
-        LOG.debug("ClientStart: completed for '" + UIContext + "': " + util.LogInfo());
+        Log.debug("ADMutil","ClientStart: completed for '" + UIContext + "': " + util.LogInfo());
     }
     public static void ClientExit(String UIContext){
-        LOG.debug("ClientExit: started for '" + UIContext + "': " + util.LogInfo());
+        Log.debug("ADMutil","ClientExit: started for '" + UIContext + "': " + util.LogInfo());
         ADMMenuNode.ClientExit(UIContext);
-        LOG.debug("ClientExit: completed for '" + UIContext + "': " + util.LogInfo());
+        Log.debug("ADMutil","ClientExit: completed for '" + UIContext + "': " + util.LogInfo());
     }
     
     public static void ClearFocusStorage(){
@@ -182,50 +180,50 @@ public class ADMutil {
         ADMMenuNode.BackupMenus("ClearAll-" + PropertyBackupFile);
         
         //clear all the old ADM Sage property settings (these settings are not used with Gemstone anymore)
-        LOG.debug("ClearAll: clear Old ADM style Sage Properties");
+        Log.debug("ADMutil","ClearAll: clear Old ADM style Sage Properties");
         RemovePropertyAndChildren(SageADMBasePropertyLocation);
         //TODO: ClearAll not sure I should be clearing ALL Server properties for this
-        //LOG.debug("ClearAll: clear Sage Server Properties");
+        //Log.debug("ADMutil","ClearAll: clear Sage Server Properties");
         //RemoveServerPropertyAndChildren(SageADMBasePropertyLocation);
 
         //clear all the Menu Manager property settings
-        LOG.debug("ClearAll: clear MenuManager Properties");
+        Log.debug("ADMutil","ClearAll: clear MenuManager Properties");
         RemovePropertyAndChildren(MenuManagerBaseProp);
         //TODO: ClearAll not sure I should be clearing ALL Server properties for this
-        //LOG.debug("ClearAll: clear MenuManager Server Properties");
+        //Log.debug("ADMutil","ClearAll: clear MenuManager Server Properties");
         //RemoveServerPropertyAndChildren(MenuManagerBaseProp);
         
         ADMInitComplete = Boolean.FALSE;
-        //LOG.debug("ClearAll: load default menus");
+        //Log.debug("ADMutil","ClearAll: load default menus");
         //ADMMenuNode.LoadMenuItemDefaults();
-        LOG.debug("ClearAll: initialize settings");
+        Log.debug("ADMutil","ClearAll: initialize settings");
         ClientStart();
-        LOG.debug("ClearAll: complete - settings restored to defaults");
+        Log.debug("ADMutil","ClearAll: complete - settings restored to defaults");
         
     }
 
     public static void ReloadADMSettings(){
 
         //clear all the Sage property settings for ADM
-        LOG.debug("ReloadADMSettings: reload ADM settings");
+        Log.debug("ADMutil","ReloadADMSettings: reload ADM settings");
         ADMInitComplete = Boolean.FALSE;
         ClientStart();
-        LOG.debug("ReloadADMSettings: complete");
+        Log.debug("ADMutil","ReloadADMSettings: complete");
         
     }
 
     public static String GetElement(Collection<String> List, Integer element){
-        LOG.debug("GetElement: looking for element " + element + " in:" + List);
+        Log.debug("ADMutil","GetElement: looking for element " + element + " in:" + List);
         Integer counter = 0;
         for (String CurElement:List){
             counter++;
-            LOG.debug("GetElement: checking element '" + counter + "' = '" + CurElement + "'");
+            Log.debug("ADMutil","GetElement: checking element '" + counter + "' = '" + CurElement + "'");
             if (counter.equals(element)){
-                LOG.debug("GetElement: found '" + CurElement + "'");
+                Log.debug("ADMutil","GetElement: found '" + CurElement + "'");
                 return CurElement;
             }
         }
-        LOG.debug("GetElement: not found.");
+        Log.debug("ADMutil","GetElement: not found.");
         return null;
     }
     
@@ -243,7 +241,7 @@ public class ADMutil {
         }
         EditOptions.add("admDeleteMenuItem"); //Delete current Menu Item
         EditOptions.add("admCloseEdit"); //Close the Edit Menu
-        LOG.debug("GetEditOptionsList - Loaded list for '" + Name + "' :" + EditOptions);
+        Log.debug("ADMutil","GetEditOptionsList - Loaded list for '" + Name + "' :" + EditOptions);
         return EditOptions;
     }
     
@@ -260,7 +258,7 @@ public class ADMutil {
         }else if("admCloseEdit".equals(Option)){
             ButtonText = "Close";
         }
-        //LOG.debug("GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
+        //Log.debug("ADMutil","GetEditOptionButtonText returned '" + ButtonText + "' for '" + Option + "'");
         return ButtonText;
     }
     
@@ -278,7 +276,7 @@ public class ADMutil {
                 in.close();
             }
         } catch (Exception ex) {
-            LOG.debug("LoadSubMenuListLevel1: file not found loading standard actions " + ADMutil.class.getName() + ex);
+            Log.debug("ADMutil","LoadSubMenuListLevel1: file not found loading standard actions " + ADMutil.class.getName() + ex);
             return;
         }
 
@@ -299,7 +297,7 @@ public class ADMutil {
         //Add in a -None- option to the list
         SageSubMenusLevel1Props.put(ListNone,ListNone);
         
-        LOG.debug("LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
+        Log.debug("ADMutil","LoadSubMenuListLevel1: completed for '" + SubMenuPropsPath + "'");
         return;
     }
 
@@ -317,7 +315,7 @@ public class ADMutil {
                 in.close();
             }
         } catch (Exception ex) {
-            LOG.debug("LoadSubMenuListLevel2: file not found loading standard actions " + ADMutil.class.getName() + ex);
+            Log.debug("ADMutil","LoadSubMenuListLevel2: file not found loading standard actions " + ADMutil.class.getName() + ex);
             return;
         }
 
@@ -338,7 +336,7 @@ public class ADMutil {
         //Add in a -None- option to the list
         SageSubMenusLevel2Props.put(ListNone,ListNone);
         
-        LOG.debug("LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
+        Log.debug("ADMutil","LoadSubMenuListLevel2: completed for '" + SubMenuPropsPath + "'");
         return;
     }
 
@@ -355,7 +353,7 @@ public class ADMutil {
                 in.close();
             }
         } catch (Exception ex) {
-            LOG.debug("LoadSageBGVariablesList: file not found loading SageBGVariables " + ADMutil.class.getName() + ex);
+            Log.debug("ADMutil","LoadSageBGVariablesList: file not found loading SageBGVariables " + ADMutil.class.getName() + ex);
             return;
         }
 
@@ -372,7 +370,7 @@ public class ADMutil {
             SageBGVariablesKeys.add(ActionValue.getValue());
         }
         
-        LOG.debug("LoadSageBGVariablesList: completed for '" + StandardActionPropsPath + "'");
+        Log.debug("ADMutil","LoadSageBGVariablesList: completed for '" + StandardActionPropsPath + "'");
         return;
     }
 
@@ -404,7 +402,7 @@ public class ADMutil {
             }
                     
         }else{
-            LOG.debug("GetSageBGVariablesButtonTextFormatted: themed value for Option '" + Option + "' ButtonName '" + ButtonName + "'");
+            Log.debug("ADMutil","GetSageBGVariablesButtonTextFormatted: themed value for Option '" + Option + "' ButtonName '" + ButtonName + "'");
             if (IsAdvancedMode()){
                 return ButtonName + " = {Themed value}" + " (" + Option + ")";
             }else{
@@ -432,11 +430,11 @@ public class ADMutil {
     public static void SaveSageBGVariable(String VariableName, String NewValue){
         //saves the setting to the properties
         if (VariableName==null || NewValue==null){
-            LOG.debug("SaveSageBGVariable: null passed for VariableName or NewValue - no change made");
+            Log.debug("ADMutil","SaveSageBGVariable: null passed for VariableName or NewValue - no change made");
             return;
         }
         if (VariableName.equals(DefaultBG)){
-            LOG.debug("SaveSageBGVariable: cannot change the value of the protected Default BG Variable '" + VariableName + "' NOT set to '" + NewValue + "'");
+            Log.debug("ADMutil","SaveSageBGVariable: cannot change the value of the protected Default BG Variable '" + VariableName + "' NOT set to '" + NewValue + "'");
         }else{
             if (NewValue.equals(util.OptionNotFound)){
                 //don't allow this value to be set so use the themed default value
@@ -445,18 +443,18 @@ public class ADMutil {
             //now save the setting to the properties file to be reloaded at startup
             String tProp = Const.ThemeBG + Const.PropDivider + VariableName;
             util.SetOption(Const.ThemeProp, tProp, NewValue);
-            LOG.debug("SaveSageBGVariable: saved '" + VariableName + "' to Theme Prop '" + tProp + "' for value '" + NewValue + "'");
+            Log.debug("ADMutil","SaveSageBGVariable: saved '" + VariableName + "' to Theme Prop '" + tProp + "' for value '" + NewValue + "'");
         }
     }
     
     public static void SetSageBGVariable(String VariableName, String NewValue){
         //set the variable to the value (does not save to properties)
         if (VariableName==null || NewValue==null){
-            LOG.debug("SetSageBGVariable: null passed for VariableName or NewValue - no change made");
+            Log.debug("ADMutil","SetSageBGVariable: null passed for VariableName or NewValue - no change made");
             return;
         }
         if (VariableName.equals(DefaultBG)){
-            LOG.debug("SetSageBGVariable: cannot change the value of the protected Default BG Variable '" + VariableName + "' NOT set to '" + NewValue + "'");
+            Log.debug("ADMutil","SetSageBGVariable: cannot change the value of the protected Default BG Variable '" + VariableName + "' NOT set to '" + NewValue + "'");
         }else{
             if (NewValue.equals(util.OptionNotFound)){
                 //don't allow this value to be set so use the themed default value
@@ -464,7 +462,7 @@ public class ADMutil {
             }
             UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
             sagex.api.Global.AddGlobalContext(tUI, VariableName, NewValue);
-            LOG.debug("SetSageBGVariable: set '" + VariableName + "' to value '" + NewValue + "'");
+            Log.debug("ADMutil","SetSageBGVariable: set '" + VariableName + "' to value '" + NewValue + "'");
         }
     }
 
@@ -474,7 +472,7 @@ public class ADMutil {
             String tProp = Const.ThemeBG + Const.PropDivider + BGVar;
             String tValue = util.GetOptionName(Const.ThemeProp, tProp, util.OptionNotFound);
             if (tValue.equals(util.OptionNotFound)){
-                LOG.debug("LoadSageBGOverrides: no override found for '" + BGVar + "' leaving as themed value '" + EvaluateAttribute(BGVar) + "'");
+                Log.debug("ADMutil","LoadSageBGOverrides: no override found for '" + BGVar + "' leaving as themed value '" + EvaluateAttribute(BGVar) + "'");
             }else{
                 SetSageBGVariable(BGVar, tValue);
             }
@@ -484,7 +482,7 @@ public class ADMutil {
     public static void ResetSageBGOverride(String BGVar){
         String tProp = Const.ThemeBG + Const.PropDivider + BGVar;
         util.RemoveOption(Const.ThemeProp, tProp);
-        LOG.debug("ResetSageBGOverride: setting '" + BGVar + "' to themed default background '" + DefaultBG + "' = '" + EvaluateAttribute(DefaultBG) + "'");
+        Log.debug("ADMutil","ResetSageBGOverride: setting '" + BGVar + "' to themed default background '" + DefaultBG + "' = '" + EvaluateAttribute(DefaultBG) + "'");
         SetSageBGVariable(BGVar, EvaluateAttribute(DefaultBG));
     }
     public static void ResetSageBGOverrides(){
@@ -514,13 +512,13 @@ public class ADMutil {
         SageBackgrounds.addAll(SageBGVariablesKeys);
         //remove none as it may not be where we want it in the list
         SageBackgrounds.remove(ListNone);
-        LOG.debug("LoadSageBGList: Loaded BGVariables");
+        Log.debug("ADMutil","LoadSageBGList: Loaded BGVariables");
         //add None to the start of the list
         SageBackgrounds.add(0,ListNone);
 
         //find all Backgrounds from the SageTV properties file
         String[] tBackgrounds = sagex.api.Configuration.GetServerSubpropertiesThatAreLeaves(new UIContext(sagex.api.Global.GetUIContextName()),SageBackgroundsPropertyLocation);
-        LOG.debug("LoadSageBGList: Getting '" + tBackgrounds.length + "' backgrounds + UI = '" + sagex.api.Global.GetUIContextName() + "' tBackgrounds = '" + Arrays.asList(tBackgrounds) + "'");
+        Log.debug("ADMutil","LoadSageBGList: Getting '" + tBackgrounds.length + "' backgrounds + UI = '" + sagex.api.Global.GetUIContextName() + "' tBackgrounds = '" + Arrays.asList(tBackgrounds) + "'");
         if (tBackgrounds.length>0){
             for (String BGKey: tBackgrounds){
                 //only add valid backgrounds
@@ -534,7 +532,7 @@ public class ADMutil {
                 }
                 
             }
-            LOG.debug("LoadSageBGList: Loading Backgrounds");
+            Log.debug("ADMutil","LoadSageBGList: Loading Backgrounds");
         }
     }
 
@@ -570,7 +568,7 @@ public class ADMutil {
 
     public static String GetSageBGButtonText(String Option){
         if (Option==null || Option.equals(ListNone)){
-            LOG.debug("GetSageBGButtonText for '" + Option + "' Invalid request passed in");
+            Log.debug("ADMutil","GetSageBGButtonText for '" + Option + "' Invalid request passed in");
             return ListNone;
         }
 
@@ -581,16 +579,16 @@ public class ADMutil {
             if (!tPath.equals(OptionNotFound)){
                 File tBackground = sagex.api.Utility.CreateFilePath(tPath, "");
                 String tBackgroundName = sagex.api.Utility.GetFileNameFromPath(tBackground);
-                LOG.debug("GetSageBGButtonText for '" + Option + "' = '" + tBackgroundName + "'");
+                Log.debug("ADMutil","GetSageBGButtonText for '" + Option + "' = '" + tBackgroundName + "'");
                 return tBackgroundName;
             }else{
                 //remove the Not Found key if it was created as part of the Get
                 RemoveServerProperty(PropLocation);
-                LOG.debug("GetSageBGButtonText for '" + Option + "' Invalid request passed in");
+                Log.debug("ADMutil","GetSageBGButtonText for '" + Option + "' Invalid request passed in");
                 return ListNone;
             }
         }else if(Option.equals(DefaultBG)){
-            LOG.debug("GetSageBGButtonText for '" + Option + "' Default found '" + DefaultBGName + "'");
+            Log.debug("ADMutil","GetSageBGButtonText for '" + Option + "' Default found '" + DefaultBGName + "'");
             if (IsAdvancedMode()){
                 return DefaultBGName + " (" + Option + ")";
             }else{
@@ -598,7 +596,7 @@ public class ADMutil {
             }
         }else{
         //determine if using Advanced options
-            LOG.debug("GetSageBGButtonText for '" + Option + "' returning SageBGVariablesProps '" + SageBGVariablesProps.getProperty(Option, ListNone) + "'");
+            Log.debug("ADMutil","GetSageBGButtonText for '" + Option + "' returning SageBGVariablesProps '" + SageBGVariablesProps.getProperty(Option, ListNone) + "'");
             if (IsAdvancedMode()){
                 return SageBGVariablesProps.getProperty(Option, ListNone) + " (" + Option + ")";
             }else{
@@ -610,7 +608,7 @@ public class ADMutil {
     public static String GetSageBGFile(String Option){
         //see if using a GlobalVariable from a Theme or a path to an image file
         if (Option==null || Option.equals("") || Option.equals(ListNone)){
-            //LOG.debug("GetSageBGFile for '" + Option + "' Invalid request passed in");
+            //Log.debug("ADMutil","GetSageBGFile for '" + Option + "' Invalid request passed in");
             return null;
         }
         if (Option.startsWith("adm")){
@@ -618,24 +616,24 @@ public class ADMutil {
             String PropLocation = ADMutil.SageBackgroundsPropertyLocation + Option;
             String tPath = GetServerProperty(PropLocation, OptionNotFound);
             if (!tPath.equals(OptionNotFound)){
-                //LOG.debug("GetSageBGFile for '" + Option + "' = '" + tPath + "'");
+                //Log.debug("ADMutil","GetSageBGFile for '" + Option + "' = '" + tPath + "'");
                 return tPath;
             }else{
                 //remove the Not Found key if it was created as part of the Get
                 RemoveServerProperty(PropLocation);
-                LOG.debug("GetSageBGFile for '" + Option + "' Invalid request passed in");
+                Log.debug("ADMutil","GetSageBGFile for '" + Option + "' Invalid request passed in");
                 return null;
             }
         }else{
             //expect a Global Variable from the theme
-            //LOG.debug("SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
+            //Log.debug("ADMutil","SetBGImageFileandPath for '" + bBGImageFile + "' - variable found");
             String BGImageFilePath = "";
             BGImageFilePath = EvaluateAttribute(Option);
             if (BGImageFilePath.equals(OptionNotFound)){
-                LOG.debug("GetSageBGFile for '" + Option + "' Evaluate Failed");
+                Log.debug("ADMutil","GetSageBGFile for '" + Option + "' Evaluate Failed");
                 return null;
             }else{
-                //LOG.debug("GetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
+                //Log.debug("ADMutil","GetSageBGFile for '" + Option + "' = '" + BGImageFilePath + "'");
                 return BGImageFilePath;
             }
         }
@@ -644,7 +642,7 @@ public class ADMutil {
     public static void SaveSageBackground(String BackgroundFile){
         if (BackgroundFile==null || BackgroundFile.equals("") || BackgroundFile.equals(ListNone)){
             //do nothing
-            LOG.debug("SaveSageBackground for '" + BackgroundFile + "' NOTHING FOUND");
+            Log.debug("ADMutil","SaveSageBackground for '" + BackgroundFile + "' NOTHING FOUND");
         }else{
             String tBackgroundPath = "";
             String LocalDir = util.GetLocalWorkingDir();
@@ -652,15 +650,15 @@ public class ADMutil {
                 //this is a local file to Sage so only store the relative part so it can be loaded from ANY client
                 tBackgroundPath = BackgroundFile.substring(LocalDir.length()+1);
                 tBackgroundPath = "." + File.separator + tBackgroundPath;
-                LOG.debug("SaveSageBackground: path local to Sage '" + tBackgroundPath + "'");
+                Log.debug("ADMutil","SaveSageBackground: path local to Sage '" + tBackgroundPath + "'");
             }else{
                 File tBackground = sagex.api.Utility.CreateFilePath(BackgroundFile, "");
                 tBackgroundPath = tBackground.toString();
-                LOG.debug("SaveSageBackground: path not local to Sage '" + tBackgroundPath + "'");
+                Log.debug("ADMutil","SaveSageBackground: path not local to Sage '" + tBackgroundPath + "'");
             }
             String tBackgroundKey = GetNewBackgroundKey();
             SetServerProperty(SageBackgroundsPropertyLocation + tBackgroundKey, tBackgroundPath);
-            LOG.debug("SaveSageBackground completed for '" + BackgroundFile + "'");
+            Log.debug("ADMutil","SaveSageBackground completed for '" + BackgroundFile + "'");
             SageBackgrounds.add(tBackgroundKey);
         }
     }
@@ -674,12 +672,12 @@ public class ADMutil {
                 String PropLocation = ADMutil.SageBackgroundsPropertyLocation + BGKey;
                 String tPath = GetServerProperty(PropLocation, OptionNotFound);
                 if (tPath.equals(Option)){
-                    LOG.debug("CustomSageBackgroundExits: Background found - '" + Option + "'");
+                    Log.debug("ADMutil","CustomSageBackgroundExits: Background found - '" + Option + "'");
                     return Boolean.TRUE;
                 }
             }
         }
-        LOG.debug("CustomSageBackgroundExits: Background not found - '" + Option + "'");
+        Log.debug("ADMutil","CustomSageBackgroundExits: Background not found - '" + Option + "'");
         return Boolean.FALSE;
     }
     
@@ -705,9 +703,9 @@ public class ADMutil {
                 //remove each background
                 RemoveSageBackground(BGKey);
             }
-            LOG.debug("LoadSageBGList: Loading Backgrounds");
+            Log.debug("ADMutil","LoadSageBGList: Loading Backgrounds");
         }
-        LOG.debug("RemoveAllSageBackgrounds: Removed '" + tBackgrounds.length + "' backgrounds");
+        Log.debug("ADMutil","RemoveAllSageBackgrounds: Removed '" + tBackgrounds.length + "' backgrounds");
     }
     
     public static void RemoveSageBackground(String Option){
@@ -719,10 +717,10 @@ public class ADMutil {
             for (String MenuItem: ADMMenuNode.MenuNodeList().keySet()){
                 if(ADMMenuNode.GetMenuItemBGImageFile(MenuItem).equals(Option)){
                     ADMMenuNode.SetMenuItemBGImageFile(MenuItem,ListNone);
-                    LOG.debug("RemoveSageBackground: Active background removed from '" + MenuItem + "'");
+                    Log.debug("ADMutil","RemoveSageBackground: Active background removed from '" + MenuItem + "'");
                 }
             }
-            LOG.debug("RemoveSageBackground completed for '" + Option + "'");
+            Log.debug("ADMutil","RemoveSageBackground completed for '" + Option + "'");
         }
     }
     
@@ -745,7 +743,7 @@ public class ADMutil {
     
     public static Boolean UseADM(){
         //true unless this is specifically set to "off"
-        //LOG.debug("UseADM: '" + GetProperty(ADMMenuStyleLocation, ADMMenuStyleDefault) + "'");
+        //Log.debug("ADMutil","UseADM: '" + GetProperty(ADMMenuStyleLocation, ADMMenuStyleDefault) + "'");
         if (GetProperty(ADMMenuStyleLocation, ADMMenuStyleDefault).toLowerCase().equals("off")){
             return Boolean.FALSE;
         }else{
@@ -792,7 +790,7 @@ public class ADMutil {
     }
     
     public static String GetSubMenuListButtonText(String Option, Integer Level, Boolean SkipAdvanced){
-        //LOG.debug("GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
+        //Log.debug("ADMutil","GetSubMenuListButtonText: Option '" + Option + "' for Level = '" + Level + "'");
         if (Option==null || Option.equals(ListNone)){
             return ListNone;
         }
@@ -824,14 +822,14 @@ public class ADMutil {
     }
     
     public static String EvaluateAttribute(String Attribute){
-        //LOG.debug("EvaluateAttribute: Attribute = '" + Attribute + "'");
+        //Log.debug("ADMutil","EvaluateAttribute: Attribute = '" + Attribute + "'");
         Object[] passvalue = new Object[1];
         passvalue[0] = sagex.api.WidgetAPI.EvaluateExpression(new UIContext(sagex.api.Global.GetUIContextName()), Attribute);
         if (passvalue[0]==null){
-            LOG.debug("EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
+            Log.debug("ADMutil","EvaluateAttribute for Attribute = '" + Attribute + "' not evaluated.");
             return OptionNotFound;
         }else{
-            //LOG.debug("EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
+            //Log.debug("ADMutil","EvaluateAttribute for Attribute = '" + Attribute + "' = '" + passvalue[0].toString() + "'");
             return passvalue[0].toString();
         }
         
@@ -839,7 +837,7 @@ public class ADMutil {
 
     //Save the current item that is focused for later retrieval
     public static void SetLastFocusForSubMenu(String SubMenu, String FocusItem){
-        LOG.debug("SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
+        Log.debug("ADMutil","SetLastFocusForSubMenu: SubMenu '" + SubMenu + "' to '" + FocusItem + "'");
         SetProperty(SageFocusPropertyLocation + SubMenu, FocusItem);
     }
 
@@ -855,14 +853,14 @@ public class ADMutil {
         String LastFocus = GetProperty(SageFocusPropertyLocation + SubMenu,OptionNotFound);
         if (LastFocus.equals(OptionNotFound)){
             //return the DefaultMenuItem for this SubMenu
-            LOG.debug("GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
+            Log.debug("ADMutil","GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not found - returning DEFAULT");
             return ADMMenuNode.GetSubMenuDefault(SubMenu);
         }else{
             //check that the focus item stored in Sage is still valid
             if (ADMMenuNode.IsSubMenuItem(SubMenu, LastFocus, QLMCheck)){
                 return LastFocus;
             }else{
-                LOG.debug("GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
+                Log.debug("ADMutil","GetLastFocusForSubMenu: SubMenu '" + SubMenu + "' not valid - returning DEFAULT");
                 return ADMMenuNode.GetSubMenuDefault(SubMenu);
             }
         }
@@ -879,11 +877,11 @@ public class ADMutil {
         for (Field field : obj.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true); // if you want to modify private fields
-                LOG.debug("ListObjectMembers: " + field.getName() + " - " + field.getType() + " - " + field.get(obj));
+                Log.debug("ADMutil","ListObjectMembers: " + field.getName() + " - " + field.getType() + " - " + field.get(obj));
             } catch (IllegalArgumentException ex) {
-                LOG.debug("ListObjectMembers: ERROR: " + ADMutil.class.getName() + ex);
+                Log.debug("ADMutil","ListObjectMembers: ERROR: " + ADMutil.class.getName() + ex);
             } catch (IllegalAccessException ex) {
-                LOG.debug("ListObjectMembers: ERROR: " + ADMutil.class.getName() + ex);
+                Log.debug("ADMutil","ListObjectMembers: ERROR: " + ADMutil.class.getName() + ex);
             }
         }
     }

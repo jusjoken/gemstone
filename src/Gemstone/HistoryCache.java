@@ -6,7 +6,6 @@ package Gemstone;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import sagex.UIContext;
 import sagex.phoenix.vfs.IMediaResource;
 
@@ -15,7 +14,6 @@ import sagex.phoenix.vfs.IMediaResource;
  * @author jusjoken
  */
 public class HistoryCache {
-    static private final Logger LOG = Logger.getLogger(HistoryCache.class);
     private Map<String,HistoryItem> history = new HashMap<String,HistoryItem>();
     private UIContext tUI = new UIContext(sagex.api.Global.GetUIContextName());
     public HistoryCache() {
@@ -66,9 +64,9 @@ public class HistoryCache {
         }
     }
     private void logHistory(String Key){
-        LOG.debug("HISTORY Added '" + Key + "'");
+        Log.debug("HistoryCache","HISTORY Added '" + Key + "'");
         for (String tKey:history.keySet()){
-            LOG.debug("HISTORY item '" + tKey + "' Index/Table '" + Index(tKey)+ "/" + TableCell(tKey) + "' Item '" + Item(tKey) + "'");
+            Log.debug("HistoryCache","HISTORY item '" + tKey + "' Index/Table '" + Index(tKey)+ "/" + TableCell(tKey) + "' Item '" + Item(tKey) + "'");
         }
     }
     private String TableCellKey(String Key, String TableCell){
@@ -129,10 +127,10 @@ public class HistoryCache {
         return SetFocus(Item, DefaultItem, DefaultIndex, "VideoCell", Next);
     }
     public boolean SetFocus(Object Item, Object DefaultItem, Integer DefaultIndex, String TableCell, Boolean Next){
-        LOG.debug("SetFocus: *** Next '" + Next + "' DefaultIndex '" + DefaultIndex + "' TableCell '" + TableCell + "' DefaultItem '" + DefaultItem + "' Item '" + Item + "'");
+        Log.debug("HistoryCache","SetFocus: *** Next '" + Next + "' DefaultIndex '" + DefaultIndex + "' TableCell '" + TableCell + "' DefaultItem '" + DefaultItem + "' Item '" + Item + "'");
         IMediaResource imr = Source.ConvertToIMR(Item);
         if (imr==null){
-            LOG.debug("SetFocus: null Item passed in - so using Defaults");
+            Log.debug("HistoryCache","SetFocus: null Item passed in - so using Defaults");
             return SetFocus(util.OptionNotFound, DefaultItem, DefaultIndex, TableCell);
         }
         String Key = "";
@@ -154,7 +152,7 @@ public class HistoryCache {
         return SetFocus(Key, DefaultItem, DefaultIndex, TableCell(Key));
     }
     public boolean SetFocus(String Key, Object DefaultItem, Integer DefaultIndex, String TableCell){
-        LOG.debug("SetFocus: *** looking for '" + Key + "' DefaultItem '" + DefaultItem + "' DefaultIndex '" + DefaultIndex + "' TableCell '" + TableCell + "'");
+        Log.debug("HistoryCache","SetFocus: *** looking for '" + Key + "' DefaultItem '" + DefaultItem + "' DefaultIndex '" + DefaultIndex + "' TableCell '" + TableCell + "'");
         if (Contains(Key)){
             //determine the index to use
             Integer tIndex = DefaultIndex;
@@ -168,18 +166,18 @@ public class HistoryCache {
             boolean set = sagex.api.Global.EnsureVisibilityForVariable(tUI,TableCell,Item(Key),tIndex);
             if (set){
                 sagex.api.Global.SetFocusForVariable(tUI, TableCell, Item(Key));
-                LOG.debug("SetFocus: found Key '" + Key + "' TableCell '" + TableCell + "' Index '" + tIndex + "' Item '" + Item(Key) + "'");
+                Log.debug("HistoryCache","SetFocus: found Key '" + Key + "' TableCell '" + TableCell + "' Index '" + tIndex + "' Item '" + Item(Key) + "'");
                 return true;
             }else{
                 sagex.api.Global.EnsureVisibilityForVariable(tUI,TableCell,DefaultItem,tIndex);
                 sagex.api.Global.SetFocusForVariable(tUI, TableCell, DefaultItem);
-                LOG.debug("SetFocus: not found in table '" + Key + "'  TableCell '" + TableCell + "' Index '" + tIndex + "' Item '" + DefaultItem + "'");
+                Log.debug("HistoryCache","SetFocus: not found in table '" + Key + "'  TableCell '" + TableCell + "' Index '" + tIndex + "' Item '" + DefaultItem + "'");
                 return false;
             }
         }else{
             sagex.api.Global.EnsureVisibilityForVariable(tUI,TableCell,DefaultItem,DefaultIndex);
             sagex.api.Global.SetFocusForVariable(tUI, TableCell, DefaultItem);
-            LOG.debug("SetFocus: using default as Key (" + Key + ") not found - TableCell '" + TableCell + "' Index '" + DefaultIndex + "' Item '" + DefaultItem + "'");
+            Log.debug("HistoryCache","SetFocus: using default as Key (" + Key + ") not found - TableCell '" + TableCell + "' Index '" + DefaultIndex + "' Item '" + DefaultItem + "'");
             return false;
         }
     }

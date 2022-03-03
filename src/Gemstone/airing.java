@@ -2,17 +2,12 @@ package Gemstone;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
 import sagex.api.Database;
 import sagex.api.MediaFileAPI;
 import sagex.api.AiringAPI;
 import sagex.api.ShowAPI;
 import sagex.api.PlaylistAPI;
 import sagex.api.Utility;
-import sagex.phoenix.vfs.IMediaFolder;
-import sagex.phoenix.vfs.IMediaResource;
-import sagex.phoenix.vfs.sorters.Sorter;
-import sagex.phoenix.vfs.views.ViewFolder;
 
 /**
  *
@@ -23,7 +18,6 @@ import sagex.phoenix.vfs.views.ViewFolder;
 
 public class airing
 {
-    static private final Logger LOG = Logger.getLogger(airing.class);
     public static String GetAiringTitle(Object MediaObject)
     //Returns the airing title for the MediaObject.  If the MediaObject is a TV file it returns GetAiringTitle().
     //If it is not a TV file it returns the "MediaTitle" from the custom metadata fields. Returns "Unknown"
@@ -114,7 +108,7 @@ public class airing
      * @param NewPlaylistName, string for the title of the new playlist
      */
     {
-        LOG.debug("MakePlaylist: START");
+        Log.debug("airing","MakePlaylist: START");
 
         Object[] AllPlaylists = PlaylistAPI.GetPlaylists();
 
@@ -135,10 +129,10 @@ public class airing
         Object NewPlaylist = PlaylistAPI.AddPlaylist(NewPlaylistName);
 
         for ( Object MediaObject : MediaObjectsArray){
-            LOG.debug("MakePlaylist: Adding To Playlist: '" + MediaFileAPI.GetMediaTitle(MediaObject)+"::"+ MediaFileAPI.GetMediaFileID(MediaObject)+"'");
+            Log.debug("airing","MakePlaylist: Adding To Playlist: '" + MediaFileAPI.GetMediaTitle(MediaObject)+"::"+ MediaFileAPI.GetMediaFileID(MediaObject)+"'");
             PlaylistAPI.AddToPlaylist(NewPlaylist, AiringAPI.GetMediaFileForAiring(MediaObject));
         }
-        LOG.debug("MakePlaylist: END");
+        Log.debug("airing","MakePlaylist: END");
         return NewPlaylist;
     }
 
@@ -163,7 +157,7 @@ public class airing
      */
     public static Object GetLastWatched(Object MediaObjects){
         if (MediaObjects==null){
-            LOG.debug("GetLastWatched: null passed in");
+            Log.debug("airing","GetLastWatched: null passed in");
             return null;
         }
 
@@ -172,16 +166,16 @@ public class airing
         	if(!phoenix.media.IsWatched(Utility.GetElement(MediaObjects, item))){
         		if(item==0){
         			//first item is not watched so return null as we will consider all items not watched
-        	        LOG.debug("GetLastWatched: First item NOT watched so LastWatched not found - returning NULL");
+        	        Log.debug("airing","GetLastWatched: First item NOT watched so LastWatched not found - returning NULL");
         			return null;
         		}
         		//last watched is the previous item from the first not watched item
-    	        LOG.debug("GetLastWatched: NOT watched found. Returning previous item '" + Utility.GetElement(MediaObjects, item-1) + "'");
+    	        Log.debug("airing","GetLastWatched: NOT watched found. Returning previous item '" + Utility.GetElement(MediaObjects, item-1) + "'");
         		return Utility.GetElement(MediaObjects, item-1);
         	}
         }
         
-        LOG.debug("GetLastWatched: All items watched so LastWatched is the last item '" + Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1) + "'");
+        Log.debug("airing","GetLastWatched: All items watched so LastWatched is the last item '" + Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1) + "'");
         //return the last item as all items are watched
         return Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1);
     }
@@ -197,16 +191,16 @@ public class airing
      * @param MediaObjects - sage MediaFiles, Airings, or Shows Objects in an Array, list, or vector.
      */
     public static Object GetNextShow(Object MediaObjects){
-        //LOG.debug("GetNextShow: for '" + MediaObjects + "'");
+        //Log.debug("airing","GetNextShow: for '" + MediaObjects + "'");
         if (MediaObjects==null){
-            LOG.debug("GetNextShow: null passed in");
+            Log.debug("airing","GetNextShow: null passed in");
             return null;
         }
         Object LastWatched = airing.GetLastWatched(MediaObjects);
         if (LastWatched==null){
             //nothing has been watched so return the first media item as the next
             MediaObjects = Database.Sort(MediaObjects, false, "phoenix_metadata_GetOriginalAirDate");
-            LOG.debug("GetNextShow: no items watched so returning the first item in OAD order '" + Utility.GetElement(MediaObjects, 0) + "'");
+            Log.debug("airing","GetNextShow: no items watched so returning the first item in OAD order '" + Utility.GetElement(MediaObjects, 0) + "'");
             return Utility.GetElement(MediaObjects, 0);
         }else{
             return GetShowNextPrev(MediaObjects, LastWatched, Boolean.TRUE);
@@ -221,20 +215,20 @@ public class airing
      */
     public static Object GetNewShow(Object MediaObjects){
         if (MediaObjects==null){
-            LOG.debug("GetNewShow: null passed in - returning null");
+            Log.debug("airing","GetNewShow: null passed in - returning null");
             return null;
         }
         if (Utility.Size(MediaObjects)==0){
-            LOG.debug("GetNewShow: empty item list passed in - returning null");
+            Log.debug("airing","GetNewShow: empty item list passed in - returning null");
             return null;
         }
         MediaObjects = Database.Sort(MediaObjects, false, "phoenix_metadata_GetOriginalAirDate");
         Object Newest = Utility.GetElement(MediaObjects, Utility.Size(MediaObjects)-1);
         if(phoenix.media.IsWatched(Newest)){
-            LOG.debug("GetNewShow: Newest item is watched - returning null '" + Newest + "'");
+            Log.debug("airing","GetNewShow: Newest item is watched - returning null '" + Newest + "'");
             return null;
         }else{
-            LOG.debug("GetNewShow: Newest '" + Newest + "'");
+            Log.debug("airing","GetNewShow: Newest '" + Newest + "'");
             return Newest;
         }
     }
@@ -249,7 +243,7 @@ public class airing
      */
     public static Object GetShowNextPrev(Object MediaObjects, Object CurrentShow, Boolean DirectionNext){
         if (MediaObjects==null){
-            LOG.debug("GetShowNextPrev: null passed in");
+            Log.debug("airing","GetShowNextPrev: null passed in");
             return null;
         }
         MediaObjects = Database.Sort(MediaObjects, false, "phoenix_metadata_GetOriginalAirDate");
@@ -258,24 +252,24 @@ public class airing
 
         if (index==-1){
             //the current show was not found so return the first item as either the next or previous
-            LOG.debug("GetShowNextPrev: current show was not found so returning the first item '" + Utility.GetElement(MediaObjects, 0) + "'");
+            Log.debug("airing","GetShowNextPrev: current show was not found so returning the first item '" + Utility.GetElement(MediaObjects, 0) + "'");
             return Utility.GetElement(MediaObjects, 0);
         }
 
         if(DirectionNext){
             if(index+1 >= Utility.Size(MediaObjects)){
-                LOG.debug("GetShowNextPrev: NEXT - Current Show is the last show so returning null as there is no NEXT");
+                Log.debug("airing","GetShowNextPrev: NEXT - Current Show is the last show so returning null as there is no NEXT");
                 return null;
             }else{
-                LOG.debug("GetShowNextPrev: NEXT returning item (" + (index+1) + ") '" + Utility.GetElement(MediaObjects, index+1) + "'");
+                Log.debug("airing","GetShowNextPrev: NEXT returning item (" + (index+1) + ") '" + Utility.GetElement(MediaObjects, index+1) + "'");
                 return Utility.GetElement(MediaObjects, index+1);
             }
         }else{
             if(index == 0){
-                LOG.debug("GetShowNextPrev: PREV - Current Show is the first show so returning null as there is no PREV");
+                Log.debug("airing","GetShowNextPrev: PREV - Current Show is the first show so returning null as there is no PREV");
                 return null;
             }else{
-                LOG.debug("GetShowNextPrev: PREV returning item (" + (index-1) + ") '" + Utility.GetElement(MediaObjects, index-1) + "'");
+                Log.debug("airing","GetShowNextPrev: PREV returning item (" + (index-1) + ") '" + Utility.GetElement(MediaObjects, index-1) + "'");
                 return Utility.GetElement(MediaObjects, index-1);
             }
         }
@@ -289,18 +283,18 @@ public class airing
      */
     public static Object GetNextShowRandom(Object MediaObjects){
         if (MediaObjects==null){
-            LOG.debug("GetNextShowRandom: null passed in");
+            Log.debug("airing","GetNextShowRandom: null passed in");
             return null;
         }
         Object Unwatched = airing.GetShowsFromLastWatched(MediaObjects);
         if(Utility.Size(Unwatched)== 0){
-            LOG.debug("GetNextShowRandom: No unwatched shows so returning null");
+            Log.debug("airing","GetNextShowRandom: No unwatched shows so returning null");
             return null;
         }else{
             //get a random index item from the list of unwatched shows
             Random generator = new Random();
             int randomIndex = generator.nextInt( Utility.Size(Unwatched) );
-            LOG.debug("GetNextShowRandom: returning item (" + randomIndex + ") of (" + Utility.Size(Unwatched) + ") unwatched items");
+            Log.debug("airing","GetNextShowRandom: returning item (" + randomIndex + ") of (" + Utility.Size(Unwatched) + ") unwatched items");
             return Utility.GetElement(Unwatched, randomIndex);
         }
     }
@@ -317,19 +311,19 @@ public class airing
      */
     public static Object[] GetShowsFromLastWatched(Object MediaObjects){
         if (MediaObjects==null){
-            LOG.debug("GetShowsFromLastWatched: null passed in");
+            Log.debug("airing","GetShowsFromLastWatched: null passed in");
             return null;
         }
         Object LastWatched = airing.GetLastWatched(MediaObjects);
         if (LastWatched==null){
-            LOG.debug("GetShowsFromLastWatched: no items have been watched so returning all items '" + MediaObjects + "'");
+            Log.debug("airing","GetShowsFromLastWatched: no items have been watched so returning all items '" + MediaObjects + "'");
             return FanartCaching.toArray(MediaObjects);
         }else{
             Object NextWatch = airing.GetNextShow(MediaObjects);
             MediaObjects = Database.Sort(MediaObjects, false, "phoenix_metadata_GetOriginalAirDate");
             Object[] Arr0 = FanartCaching.toArray(MediaObjects);
             int	elementlocation = Utility.FindElementIndex(Arr0, NextWatch);
-            LOG.debug("GetShowsFromLastWatched: returning items '" + elementlocation + "' to '" + Arr0.length + "' [" + Arrays.copyOfRange(Arr0, elementlocation, Arr0.length) + "]");
+            Log.debug("airing","GetShowsFromLastWatched: returning items '" + elementlocation + "' to '" + Arr0.length + "' [" + Arrays.copyOfRange(Arr0, elementlocation, Arr0.length) + "]");
             return Arrays.copyOfRange(Arr0, elementlocation, Arr0.length);
         }
     }

@@ -10,7 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -18,7 +17,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author jusjoken
  */
 public class PropertiesExt extends Properties {
-    static private final Logger LOG = Logger.getLogger(PropertiesExt.class);
 
     public PropertiesExt() {
         super();
@@ -110,23 +108,23 @@ public class PropertiesExt extends Properties {
                 if (endindex!=-1){
                     if (Branches){
                         ReturnList.add(Key.substring(startindex, endindex));
-                        //LOG.debug("GetSubpropertiesThatAreBranches: FOUND Key '" + Key.substring(startindex, endindex) + "'");
+                        //Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: FOUND Key '" + Key.substring(startindex, endindex) + "'");
                     }else{
-                        //LOG.debug("GetSubpropertiesThatAreBranches: SKIPPING as there are branches '" + Key + "'");
+                        //Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: SKIPPING as there are branches '" + Key + "'");
                 }
                 }else{
                     if (Branches){
-                        //LOG.debug("GetSubpropertiesThatAreBranches: SKIPPING as no branches '" + Key + "'");
+                        //Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: SKIPPING as no branches '" + Key + "'");
                     }else{
                         ReturnList.add(Key.substring(startindex));
-                        //LOG.debug("GetSubpropertiesThatAreBranches: FOUND Key '" + Key.substring(startindex) + "'");
+                        //Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: FOUND Key '" + Key.substring(startindex) + "'");
                     }
                 }
             }else{
-                //LOG.debug("GetSubpropertiesThatAreBranches: SKIPPING Key '" + Key + "'");
+                //Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: SKIPPING Key '" + Key + "'");
             }
         }
-        LOG.debug("GetSubpropertiesThatAreBranches: PropertyKey '" + PropertyKey + "' found (" + ReturnList.size() + ") List '" + ReturnList + "'");
+        Log.debug("PropertiesExt","GetSubpropertiesThatAreBranches: PropertyKey '" + PropertyKey + "' found (" + ReturnList.size() + ") List '" + ReturnList + "'");
         return ReturnList;
         
     }
@@ -136,7 +134,7 @@ public class PropertiesExt extends Properties {
         for (String line:lines){
             if (line.startsWith("#")){
                 //skip comment
-                LOG.debug("load: from String: skipping comment = '" + line + "'");
+                Log.debug("PropertiesExt","load: from String: skipping comment = '" + line + "'");
             }else{
                 String entrys[] = line.split("=");
                 String key = entrys[0];
@@ -146,7 +144,7 @@ public class PropertiesExt extends Properties {
                     value = StringEscapeUtils.unescapeJava(value);
                 }
                 this.setProperty(key, value);
-                LOG.debug("load: from String: key = '" + key + "' value = '" + value + "'");
+                Log.debug("PropertiesExt","load: from String: key = '" + key + "' value = '" + value + "'");
             }
         }
     }

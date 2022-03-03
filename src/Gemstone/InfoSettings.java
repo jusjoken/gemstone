@@ -6,7 +6,6 @@ package Gemstone;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -31,7 +30,6 @@ public class InfoSettings {
     private boolean isTop = false;
     private String StyleDefault = "";
     private static Map<String,String> StylesMap = new LinkedHashMap<String,String>();
-    static private final Logger LOG = Logger.getLogger(InfoSettings.class);
     //TODO: InfoSettings Mode - default based on FlowType
     
     //use this constructor for general purpose uses of the Info panel
@@ -161,7 +159,7 @@ public class InfoSettings {
     
     //return the full property string including the Flow Base
     public String PropBaseFull(String PropName){
-        //LOG.debug("PropBaseFull: returning '" + PropSection() + Const.PropDivider + PropBase(PropName) + "'");
+        //Log.debug("InfoSettings","PropBaseFull: returning '" + PropSection() + Const.PropDivider + PropBase(PropName) + "'");
         return Const.BaseProp + Const.PropDivider + PropSection() + Const.PropDivider + PropBase(PropName);
     }
     
@@ -182,7 +180,7 @@ public class InfoSettings {
             return Modes.AlwaysOn.toString();
         }
         String tValue = util.GetOptionName(PropSection(), PropBase("Mode"), util.OptionNotFound);
-        //LOG.debug("Mode: value '" + tValue + "' PropSection() '" + PropSection() + "' PropBase() '" + PropBase("Mode") + "'");
+        //Log.debug("InfoSettings","Mode: value '" + tValue + "' PropSection() '" + PropSection() + "' PropBase() '" + PropBase("Mode") + "'");
         if (tValue.equals(util.OptionNotFound)){
             //return the default dependent on the FlowType or other ID
             if (FlowBased){
@@ -217,7 +215,7 @@ public class InfoSettings {
 
     public String Style(){
         String tValue = util.GetOptionName(PropSection(), PropBase("Style"), util.OptionNotFound);
-        //LOG.debug("Style: value '" + tValue + "' PropSection() '" + PropSection() + "' PropBase() '" + PropBase("Style") + "'");
+        //Log.debug("InfoSettings","Style: value '" + tValue + "' PropSection() '" + PropSection() + "' PropBase() '" + PropBase("Style") + "'");
         //String tValue = Flow.GetOptionName(ID, PropBase("Style"), util.OptionNotFound);
         if (tValue.equals(util.OptionNotFound)){
             //return the default dependent on the FlowType or other ID
@@ -234,7 +232,7 @@ public class InfoSettings {
     }
 
     public Integer Delay(){
-        //LOG.debug("Delay: Prop '" + PropBaseFull("Delay") + "' Value '" + util.GetPropertyAsInteger(PropBaseFull("Delay"), 5000) + "'");
+        //Log.debug("InfoSettings","Delay: Prop '" + PropBaseFull("Delay") + "' Value '" + util.GetPropertyAsInteger(PropBaseFull("Delay"), 5000) + "'");
         return util.GetPropertyAsInteger(PropBaseFull("Delay"), 5000);
     }
     
